@@ -80,26 +80,21 @@ class JobBankCashIn extends Command
                 $itemJson = json_decode($response, true);
 
                 if (!empty($itemJson) && isset($itemJson['status']) && $itemJson['status'] == 'true') {
-
-
                     $datas = $itemJson['transactions'];
 
                     foreach ($datas as $itemData) {
-
                         $date = Carbon::parse("2023-12-25 14:11:44");
                         $date2 = Carbon::parse(Formatter::convertDateVNToEng($itemData['transactionDate']));
 
                         if ($date2->gt($date)) {
-
                             $creditAmount = $itemData['amount'];
                             $refNo = $itemData['transactionID'];
                             $content = strtoupper($itemData['description']);
-                            $content = str_replace("  ", " ",$content);
+                            $content = str_replace("  ", " ", $content);
 
                             $content = explode("NAPTIEN", $content);
 
                             if (count($content) > 1) {
-
                                 $content = $content[1];
                                 $content = trim($content);
 
@@ -112,7 +107,7 @@ class JobBankCashIn extends Command
 
                                     $amount = Formatter::getOnlyNumber($contents[1]);
 
-                                    if ($amount != $creditAmount){
+                                    if ($amount != $creditAmount) {
                                         if (count($contents) > 2) {
                                             $amount .= ($contents[2]);
                                             $amount = Formatter::getOnlyNumber($amount);
@@ -122,10 +117,12 @@ class JobBankCashIn extends Command
                                     $user = User::find($id);
 
                                     if (!empty($user) && $amount == $creditAmount) {
-                                        $userCashIn = UserCashIn::where('ref_no',$refNo)->first();
+                                        $userCashIn = UserCashIn::where('ref_no', $refNo)->first();
 
 
-                                        if (!empty($userCashIn)) continue;
+                                        if (!empty($userCashIn)) {
+                                            continue;
+                                        }
 
                                         UserCashIn::create([
                                             'user_id' => $id,
@@ -141,8 +138,7 @@ class JobBankCashIn extends Command
                             }
                         }
                     }
-
-                }else{
+                } else {
 //                    $statusWeb2M->update([
 //                        'is_success' => 0,
 //                        'description' => $response . "",

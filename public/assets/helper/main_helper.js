@@ -107,131 +107,6 @@ function getFormattedDate(input, format = "dd/mm/yyyy") {
     return getOnlyDate(input, format) + " " + getOnlyTime(input)
 }
 
-function actionDelete(event, url = null, table = null, target_remove = null) {
-    event.preventDefault()
-    let urlRequest = $(this).data('url')
-    let that = $(this)
-
-    if (!urlRequest) {
-        urlRequest = url
-    }
-
-    Swal.fire({
-        title: 'Bạn có chắc?',
-        text: "Tác vụ sẽ không thể hoàn tác!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Vâng, xóa nó!',
-        cancelButtonText: 'Không'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: urlRequest,
-                beforeSend: function () {
-                    showLoading()
-                },
-                success: function (response) {
-                    hideLoading()
-                    if (response.code === 200) {
-                        const parent_remove_id = that.parent().parent().data('id')
-
-                        $('.tr_container_index_' + parent_remove_id).remove()
-                        that.parent().parent().remove()
-
-                    }
-                },
-                error: function (err) {
-                    console.log(err)
-                    hideLoading()
-                    Swal.fire(
-                        {
-                            icon: 'error',
-                            title: err.responseText,
-                        }
-                    );
-                },
-            })
-        }
-    })
-}
-
-function actionRestore(event, url = null, table = null, target_remove = null) {
-    event.preventDefault()
-    let urlRequest = $(this).data('url')
-    let that = $(this)
-
-    if (!urlRequest) {
-        urlRequest = url
-    }
-
-    $.ajax({
-        type: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        url: urlRequest,
-        beforeSend: function () {
-            showLoading()
-        },
-        success: function (response) {
-            hideLoading()
-            that.parent().parent().remove()
-        },
-        error: function (err) {
-            console.log(err)
-            hideLoading()
-            Swal.fire(
-                {
-                    icon: 'error',
-                    title: err.responseText,
-                }
-            );
-        },
-    })
-}
-
-function actionAudit(event, url = null, table = null, target_remove = null) {
-    event.preventDefault()
-    let urlRequest = $(this).data('url')
-    let that = $(this)
-
-    if (!urlRequest) {
-        urlRequest = url
-    }
-
-    $.ajax({
-        type: 'GET',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        url: urlRequest,
-        beforeSend: function () {
-            showLoading()
-        },
-        success: function (response) {
-            hideLoading()
-            $('#content_modal_audit').html(response.html)
-            showModal('modal_audit')
-        },
-        error: function (err) {
-            console.log(err)
-            hideLoading()
-            Swal.fire(
-                {
-                    icon: 'error',
-                    title: err.responseText,
-                }
-            );
-        },
-    })
-
-}
 
 let editor_config = {
     path_absolute : "/",
@@ -877,30 +752,174 @@ function addUrlParameterObjects($params) {
     window.location.search = searchParams.toString()
 }
 
+function showToastLoading(content = null){
+    const toast = Toastify({
+        position: "center",
+        text: content ?? "Loading...",
+        duration: -1,
+        close: false,
+    });
+    toast.showToast();
+    activeToasts.push(toast);
+}
+
+const activeToasts = [];
+
 function showToastSuccess(content = null, duration = null){
-    Toastify({
-
+    const toast = Toastify({
+        position: "center",
         text: content ?? "Đã lưu thay đổi",
-
-        duration: duration ?? 3000
-
-    }).showToast();
+        duration: duration ?? 3000,
+        background: "linear-gradient(to right, #00b09b, #96c93d)",
+    });
+    toast.showToast();
+    activeToasts.push(toast);
 }
 
 function showToastError(content = null, duration = null){
-    Toastify({
-
+    const toast = Toastify({
+        position: "center",
         text: content ?? "Có lỗi",
-
-        duration: duration ?? 3000
-
-    }).showToast();
+        duration: duration ?? 3000,
+        background: "linear-gradient(to right, #ff5f6d, #ffc371)"
+    });
+    toast.showToast();
+    activeToasts.push(toast);
 }
 
-$(document).ready(function () {
-    $(document).on('click', '.action_delete', actionDelete);
-    $(document).on('click', '.action_restore', actionRestore);
-    $(document).on('click', '.action_audit', actionAudit);
+function hideAllToast(){
+    activeToasts.forEach(toast => {
+        toast.hideToast();
+    });
+    activeToasts.length = 0;
+}
+
+$(document).ready(function (e) {
+    $(document).on('click', '.action_delete', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        let urlRequest = $(this).data('url')
+        let that = $(this)
+
+        if (!urlRequest) {
+            urlRequest = url
+        }
+
+        Swal.fire({
+            title: 'Bạn có chắc?',
+            text: "Tác vụ sẽ không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Vâng, xóa nó!',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: urlRequest,
+                    beforeSend: function () {
+                        showLoading()
+                    },
+                    success: function (response) {
+                        hideLoading()
+                        if (response.code === 200) {
+                            const parent_remove_id = that.parent().parent().data('id')
+
+                            $('.tr_container_index_' + parent_remove_id).remove()
+                            that.parent().parent().remove()
+
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err)
+                        hideLoading()
+                        Swal.fire(
+                            {
+                                icon: 'error',
+                                title: err.responseText,
+                            }
+                        );
+                    },
+                })
+            }
+        })
+    });
+    $(document).on('click', '.action_restore', function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        let urlRequest = $(this).data('url')
+        let that = $(this)
+
+        if (!urlRequest) {
+            urlRequest = url
+        }
+
+        $.ajax({
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: urlRequest,
+            beforeSend: function () {
+                showLoading()
+            },
+            success: function (response) {
+                hideLoading()
+                that.parent().parent().remove()
+            },
+            error: function (err) {
+                console.log(err)
+                hideLoading()
+                Swal.fire(
+                    {
+                        icon: 'error',
+                        title: err.responseText,
+                    }
+                );
+            },
+        })
+    });
+    $(document).on('click', '.action_audit', function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        let urlRequest = $(this).data('url')
+        let that = $(this)
+
+        if (!urlRequest) {
+            urlRequest = url
+        }
+
+        $.ajax({
+            type: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: urlRequest,
+            beforeSend: function () {
+                showLoading()
+            },
+            success: function (response) {
+                hideLoading()
+                $('#content_modal_audit').html(response.html)
+                showModal('modal_audit')
+            },
+            error: function (err) {
+                console.log(err)
+                hideLoading()
+                Swal.fire(
+                    {
+                        icon: 'error',
+                        title: err.responseText,
+                    }
+                );
+            },
+        })
+    });
     $("input").attr("autocomplete", "off");
 });
 

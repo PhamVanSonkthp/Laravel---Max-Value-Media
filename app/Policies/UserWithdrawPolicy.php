@@ -74,7 +74,7 @@ class UserWithdrawPolicy
      * @param  \App\Models\  $user_withdraws
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user,  $user_withdraws)
+    public function restore(User $user, $user_withdraws)
     {
         //
     }
@@ -86,7 +86,7 @@ class UserWithdrawPolicy
      * @param  \App\Models\  $user_withdraws
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user,  $user_withdraws)
+    public function forceDelete(User $user, $user_withdraws)
     {
         //
     }

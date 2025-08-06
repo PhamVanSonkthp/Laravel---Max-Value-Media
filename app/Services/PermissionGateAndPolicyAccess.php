@@ -46,7 +46,9 @@ class PermissionGateAndPolicyAccess
         $this->defineGatePostComments();
         $this->defineGateReasonCancels();
         $this->defineGateAppVersions();
-        $this->defineGateUserWithdraws();/*step_1*/
+        $this->defineGateUserWithdraws();
+        $this->defineGateWebsites();
+        $this->defineGateReports();/*step_1*/
     }
 
     public function defineGateFAQs()
@@ -85,6 +87,18 @@ class PermissionGateAndPolicyAccess
         Gate::define('user_withdraws-add', 'App\Policies\UserWithdrawPolicy@create');
         Gate::define('user_withdraws-edit', 'App\Policies\UserWithdrawPolicy@update');
         Gate::define('user_withdraws-delete', 'App\Policies\UserWithdrawPolicy@delete');
+    }public function defineGateWebsites()
+    {
+        Gate::define('websites-list', 'App\Policies\WebsitePolicy@view');
+        Gate::define('websites-add', 'App\Policies\WebsitePolicy@create');
+        Gate::define('websites-edit', 'App\Policies\WebsitePolicy@update');
+        Gate::define('websites-delete', 'App\Policies\WebsitePolicy@delete');
+    }public function defineGateReports()
+    {
+        Gate::define('reports-list', 'App\Policies\ReportPolicy@view');
+        Gate::define('reports-add', 'App\Policies\ReportPolicy@create');
+        Gate::define('reports-edit', 'App\Policies\ReportPolicy@update');
+        Gate::define('reports-delete', 'App\Policies\ReportPolicy@delete');
     }/*step_2*/
 
     public function defineGateUserTypes()

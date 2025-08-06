@@ -51,7 +51,7 @@ class UserWithdrawStatus extends Model implements Auditable
 
     public function avatar($size = "100x100")
     {
-       return Helper::getDefaultIcon($this, $size);
+        return Helper::getDefaultIcon($this, $size);
     }
 
     public function image()
@@ -64,8 +64,9 @@ class UserWithdrawStatus extends Model implements Auditable
         return Helper::images($this);
     }
 
-    public function createdBy(){
-        return $this->hasOne(User::class,'id','created_by_id');
+    public function createdBy()
+    {
+        return $this->hasOne(User::class, 'id', 'created_by_id');
     }
 
     public function searchByQuery($request, $queries = [], $randomRecord = null, $makeHiddens = null, $isCustom = false)
@@ -107,9 +108,9 @@ class UserWithdrawStatus extends Model implements Auditable
         return Helper::deleteManyByIds($this, $request, $forceDelete);
     }
 
-    public function findById($id){
+    public function findById($id)
+    {
         $item = $this->find($id);
         return $item;
     }
-
 }

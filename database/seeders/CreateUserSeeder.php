@@ -26,6 +26,7 @@ class CreateUserSeeder extends Seeder
                 'role_id'=> 1,
                 'level_number'=> 0,
                 'referral_id'=> 0,
+                'adserver_id'=> 0,
             ],
             [
                 'name' => 'Phạm văn sơn',
@@ -36,6 +37,7 @@ class CreateUserSeeder extends Seeder
                 'role_id'=> 1,
                 'level_number'=> -1,
                 'referral_id'=> 0,
+                'adserver_id'=> 0,
             ],
             [
                 'name' => 'Khách hàng',
@@ -46,6 +48,7 @@ class CreateUserSeeder extends Seeder
                 'role_id'=> 0,
                 'level_number'=> 1,
                 'referral_id'=> 1,
+                'adserver_id'=> 0,
             ],
         ]);
     }

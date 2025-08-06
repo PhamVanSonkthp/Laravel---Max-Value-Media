@@ -105,7 +105,7 @@ class Helper extends Model
         $columns = Schema::getColumnListing($object->getTableName());
         $query = $object->query();
 
-        $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name'];
+        $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name','url'];
         $searchColumnBanned = ['limit', 'page', 'with_trashed'];
 
         foreach ($request->all() as $key => $item) {
@@ -726,7 +726,7 @@ class Helper extends Model
         return $date1->greaterThan($date2);
     }
 
-    public static function successAPI($code, $data, $message)
+    public static function successAPI($code, $data, $message = "Success")
     {
         return [
             'success' => true,
@@ -827,7 +827,8 @@ class Helper extends Model
         return $current >= $start && $current <= $end;
     }
 
-    public static function distanceTwoCoordinates($lat1, $lon1, $lat2, $lon2, $unit = "M") {
+    public static function distanceTwoCoordinates($lat1, $lon1, $lat2, $lon2, $unit = "M")
+    {
 
         $lat1 = (float) $lat1;
         $lon1 = (float) $lon1;

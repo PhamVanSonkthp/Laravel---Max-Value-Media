@@ -46,5 +46,4 @@ class SocialController extends Controller
 
         return response()->json($result);
     }
-
 }

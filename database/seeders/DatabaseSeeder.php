@@ -49,6 +49,11 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateReasonCancelSeeder::class);
         $this->call(CreateAppVersionSeeder::class);
         $this->call(CreateUserWithdrawStatusSeeder::class);
+        $this->call(CreateCategoryWebsiteSeeder::class);
+        $this->call(CreateStatusWebsiteSeeder::class);
+        $this->call(CreateAdsStatusWebsiteSeeder::class);
+        $this->call(CreateZoneDimensionSeeder::class);
+        $this->call(CreateZoneStatusSeeder::class);
 
     }
 }

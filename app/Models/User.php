@@ -56,7 +56,8 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
 
     // begin
 
-    public function parent(){
+    public function parent()
+    {
         return $this->hasOne(User::class, 'id', 'referral_id');
     }
 

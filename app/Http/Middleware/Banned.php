@@ -23,7 +23,9 @@ class Banned
                     'error' => 'Tài khoản của bạn đã bị khóa',
                     'message' => 'Tài khoản của bạn đã bị khóa',
                     'code' => 99
-                ], 405);
+                ],
+                405
+            );
         }
 
         return $next($request);

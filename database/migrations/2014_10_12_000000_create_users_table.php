@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->bigInteger('role_id');
             $table->tinyInteger('is_admin')->default(0);
             $table->tinyInteger('gender_id')->default(1);
+            $table->tinyInteger('adserver_id');
 
             $table->string('provider_name')->nullable();
             $table->string('provider_id')->nullable();

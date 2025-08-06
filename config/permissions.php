@@ -159,7 +159,7 @@ return [
         'user_types-edit' => 'user_types_edit',
         'user_types-delete' => 'user_types_delete',
 
-        'f_a_q_s-list' => 'f_a_q_s_list','f_a_q_s-add' => 'f_a_q_s_add','f_a_q_s-edit' => 'f_a_q_s_edit','f_a_q_s-delete' => 'f_a_q_s_delete','posts-list' => 'posts_list','posts-add' => 'posts_add','posts-edit' => 'posts_edit','posts-delete' => 'posts_delete','post_comments-list' => 'post_comments_list','post_comments-add' => 'post_comments_add','post_comments-edit' => 'post_comments_edit','post_comments-delete' => 'post_comments_delete','reason_cancels-list' => 'reason_cancels_list','reason_cancels-add' => 'reason_cancels_add','reason_cancels-edit' => 'reason_cancels_edit','reason_cancels-delete' => 'reason_cancels_delete','app_versions-list' => 'app_versions_list','app_versions-add' => 'app_versions_add','app_versions-edit' => 'app_versions_edit','app_versions-delete' => 'app_versions_delete','user_withdraws-list' => 'user_withdraws_list','user_withdraws-add' => 'user_withdraws_add','user_withdraws-edit' => 'user_withdraws_edit','user_withdraws-delete' => 'user_withdraws_delete',/*step_1*/
+        'f_a_q_s-list' => 'f_a_q_s_list','f_a_q_s-add' => 'f_a_q_s_add','f_a_q_s-edit' => 'f_a_q_s_edit','f_a_q_s-delete' => 'f_a_q_s_delete','posts-list' => 'posts_list','posts-add' => 'posts_add','posts-edit' => 'posts_edit','posts-delete' => 'posts_delete','post_comments-list' => 'post_comments_list','post_comments-add' => 'post_comments_add','post_comments-edit' => 'post_comments_edit','post_comments-delete' => 'post_comments_delete','reason_cancels-list' => 'reason_cancels_list','reason_cancels-add' => 'reason_cancels_add','reason_cancels-edit' => 'reason_cancels_edit','reason_cancels-delete' => 'reason_cancels_delete','app_versions-list' => 'app_versions_list','app_versions-add' => 'app_versions_add','app_versions-edit' => 'app_versions_edit','app_versions-delete' => 'app_versions_delete','user_withdraws-list' => 'user_withdraws_list','user_withdraws-add' => 'user_withdraws_add','user_withdraws-edit' => 'user_withdraws_edit','user_withdraws-delete' => 'user_withdraws_delete','websites-list' => 'websites_list','websites-add' => 'websites_add','websites-edit' => 'websites_edit','websites-delete' => 'websites_delete','reports-list' => 'reports_list','reports-add' => 'reports_add','reports-edit' => 'reports_edit','reports-delete' => 'reports_delete',/*step_1*/
 
     ],
     'table_module'=>[
@@ -194,7 +194,7 @@ return [
         'calendars',
         'products',
         'user_types',
-        'f_a_q_s','posts','post_comments','reason_cancels','app_versions','user_withdraws',/*step_2*/
+        'f_a_q_s','posts','post_comments','reason_cancels','app_versions','user_withdraws','websites','reports',/*step_2*/
     ],
 
     'table_module_name'=>[
@@ -229,7 +229,7 @@ return [
         'Quản lý lịch làm việc',
         'Quản lý sản phẩm',
         'Quản lý Loại khách hàng',
-        'Manage f_a_q_s','Manage posts','Manage post_comments','Manage reason_cancels','Manage app_versions','Manage user_withdraws',/*step_3*/
+        'Manage f_a_q_s','Manage posts','Manage post_comments','Manage reason_cancels','Manage app_versions','Manage user_withdraws','Manage websites','Manage reports',/*step_3*/
     ],
 
     'module_children'=>[

@@ -163,9 +163,7 @@ Route::prefix('public')->group(function () {
 
             Route::post('/create-info-by-token', [SocialController::class, 'createInforByToken']);
             Route::get('/get-info-by-token', [SocialController::class, 'getInforByToken']);
-
         });
-
     });
 
     Route::prefix('faqs')->group(function () {

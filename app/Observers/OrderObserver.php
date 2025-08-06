@@ -50,7 +50,6 @@ class OrderObserver
                 } else if ($old_order_status_id == 2 && $new_order_status_id == 3) {
                     JobNotification::dispatch($user->id, "Đơn hàng", "Đơn hàng: " . $order->code . " đã hoàn thành", true, $user->id, null, 'order/' . $order->id);
                     event(new OrderEvent($order));
-
                 } else if ($old_order_status_id == 1 && $new_order_status_id == 4) {
                     JobNotification::dispatch($user->id, "Đơn hàng", "Đơn hàng: " . $order->code . " đã bị hủy", true, $user->id, null, 'order/' . $order->id);
                 }

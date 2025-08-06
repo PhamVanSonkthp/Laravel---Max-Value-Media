@@ -155,14 +155,13 @@ class AuthController extends Controller
 
     public function signIn(Request $request)
     {
-        if (!empty($request->provider_token)){
+        if (!empty($request->provider_token)) {
             $user = User::where('provider_token', $request->provider_token)->first();
 
-            if (empty($user)){
-
+            if (empty($user)) {
                 $socialToken = SocialToken::where('token', $request->provider_token)->first();
 
-                if (empty($socialToken)){
+                if (empty($socialToken)) {
                     return response([
                         'message' => "Token không hợp lệ",
                         'code' => 400,
@@ -178,14 +177,13 @@ class AuthController extends Controller
                 $user->refresh();
             }
             goto skipPassword;
-        }else{
+        } else {
             $request->validate([
                 'user_name' => 'required|string',
                 'password' => 'required|string',
             ]);
 
             $user = User::where('email', $request->user_name)->orWhere('phone', $request->user_name)->first();
-
         }
 
         if (empty($user)) {

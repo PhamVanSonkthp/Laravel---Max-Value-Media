@@ -1,8 +1,11 @@
 <?php
 
+use App\Components\Common;
 use App\Events\ChatPusherEvent;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Requests\PusherChatRequest;
+use App\Jobs\QueueAdserverCreateWebsite;
+use App\Models\CategoryWebsite;
 use App\Models\Chat;
 use App\Models\ChatImage;
 use App\Models\Formatter;
@@ -15,6 +18,7 @@ use App\Models\ParticipantChat;
 use App\Models\Product;
 use App\Models\RestfulAPI;
 use App\Models\SingleImage;
+use App\Models\StatusWebsite;
 use App\Models\User;
 use App\Models\UserCart;
 use App\Models\UserPoint;
@@ -23,8 +27,12 @@ use App\Models\UserTransaction;
 use App\Models\UserType;
 use App\Models\Voucher;
 use App\Models\VoucherUsed;
+use App\Models\Website;
+use App\Models\ZoneWebsite;
+use App\Traits\AdserverTrait;
 use App\Traits\StorageImageTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
@@ -37,7 +45,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
             Route::put('/update_field', function (Request $request) {
 
-                $model = Helper::convertVariableToModelName(Helper::prefixToClassName($request->model), ['App','Models']);
+                $model = Helper::convertVariableToModelName(Helper::prefixToClassName($request->model), ['App', 'Models']);
                 $item = $model->findOrFail($request->id);
                 foreach ($request->all() as $field => $value) {
                     if ($field != "id" && $field != "model") {
@@ -50,6 +58,83 @@ Route::prefix('ajax/administrator')->group(function () {
                     'message' => 'saved!'
                 ]);
             })->name('ajax.administrator.model.update_field');
+        });
+
+        Route::prefix('zone_websites')->group(function () {
+
+            Route::delete('delete', function (Request $request) {
+
+                $zoneWebsite = ZoneWebsite::findOrFail($request->zone_website_id);
+                $zoneWebsite->delete();
+
+                return response()->json(Helper::successAPI(200, [
+
+                ]));
+            })->name('ajax.administrator.zone_websites.delete');
+        });
+
+        Route::prefix('websites')->group(function () {
+
+            Route::get('create', function (Request $request) {
+
+                $users = User::where('user_type_id', 1)->get();
+                $categoryWebsites = CategoryWebsite::get();
+                $statusWebsites = StatusWebsite::get();
+                $modalID = $request->modal_id;
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.websites.modal_create_website', compact('users', 'categoryWebsites', 'statusWebsites', 'modalID'))->render()
+                ]));
+            })->name('ajax.administrator.websites.create');
+
+            Route::get('panel_zone', function (Request $request) {
+
+                $website = Website::findOrFail($request->website_id);
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.websites.panel_zone', ['item' => $website, 'prefixView' => 'websites'])->render()
+                ]));
+            })->name('ajax.administrator.websites.panel_zone');
+
+            Route::get('row', function (Request $request) {
+
+                $website = Website::findOrFail($request->website_id);
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.websites.row', ['item' => $website, 'index' => -1, 'prefixView' => 'websites'])->render()
+                ]));
+            })->name('ajax.administrator.websites.row');
+
+            Route::post('store', function (Request $request) {
+
+                $categoryWebsite = CategoryWebsite::findOrFail($request->category_website_id);
+                $statusWebsite = StatusWebsite::findOrFail($request->status_website_id);
+                $user = User::findOrFail($request->user_id);
+
+                $name = Formatter::trimer($request->url);
+                $url = Formatter::trimer($request->url);
+
+                $keyCache = AdserverTrait::$KEY_CACHE_CREATE_WEBSITE
+                    . $name
+                    . $url
+                    . $categoryWebsite->adserver_id
+                    . $user->adserver_id;
+                $cacheValue = Cache::get($keyCache);
+
+                if (!empty($cacheValue)) {
+                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
+                        goto skip;
+                    }
+
+                    return response()->json($cacheValue);
+                }
+
+                QueueAdserverCreateWebsite::dispatch($keyCache, $name, $url, $categoryWebsite, $statusWebsite, $user);
+                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
+
+                skip:
+                return response()->json(Helper::successAPI(219, [], 'Processing'));
+            })->name('ajax.administrator.websites.store');
         });
 
         Route::prefix('weather')->group(function () {
@@ -180,7 +265,6 @@ Route::prefix('ajax/administrator')->group(function () {
                 DB::beginTransaction();
 
 
-
                 $model = new Order();
 
                 $user = User::find($request->user_id);
@@ -244,7 +328,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $item->refresh();
 
-                $item['html'] = View::make('administrator.orders.row', ['item' => $item , 'prefixView' => 'orders'])->render();
+                $item['html'] = View::make('administrator.orders.row', ['item' => $item, 'prefixView' => 'orders'])->render();
                 return response()->json($item);
             })->name('ajax.administrator.orders.update_to_shipping');
         });
@@ -378,7 +462,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
         Route::prefix('chat-ai')->group(function () {
             Route::post('/gen-content', [
-                'uses'=>'App\Http\Controllers\API\ChatAIController@genContent',
+                'uses' => 'App\Http\Controllers\API\ChatAIController@genContent',
             ])->name('ajax.chat_ai.get');
         });
 
@@ -414,7 +498,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 for ($x = 0; $x < $request->total_files; $x++) {
                     if ($request->hasFile('feature_image' . $x)) {
-                        $dataChatImageDetail = StorageImageTrait::storageTraitUpload($request, 'feature_image'.$x, 'chat', $chat->id);
+                        $dataChatImageDetail = StorageImageTrait::storageTraitUpload($request, 'feature_image' . $x, 'chat', $chat->id);
 
                         ChatImage::create([
                             'image_name' => $dataChatImageDetail['file_name'],

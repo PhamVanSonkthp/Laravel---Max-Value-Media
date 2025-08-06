@@ -1,6 +1,11 @@
 <?php
 
 return [
+
+    'url_adserver' => "https://api.adsrv.net/v2/",
+    'timeout_request_api' => 60,
+    'cache_time_api' => 500,
+
     'default_avatar' => null,
     'default_size_avatar' => "100x100",
 

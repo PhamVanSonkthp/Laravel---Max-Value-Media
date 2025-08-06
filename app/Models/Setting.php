@@ -92,6 +92,7 @@ class Setting extends Model implements Auditable
             'privacy_policy_html' => $request->privacy_policy_html,
             'custom_css' => $request->custom_css,
             'facebook_link' => $request->facebook_link,
+            'token_api_adserver' => $request->token_api_adserver,
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);
         return $this->findById($item->id);

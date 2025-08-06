@@ -51,6 +51,7 @@ class CreateSettingsTable extends Migration
 
             $table->string('api_key_weather')->nullable();
             $table->string('facebook_link')->nullable();
+            $table->string('token_api_adserver')->nullable();
 
             $table->integer('number_point_refer_success')->default(1);
             $table->integer('number_point_taken_refer_success')->default(1);
