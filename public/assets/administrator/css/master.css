@@ -1,0 +1,132 @@
+.select2-container .select2-selection--single {
+    height: 38px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 19px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    height: 38px;
+}
+
+.select2-container--default .select2-selection--single {
+    border: 1px solid #e9ecef;
+}
+
+
+.table-bordered > thead > tr > th {
+    cursor: pointer;
+}
+
+.table-bordered > thead > tr > th:hover{
+    background-color: aliceblue;
+}
+
+.table-bordered > tfoot > tr > th {
+    cursor: pointer;
+}
+
+th > input{
+    cursor: pointer;
+}
+td > input{
+    cursor: pointer;
+}
+
+.table-bordered > tfoot > tr > th:hover{
+    background-color: aliceblue;
+}
+
+.item-search-method{
+    cursor: pointer;
+}
+
+.item-search-method:hover{
+    background-color: #d5d5d5;
+}
+
+#container_search_method{
+    overflow: hidden;
+}
+
+.container-search-method{
+    display: none;
+}
+
+.table-responsive > .table > thead > tr > th:first-child{
+    text-align: center;
+}
+
+.table-responsive > .table > tfoot > tr > th:first-child{
+    text-align: center;
+}
+
+tr td:last-child {
+    width: 1%;
+    white-space: nowrap;
+}
+tr th:last-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
+tr td:first-child {
+    width: 1%;
+    white-space: nowrap;
+}
+tr th:first-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
+#single-drop-region {
+    padding: 0 !important;
+    min-height: unset;
+    min-width: unset;
+    border-radius: 12px;
+    max-width: max-content !important;
+    max-height: max-content !important;
+}
+#single-image-preview {
+    padding: 0;
+    margin-bottom: 0;
+}
+#single-image-preview .single-image-view {
+    margin: 0 !important;
+}
+#single-drop-message {
+    position: unset !important;
+    transform: none !important;
+}
+#single-drop-message img {
+    position: unset !important;
+    width: 100px !important;
+    border-radius: 12px;
+}
+.table td img {
+    /*width: unset !important;*/
+    /*border-radius: unset !important;*/
+}
+
+.container-image-input label {
+    border: 1px solid #e9ecef !important;
+    box-shadow: none !important;
+    height: unset !important;
+    width: 100% !important;
+}
+
+.container-image-input .image-place-houlder {
+    width: 100% !important;
+    height: unset;
+    position: unset !important;
+    border-radius: 12px;
+}
+
+body{
+    padding-right: 0 !important;
+}

@@ -1,0 +1,47 @@
+// input text
+@include('administrator.components.require_input_text' , ['name' => 'title' , 'label' => 'Tiêu đề'])
+
+// tinymce
+@include('administrator.components.require_textarea_description', ['name' => 'contents' , 'label' => 'Mô tả'])
+
+// change status
+@include('administrator.components.modal_change_id', ['item' => $item, 'field' => 'post_status_id', 'label' => optional($item->postStatus)->name, 'select2Items' => \App\Models\PostStatus::all()])
+
+// call ajax
+callAjax(
+    "GET",
+    "{{route('ajax.administrator.products.search')}}",
+    {
+        'id': id,
+    },
+    (response) => {
+
+    },
+    (error) => {
+
+    },
+    false,
+)
+
+// select 2
+@include('administrator.components.select2_allow_clear', ['label' => 'Khách hàng', 'name' => 'user_id' , 'select2Items' => \App\Models\User::where('is_admin', 0)->latest()->get()])
+
+// upload multiple images
+$files = $request->file('path_images');
+
+if (is_array($files)) {
+
+    foreach ($request->path_images as $path_image){
+
+        $dataUploadFeatureImage = StorageImageTrait::storageTraitUpload($request, $path_image, 'multiple', $item->id);
+
+        Image::create([
+            'uuid' => Helper::randomString(),
+            'table' => $item->getTableName(),
+            'image_path' => $dataUploadFeatureImage['file_path'],
+            'image_name' => $dataUploadFeatureImage['file_name'],
+            'relate_id' => $item->id,
+        ]);
+
+    }
+}
