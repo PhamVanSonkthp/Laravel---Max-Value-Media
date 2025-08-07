@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\StatusWebsite;
 use App\Models\Website;
 use App\Http\Controllers\Controller;
+use App\Models\ZoneStatus;
 use Illuminate\Http\Request;
 use App\Models\Audit;
 use App\Models\Helper;
@@ -29,7 +31,9 @@ class WebsiteController extends Controller
     public function index(Request $request)
     {
         $items = $this->model->searchByQuery($request);
-        return view('administrator.' . $this->prefixView . '.index', compact('items'));
+        $statusWebsites = StatusWebsite::all();
+        $zoneStatuses = ZoneStatus::all();
+        return view('administrator.' . $this->prefixView . '.index', compact('items', 'statusWebsites','zoneStatuses'));
     }
 
     public function get(Request $request, $id)

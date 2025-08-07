@@ -9,7 +9,7 @@
             Chọn
         </option>
         @foreach($select2Items as $select2Item)
-            <option value="{{$select2Item->id}}" {{$value == $select2Item->id ? 'selected' : ''}}>{{$select2Item->name ?? $select2Item->title}}</option>
+            <option value="{{$select2Item->id}}" {{$value == $select2Item->id ? 'selected' : ''}}>{{ isset($field) ? $select2Item->$field : ($select2Item->name ?? $select2Item->title)}}</option>
         @endforeach
     </select>
 </div>

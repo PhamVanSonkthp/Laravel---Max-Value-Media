@@ -166,12 +166,12 @@ class Formatter extends Model
         return number_format($input);
     }
 
-    public static function formatNumber($input)
+    public static function formatNumber($input, $decima = 0)
     {
         if (empty($input)) {
             return 0;
         }
-        return number_format($input);
+        return number_format($input, $decima);
     }
 
     public static function formatNumberToDatabase($input)

@@ -58,10 +58,6 @@ trait AdserverTrait
             'Authorization' => 'Bearer ' . $this->token,
         ];
 
-        $params = [
-            'query' => $params
-        ];
-
         $response = Http::withHeaders($headers)->timeout(config('_my_config.timeout_request_api'))
             ->get($this->urlApi . $url, $params);
 

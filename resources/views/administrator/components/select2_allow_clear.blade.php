@@ -6,11 +6,16 @@
     }else{
         $value = old($name);
     }
+
+    if(isset($id)) {
+        $id = \App\Models\Helper::randomString();
+    }
+
 @endphp
 
 <div class="mt-3">
     <label>{{$label}}</label>
-    <select style="width: 100%;" id="{{isset($id) ? $id : \App\Models\Helper::randomString()}}" name="{{$name}}" class="form-control select2_init_allow_clear">
+    <select style="width: 100%;" id="{{$id}}" name="{{$name}}" class="form-control select2_init_allow_clear">
         <option value="">
             Chọn
         </option>
@@ -23,7 +28,7 @@
 <script>
 
     $( document ).ready(function() {
-        $(".select2_init_allow_clear").select2({
+        $("#{{$id}}").select2({
             placeholder: "Chọn",
             allowClear: true,
             @if(isset($modal_id))

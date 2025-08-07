@@ -22,32 +22,35 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command('email:job_notification')
+        $schedule->command('job:create_report')
             ->everyMinute();
 
-        $schedule->command('email:job_email')
-            ->everyMinute();
+//        $schedule->command('email:job_notification')
+//            ->everyMinute();
+//
+//        $schedule->command('email:job_email')
+//            ->everyMinute();
+//
+//        $schedule->command('schedule:bank_cash_in')
+//            ->everyMinute();
 
-        $schedule->command('schedule:bank_cash_in')
-            ->everyMinute();
-
-        if (env('APP_ENV') == "local") {
-            $schedule->command('cache:clear-expired')->everyMinute();
-            $schedule->command('schedule:sitemap')->everyMinute();
-            $schedule->command('backup:run')->everyMinute();
-        } else {
-            $schedule->command('cache:clear-expired')
-                ->timezone('Asia/Ho_Chi_Minh')
-                ->dailyAt('00:00');
-
-            $schedule->command('schedule:sitemap')
-                ->timezone('Asia/Ho_Chi_Minh')
-                ->dailyAt('00:00');
-
-            $schedule->command('backup:run')
-                ->timezone('Asia/Ho_Chi_Minh')
-                ->dailyAt('00:00');
-        }
+//        if (env('APP_ENV') == "local") {
+//            $schedule->command('cache:clear-expired')->everyMinute();
+//            $schedule->command('schedule:sitemap')->everyMinute();
+//            $schedule->command('backup:run')->everyMinute();
+//        } else {
+//            $schedule->command('cache:clear-expired')
+//                ->timezone('Asia/Ho_Chi_Minh')
+//                ->dailyAt('00:00');
+//
+//            $schedule->command('schedule:sitemap')
+//                ->timezone('Asia/Ho_Chi_Minh')
+//                ->dailyAt('00:00');
+//
+//            $schedule->command('backup:run')
+//                ->timezone('Asia/Ho_Chi_Minh')
+//                ->dailyAt('00:00');
+//        }
 
 
         // duplicate with cores of servers

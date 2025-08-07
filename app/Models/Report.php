@@ -26,9 +26,21 @@ class Report extends Model implements Auditable
 
     // begin
 
-    //    public function one(){
-    //        return $this->hasOne(Model::class, 'id', 'local_id');
-    //    }
+    public function website()
+    {
+        return $this->hasOne(Website::class, 'id', 'website_id');
+    }
+
+    public function demand()
+    {
+        return $this->hasOne(Demand::class, 'id', 'demand_id');
+    }
+
+    public function zoneWebsite()
+    {
+        return $this->hasOne(ZoneWebsite::class, 'id', 'zone_website_id');
+    }
+
     //
     //    public function multiples(){
     //        return $this->hasMany(Model::class, 'id', 'local_id');
@@ -51,7 +63,7 @@ class Report extends Model implements Auditable
 
     public function avatar($size = "100x100")
     {
-       return Helper::getDefaultIcon($this, $size);
+        return Helper::getDefaultIcon($this, $size);
     }
 
     public function image()
@@ -64,8 +76,9 @@ class Report extends Model implements Auditable
         return Helper::images($this);
     }
 
-    public function createdBy(){
-        return $this->hasOne(User::class,'id','created_by_id');
+    public function createdBy()
+    {
+        return $this->hasOne(User::class, 'id', 'created_by_id');
     }
 
     public function searchByQuery($request, $queries = [], $randomRecord = null, $makeHiddens = null, $isCustom = false)
@@ -107,7 +120,8 @@ class Report extends Model implements Auditable
         return Helper::deleteManyByIds($this, $request, $forceDelete);
     }
 
-    public function findById($id){
+    public function findById($id)
+    {
         $item = $this->find($id);
         return $item;
     }

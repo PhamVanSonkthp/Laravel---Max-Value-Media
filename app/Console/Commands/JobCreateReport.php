@@ -53,7 +53,7 @@ class JobCreateReport extends Command
     {
 
         set_time_limit(1000);
-        $date = Carbon::today()->toDateString();
+        $date = Carbon::parse('2025-03-19')->toDateString();
 
         $params = [
             'dateBegin' => $date,
@@ -64,31 +64,30 @@ class JobCreateReport extends Command
             'no_limit' => 1,
         ];
 
-        $response = $this->callGetHTTP('site', $params);
+        $response = $this->callGetHTTP('stats', $params);
 
         if ($response['is_success']){
             foreach ($response['data'] as $result){
 
-//                $zoneWebsite = ZoneWebsite::find($result['iddimension_2']);
-//
-//                $website = optional($zoneWebsite)->website;
-//
-//                $report = Report::updateOrCreate([
-//                    'date' => $result['dimension'],
-//                    'website_id' => optional($website)->id,
-//                    'zone_website_id' => optional($zoneWebsite)->id,
-//                ], [
-//                    'date' => $result['dimension'],
-//                    'website_id' => $result['iddimension_2'],
-//                    'zone_id' => 0,
-//                    'zone_name' => "",
-//                    'd_request' => 0,
-//                    'd_impression' => $result['impressions'],
-//                    'd_ecpm' => $result['ecpm'],
-//                    'd_revenue' => $result['amount'],
-//                ]);
-//                $report->refresh();
-//                $report->touch();
+                $zoneWebsite = ZoneWebsite::where('adserver_id', $result['iddimension_2'])->first();
+                $website = optional($zoneWebsite)->website;
+
+                $report = Report::updateOrCreate([
+                    'date' => $result['dimension'],
+                    'website_id' => optional($website)->id ?? 0,
+                    'zone_website_id' => optional($zoneWebsite)->id ?? 0,
+                ], [
+                    'date' => $result['dimension'],
+                    'website_id' => optional($website)->id ?? 0,
+                    'zone_website_id' => optional($zoneWebsite)->id ?? 0,
+                    'user_id' => optional($website)->user_id ?? 0,
+                    'd_request' => $result['requests'],
+                    'd_impression' => $result['impressions'],
+                    'd_ecpm' => $result['cpm'],
+                    'd_revenue' => $result['amount'],
+                ]);
+                $report->refresh();
+                $report->touch();
             }
         }else{
             Log::error("JobCreateReport: " . $response['data']);

@@ -18,11 +18,11 @@ class CreateUserStatusSeeder extends Seeder
     public function run()
     {
         UserStatus::firstOrCreate([
-            "name" => "Hoạt động",
+            "name" => "Active",
         ]);
 
         UserStatus::firstOrCreate([
-            "name" => "Khóa",
+            "name" => "In active",
         ]);
     }
 }

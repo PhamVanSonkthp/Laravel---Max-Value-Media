@@ -128,12 +128,24 @@ class Helper extends Model
                     });
                 }
             } else if ($key == "start" || $key == "from" || $key == "begin") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->whereDate($object->getTableName() . '.created_at', '>=', $item);
+                if (in_array("date", $columns)) {
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->whereDate($object->getTableName() . '.date', '>=', $item);
+                    }
+                } else {
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->whereDate($object->getTableName() . '.created_at', '>=', $item);
+                    }
                 }
             } else if ($key == "end" || $key == "to") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->whereDate($object->getTableName() . '.created_at', '<=', $item);
+                if (in_array("date", $columns)) {
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->whereDate($object->getTableName() . '.date', '<=', $item);
+                    }
+                } else {
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->whereDate($object->getTableName() . '.created_at', '<=', $item);
+                    }
                 }
             } else {
                 if (!in_array($key, $columns)) {

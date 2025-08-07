@@ -1,4 +1,42 @@
 
+<div class="mt-4 mb-2">
+    <div class="card">
+
+        <div class="accordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Click here to add a new Zone
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div class="mt-3">
+                            @include('administrator.components.require_input_text',['label' => 'Name', 'name' => 'zone_name'])
+                        </div>
+
+                        <div class="mt-3">
+                            @include('administrator.components.require_select2', ['label' => 'Categories', 'name' => 'category_website_id', 'select2Items' => $categoryWebsites])
+                        </div>
+
+                        <div class="mt-3">
+                            @include('administrator.components.require_select2', ['label' => 'Status', 'name' => 'status_website_id', 'select2Items' => $statusWebsites])
+                        </div>
+
+                        <div style="position: relative;">
+                            <button id="{{isset($id) ? $id : \App\Models\Helper::randomString()}}" type="submit" class="btn btn-primary mt-3">Save</button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
 <div>
     <strong>
         {{$item->url}}
@@ -6,7 +44,7 @@
 </div>
 <div class="row">
     @foreach($item->zoneWebsites as $zone)
-        <div class="col-lg-6 col-12" id="container_zone_website_{{$zone->id}}">
+        <div class="col-xxl-6 col-12" id="container_zone_website_{{$zone->id}}">
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #eee; border-radius: 6px; background-color: #fff; font-family: sans-serif; font-size: 14px;">
 
                 <!-- Left section -->
@@ -18,11 +56,13 @@
                     </div>
 
                     <div style="margin-top: 6px; display: flex; align-items: center; gap: 10px;">
-                        <span style="background-color: #7ed321; color: white; font-size: 12px; padding: 2px 6px; border-radius: 4px;">Active</span>
+                        <span>
+                            @include('administrator.components.modal_change_id', ['label' => optional($zone->zoneStatus)->name, 'select2Items' => $zoneStatuses, 'field' => 'zone_status_id', 'item' => $zone, 'removeBackdrop' => true])
+                        </span>
 
                         <div style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                            <img src="https://img.icons8.com/material-outlined/16/000000/code.png"/>
-                            <span style="color: #333;">GET CODE</span>
+                            <i class="fa-solid fa-file-code"></i>
+                            <a onclick="onGetAdCodeZone({{$zone->id}})">GET CODE</a>
                         </div>
                     </div>
                 </div>

@@ -15,7 +15,7 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->bigInteger('demand_id')->default(1)->index();
             $table->bigInteger('website_id')->index();
             $table->bigInteger('user_id')->index();
             $table->bigInteger('zone_website_id')->index();

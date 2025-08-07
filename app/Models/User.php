@@ -56,9 +56,19 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
 
     // begin
 
+    public function websites()
+    {
+        return $this->hasMany(Website::class, 'user_id', 'id');
+    }
+
     public function parent()
     {
         return $this->hasOne(User::class, 'id', 'referral_id');
+    }
+
+    public function manager()
+    {
+        return $this->hasOne(User::class, 'id', 'manager_id');
     }
 
     public function renderChildrenTreeView($parent_id, $old_html = "", $first = false, $end = false, $is_parent = false)

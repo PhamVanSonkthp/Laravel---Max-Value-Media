@@ -4,19 +4,52 @@
     <a href="{{route('administrator.'.$prefixView.'.create')}}" class="btn btn-outline-success float-end"><i
             class="fa-solid fa-plus"></i></a>
 
-    <a href="{{route('administrator.'.$prefixView.'.export')}}" class="btn btn-outline-primary float-end me-2" data-bs-original-title="" title="Excel"><i class="fa-sharp fa-solid fa-file-excel"></i></i></a>
+    <a href="{{route('administrator.'.$prefixView.'.export')}}" class="btn btn-outline-primary float-end me-2"
+       data-bs-original-title="" title="Excel"><i class="fa-sharp fa-solid fa-file-excel"></i></a>
 
     <div class="clearfix"></div>
 
     <div class="row">
+
         <div class="col-md-3">
-            <div class="mt-3">
-                <label>Lọại khách hàng</label>
-                <select name="user_type_id" class="form-control select2_init_allow_clear">
-                    @foreach($userTypes as $userTypeItem)
-                        <option value="{{$userTypeItem->id}}" {{request('user_type_id') == $userTypeItem->id ? 'selected' : ''}}>{{$userTypeItem->name}}</option>
-                    @endforeach
-                </select>
+            <div>
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'manager_id' , 'label' => 'Manager', 'select2Items' => $managers])
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div>
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'user_id' , 'label' => 'Publisher', 'select2Items' => $users, 'field' => 'email'])
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div>
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'website_id' , 'label' => 'Website', 'select2Items' => $websites])
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div>
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'is_verify' , 'label' => 'Verify', 'select2Items' => $isVerifies])
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div>
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'is_balance' , 'label' => 'Balance', 'select2Items' => $isBalances])
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div>
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'user_status_id' , 'label' => 'Status', 'select2Items' => $userStatus])
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div>
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'status_website_id' , 'label' => 'Website status', 'select2Items' => $statusWebsite])
             </div>
         </div>
 

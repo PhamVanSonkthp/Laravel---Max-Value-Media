@@ -6,11 +6,13 @@ use App\Models\Image;
 use App\Models\Order;
 use App\Models\ParticipantChat;
 use App\Models\PostComment;
+use App\Models\Report;
 use App\Models\SingleImage;
 use App\Observers\ImageObserver;
 use App\Observers\OrderObserver;
 use App\Observers\ParticipantChatObserver;
 use App\Observers\PostCommentObserver;
+use App\Observers\ReportObserver;
 use App\Observers\SingleImageObserver;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -54,5 +56,6 @@ class AppServiceProvider extends ServiceProvider
         Image::observe(ImageObserver::class);
         SingleImage::observe(SingleImageObserver::class);
         PostComment::observe(PostCommentObserver::class);
+        Report::observe(ReportObserver::class);
     }
 }

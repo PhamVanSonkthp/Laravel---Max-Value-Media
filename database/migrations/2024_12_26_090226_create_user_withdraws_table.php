@@ -22,6 +22,7 @@ class CreateUserWithdrawsTable extends Migration
             $table->string('account_name');
             $table->bigInteger('user_withdraw_status_id')->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

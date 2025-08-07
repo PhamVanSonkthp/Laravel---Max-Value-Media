@@ -26,6 +26,11 @@ class ZoneWebsite extends Model implements Auditable
 
     // begin
 
+    public function zoneStatus()
+    {
+        return $this->hasOne(ZoneStatus::class, 'id', 'zone_status_id');
+    }
+
     public function website()
     {
         return $this->hasOne(Website::class, 'id', 'website_id');

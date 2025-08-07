@@ -2,29 +2,57 @@
     <td class="text-center">
         <input type="checkbox" class="checkbox-delete-item" value="{{$item->id}}">
     </td>
-    <td>
+{{--    <td>--}}
 {{--        @include('administrator.components.sort_icon_for_table', ['prefixView' => $prefixView])--}}
 
-        {{$item->id}}
-    </td>
-    <td>{{ optional($item->manager)->name}}</td>
+{{--        {{$item->id}}--}}
+{{--    </td>--}}
     <td>
-        <a href="{{ $item->url}}">{{ $item->url}}</a>
-    </td>
-    <td>{{ optional($item->adsStatusWebsite)->name}}</td>
-    <td>{{ optional($item->user)->email}}</td>
-    <td>
-
+        <div>
+            {{ optional( optional($item->user)->manager)->name}}
+        </div>
     </td>
     <td>
-
+        <a target="_blank" href="{{ $item->url}}">{{ $item->url}}</a>
     </td>
-    <td>{{ optional($item->statusWebsite)->name}}</td>
+    <td>
+        <div class="text-center">
+            @include('administrator.websites.ads_status', ['item' => $item])
+        </div>
+    </td>
+    <td>
+        <div>
+            {{ optional($item->user)->email}}
+        </div>
+    </td>
+    <td>
+        <ul>
+            @foreach($item->zoneWebsites as $index => $zoneWebsites)
+                @if($index < 3)
+                    <li>
+                        {{$zoneWebsites->name}}
+                    </li>
+                @else
+                    <li>
+                        +{{count($item->zoneWebsites) - $index}}
+                    </li>
+                    @break
+                @endif
+            @endforeach
+        </ul>
+    </td>
+    <td>
+        <div>
+            {{\App\Models\Formatter::formatNumber($item->getMaxDImpressionOneDay())}} / {{\App\Models\Formatter::formatNumber($item->getMaxRequestOneDay())}}
+        </div>
+    </td>
+    <td>
+        @include('administrator.components.modal_change_id', ['label' => optional($item->statusWebsite)->name, 'select2Items' => $statusWebsites, 'field' => 'status_website_id'])
+    </td>
 
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
     <td>
-        <a href="#" title="Add zone"
-           class="btn btn-outline-success btn-sm"
+        <a title="Zones" class="btn btn-outline-success btn-sm"
            onclick="onCreateZone('{{$item->id}}')"
            data-id="{{$item->id}}">
             <i class="fa-solid fa-cloud"></i>

@@ -16,6 +16,7 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\ParticipantChat;
 use App\Models\Product;
+use App\Models\Report;
 use App\Models\RestfulAPI;
 use App\Models\SingleImage;
 use App\Models\StatusWebsite;
@@ -28,6 +29,7 @@ use App\Models\UserType;
 use App\Models\Voucher;
 use App\Models\VoucherUsed;
 use App\Models\Website;
+use App\Models\ZoneStatus;
 use App\Models\ZoneWebsite;
 use App\Traits\AdserverTrait;
 use App\Traits\StorageImageTrait;
@@ -60,6 +62,30 @@ Route::prefix('ajax/administrator')->group(function () {
             })->name('ajax.administrator.model.update_field');
         });
 
+        Route::prefix('reports')->group(function () {
+
+            Route::put('/update_field', function (Request $request) {
+
+                $item = Report::findOrFail($request->id);
+                foreach ($request->all() as $field => $value) {
+                    if ($field != "id" && $field != "model" && $field != "index") {
+                        $item->$field = $value;
+                    }
+                }
+
+                $item->save();
+                $item->refresh();
+
+                $htmlRow = View::make('administrator.reports.row', ['item'=> $item, 'index' => $request->index])->render();
+
+                return response()->json([
+                    'message' => 'saved!',
+                    'item' => $item,
+                    'row_html' => $htmlRow,
+                ]);
+            })->name('ajax.administrator.reports.update_field');
+        });
+
         Route::prefix('zone_websites')->group(function () {
 
             Route::delete('delete', function (Request $request) {
@@ -71,6 +97,15 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 ]));
             })->name('ajax.administrator.zone_websites.delete');
+
+            Route::get('ad_code', function (Request $request) {
+
+                $zoneWebsite = ZoneWebsite::findOrFail($request->zone_website_id);
+
+                return response()->json(Helper::successAPI(200, [
+                    'html' => View::make('administrator.websites.modal_ad_zone_website', ['zoneWebsite'=> $zoneWebsite])->render()
+                ]));
+            })->name('ajax.administrator.zone_websites.ad_code');
         });
 
         Route::prefix('websites')->group(function () {
@@ -90,18 +125,22 @@ Route::prefix('ajax/administrator')->group(function () {
             Route::get('panel_zone', function (Request $request) {
 
                 $website = Website::findOrFail($request->website_id);
-
+                $categoryWebsites = CategoryWebsite::get();
+                $statusWebsites = StatusWebsite::get();
+                $zoneStatuses = ZoneStatus::all();
                 return response()->json(Helper::successAPI(200, [
-                    "html" => View::make('administrator.websites.panel_zone', ['item' => $website, 'prefixView' => 'websites'])->render()
+                    "html" => View::make('administrator.websites.panel_zone', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'categoryWebsites' => $categoryWebsites, 'statusWebsites' => $statusWebsites])->render()
                 ]));
             })->name('ajax.administrator.websites.panel_zone');
 
             Route::get('row', function (Request $request) {
 
                 $website = Website::findOrFail($request->website_id);
+                $statusWebsites = StatusWebsite::all();
 
+                $zoneStatuses = ZoneStatus::all();
                 return response()->json(Helper::successAPI(200, [
-                    "html" => View::make('administrator.websites.row', ['item' => $website, 'index' => -1, 'prefixView' => 'websites'])->render()
+                    "html" => View::make('administrator.websites.row', ['item' => $website, 'index' => -1, 'prefixView' => 'websites', 'statusWebsites' => $statusWebsites, 'zoneStatuses' => $zoneStatuses])->render()
                 ]));
             })->name('ajax.administrator.websites.row');
 
@@ -151,10 +190,9 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $item = User::find($request->id);
 
-                $userTypes = UserType::all();
-                $userStatuses = UserStatus::all();
+                $managers = User::where('is_admin', '!=', 0)->get();
 
-                $htmlRow = View::make('administrator.users.modal_edit', compact('item', 'userTypes', 'userStatuses'))->render();
+                $htmlRow = View::make('administrator.users.modal_edit', compact('item', 'managers'))->render();
 
                 $item['html'] = $htmlRow;
 

@@ -120,8 +120,9 @@
     }
 
 
-    $(document).ready(function() {
-        $('.checkbox-delete-item').change(function(){
+    $(document).ready(function(e) {
+        $(document).on('click','.checkbox-delete-item', function (ev) {
+            ev.stopPropagation();
             let number_not_check = 0;
             let number_check = 0;
 

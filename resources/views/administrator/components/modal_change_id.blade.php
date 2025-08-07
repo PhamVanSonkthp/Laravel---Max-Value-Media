@@ -3,13 +3,13 @@
 @endphp
 
 <div>
-    <a id="label_{{$randomID}}" href="#" data-bs-toggle="modal" data-bs-target="#model_change_id_{{$randomID}}">
+    <a style="cursor: pointer;" onclick="onShowModalChangeID{{$randomID}}(event)" id="label_{{$randomID}}" class="text-primary">
         {{$label}}
     </a>
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="model_change_id_{{$randomID}}" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="model_change_id_{{$randomID}}" data-bs-keyboard="false" tabindex="-1" aria-hidden="true" role="dialog" data-backdrop="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -17,6 +17,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+
                 <label>{{$label}} @include('administrator.components.lable_require') </label>
                 <div>
                     <select style="with:100%;" id="select_change_{{$randomID}}" name="select_change_{{$randomID}}" class="form-control">
@@ -37,6 +38,7 @@
 </div>
 
 <script>
+
     function onChangeID{{$randomID}}() {
 
         callAjax(
@@ -59,6 +61,16 @@
         )
 
     }
+
+    function onShowModalChangeID{{$randomID}}(e){
+        e.stopPropagation();
+        showModal('model_change_id_{{$randomID}}')
+        @if(isset($removeBackdrop))
+            $('#model_change_id_{{$randomID}}').css("background", "rgb(157, 157, 157)");
+            $('.modal-backdrop').removeClass("modal-backdrop");
+        @endif
+    }
+
 
     $(document).ready(function() {
         $("#select_change_{{$randomID}}").select2({

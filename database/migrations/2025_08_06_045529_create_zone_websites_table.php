@@ -17,7 +17,7 @@ class CreateZoneWebsitesTable extends Migration
             $table->id();
             $table->string('name');
             $table->bigInteger('website_id')->index();
-            $table->bigInteger('adserver_id');
+            $table->bigInteger('adserver_id')->index();
             $table->bigInteger('zone_dimension_id');
             $table->bigInteger('zone_status_id');
             $table->text('code')->nullable();

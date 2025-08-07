@@ -51,6 +51,16 @@ class Website extends Model implements Auditable
         return $this->hasMany(ZoneWebsite::class, 'website_id', 'id');
     }
 
+    public function getMaxDImpressionOneDay()
+    {
+        return Report::where('website_id', $this->id)->max('d_impression');
+    }
+
+    public function getMaxRequestOneDay()
+    {
+        return Report::where('website_id', $this->id)->max('d_request');
+    }
+
     // end
 
     public function getTableName()

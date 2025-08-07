@@ -3,7 +3,11 @@
 @include('administrator.'.$prefixView.'.header')
 
 @section('css')
-
+    <style>
+        tr:hover{
+            cursor: pointer;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -30,11 +34,11 @@
                                 <tr>
                                     <th><input id="check_box_delete_all" type="checkbox" class="checkbox-parent"
                                                onclick="onSelectCheckboxDeleteItem()"></th>
-                                    <th onclick='onSortSearch(`id`, `{{ \App\Models\Helper::getValueInFilterReuquest('id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            # {!! \App\Models\Helper::getValueInFilterReuquest('id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
+{{--                                    <th onclick='onSortSearch(`id`, `{{ \App\Models\Helper::getValueInFilterReuquest('id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? "desc" : "") }}`)'>--}}
+{{--                                        <div>--}}
+{{--                                            # {!! \App\Models\Helper::getValueInFilterReuquest('id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
+{{--                                        </div>--}}
+{{--                                    </th>--}}
                                     <th onclick='onSortSearch(`manager_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? "desc" : "") }}`)'>
                                         <div>
                                             Account
@@ -83,7 +87,7 @@
                                 </thead>
                                 <tbody class="" id="body_container_item">
                                 @foreach($items as $index => $item)
-                                    @include('administrator.'.$prefixView.'.row', ['item' => $item, 'prefixView' => $prefixView, 'index' => $index])
+                                    @include('administrator.'.$prefixView.'.row', ['item' => $item, 'prefixView' => $prefixView, 'index' => $index, 'statusWebsites' => $statusWebsites])
                                 @endforeach
 
                                 </tbody>
@@ -92,11 +96,11 @@
                                 <tr>
                                     <th><input id="check_box_delete_all_footer" type="checkbox" class="checkbox-parent"
                                                onclick="onSelectCheckboxDeleteItemFooter()"></th>
-                                    <th onclick='onSortSearch(`id`, `{{ \App\Models\Helper::getValueInFilterReuquest('id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            # {!! \App\Models\Helper::getValueInFilterReuquest('id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
+{{--                                    <th onclick='onSortSearch(`id`, `{{ \App\Models\Helper::getValueInFilterReuquest('id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? "desc" : "") }}`)'>--}}
+{{--                                        <div>--}}
+{{--                                            # {!! \App\Models\Helper::getValueInFilterReuquest('id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
+{{--                                        </div>--}}
+{{--                                    </th>--}}
                                     <th onclick='onSortSearch(`manager_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? "desc" : "") }}`)'>
                                         <div>
                                             Account
@@ -170,7 +174,7 @@
   padding: 20px;
 ">
         <div class="float-end">
-            <a id="closePanel" href="#" title="Đóng" class="btn btn-outline-danger btn-sm">
+            <a id="closePanel" title="Đóng" class="btn btn-outline-danger btn-sm">
                 <i class="fa-solid fa-x"></i>
             </a>
         </div>
@@ -198,48 +202,39 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal get ad zone website -->
+    <div class="modal fade" id="ad_zone_website_modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ad code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_ad_zone_website_modal">
+
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js')
     <script>
         $(function () {
+
+            $(document).on('click','tbody > tr > td > *', function (ev) {
+                ev.stopPropagation();
+            });
             // Click on row
-            $(document).on('click','tr', function () {
-                const id = $(this).data('id');
+            $(document).on('click','tbody tr', function () {
 
-                $('#panelContent').html("<div class=\"spinner-border text-primary\" role=\"status\">\n" +
-                    "  <span class=\"visually-hidden\">Loading...</span>\n" +
-                    "</div>")
-
-                callAjax(
-                    "GET",
-                    "{{route('ajax.administrator.'.$prefixView.'.panel_zone')}}",
-                    {
-                        'website_id': id
-                    },
-                    (response) => {
-                        $('#panelContent').html(response.data.html)
-                    },
-                    (error) => {
-
-                    },false
-                )
-
-                $('#infoPanel').hide().show("slide", { direction: "right" }, 500);
             });
 
             // Close button
             $('#closePanel').on('click', function () {
                 $('#infoPanel').fadeOut(200);
             });
-
-            // Hide when clicking outside the panel
-            // $(document).on('mousedown', function (e) {
-            //     const panel = $('#infoPanel');
-            //     if (panel.is(':visible') && !panel.is(e.target) && panel.has(e.target).length === 0) {
-            //         panel.fadeOut(200);
-            //     }
-            // });
 
         });
 
@@ -315,7 +310,49 @@
         }
 
         function onCreateZone(website_id) {
+            if ($('.modal:visible').length) {
+                // Modal is open, ignore this click
+                return;
+            }
 
+            const id = $(this).data('id');
+
+            $('#panelContent').html("<div class=\"spinner-border text-primary\" role=\"status\">\n" +
+                "  <span class=\"visually-hidden\">Loading...</span>\n" +
+                "</div>")
+
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.'.$prefixView.'.panel_zone')}}",
+                {
+                    'website_id': website_id
+                },
+                (response) => {
+                    $('#panelContent').html(response.data.html)
+                },
+                (error) => {
+
+                },false
+            )
+
+            $('#infoPanel').hide().show("slide", { direction: "right" }, 500);
+        }
+
+        function onGetAdCodeZone(zone_website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.zone_websites.ad_code')}}",
+                {
+                    'zone_website_id': zone_website_id
+                },
+                (response) => {
+                    showModal('ad_zone_website_modal')
+                    $('#container_ad_zone_website_modal').html(response.data.html).fadeIn(1000);
+                },
+                (error) => {
+
+                }
+            )
         }
 
         function onDeleteZone(zone_website_id) {

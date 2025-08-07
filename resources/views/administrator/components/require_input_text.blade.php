@@ -9,7 +9,9 @@
 @endphp
 
 <div class="form-group mt-3">
-    <label>{{$label}} @include('administrator.components.lable_require') </label>
+    @if(isset($label))
+        <label>{{$label}} @include('administrator.components.lable_require') </label>
+    @endif
     <input id="{{isset($id) ? $id : \App\Models\Helper::randomString()}}" type="text" autocomplete="off" name="{{$name}}" class="form-control @error($name) is-invalid @enderror"
            value="{{$value}}" required placeholder="{{isset($placeholder) ? $placeholder : 'Nhập...'}}" style="{{isset($hidden) ? "display: none;" : ''}}">
     @error($name)
