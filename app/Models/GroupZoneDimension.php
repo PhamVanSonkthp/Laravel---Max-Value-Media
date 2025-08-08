@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 
-class ZoneWebsite extends Model implements Auditable
+class GroupZoneDimension extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use HasFactory;
@@ -26,25 +26,15 @@ class ZoneWebsite extends Model implements Auditable
 
     // begin
 
-    public function zoneDimension()
-    {
-        return $this->hasOne(ZoneDimension::class, 'id', 'zone_dimension_id');
-    }
-
-    public function zoneStatus()
-    {
-        return $this->hasOne(ZoneStatus::class, 'id', 'zone_status_id');
-    }
-
-    public function website()
-    {
-        return $this->hasOne(Website::class, 'id', 'website_id');
-    }
-
-    //
-    //    public function multiples(){
-    //        return $this->hasMany(Model::class, 'id', 'local_id');
+    //    public function one(){
+    //        return $this->hasOne(Model::class, 'id', 'local_id');
     //    }
+    //
+
+    public function zoneDimensions()
+    {
+        return $this->hasMany(ZoneDimension::class, 'group_zone_dimension_id', 'id');
+    }
 
     // end
 
@@ -125,4 +115,5 @@ class ZoneWebsite extends Model implements Auditable
         $item = $this->find($id);
         return $item;
     }
+
 }

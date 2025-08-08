@@ -217,6 +217,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal view and edit website -->
+    <div class="modal fade" id="view_and_edit_website_modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Infor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_view_and_edit_website_modal">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('js')
@@ -256,8 +272,8 @@
         }
 
         function onSubmitCreateWebsite() {
-            hideModal('create_website_modal')
-            showToastLoading("Đang khởi tạo website...")
+            hideModal('create_website_modal');
+            showToastLoading("Đang khởi tạo website...");
             processStoreWebsite();
         }
 
@@ -267,10 +283,10 @@
                 "POST",
                 "{{route('ajax.administrator.'.$prefixView.'.store')}}",
                 {
-                    'user_id': $('select[name="user_id"]').val(),
-                    'url': $('input[name="url"]').val(),
-                    'category_website_id': $('select[name="category_website_id"]').val(),
-                    'status_website_id': $('select[name="status_website_id"]').val(),
+                    'user_id': $('#modal_create_website_user_id').val(),
+                    'url': $('#modal_create_website_input_name').val(),
+                    'category_website_id': $('#modal_create_website_select_category_website_id').val(),
+                    'status_website_id': $('#modal_create_website_select_status_website_id').val(),
                 },
                 (response) => {
                     if (response.code == 219) {
@@ -383,6 +399,62 @@
                     )
                 }
             })
+        }
+
+        function onViewAndEdit(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.websites.get')}}",
+                {
+                    id: website_id,
+                    modal_id: 'view_and_edit_website_modal',
+                },
+                (response) => {
+                    showModal('view_and_edit_website_modal')
+                    $('#container_view_and_edit_website_modal').html(response.data.html).fadeIn(1000);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onStoreZones(website_id) {
+            $('#panel_zone_collapse').collapse('hide');
+            showToastLoading("Đang khởi tạo Zone...");
+            processStoreZone(website_id);
+        }
+
+        function processStoreZone(website_id) {
+
+            callAjax(
+                "POST",
+                "{{route('ajax.administrator.zone_websites.store')}}",
+                {
+                    id: website_id,
+                    name: $('#panel_zone_input_zone_name').val(),
+                    dimension_ids: $('#panel_zone_select_dimensions_id').val(),
+                    zone_status_id: $('#panel_zone_select_zone_status_id').val(),
+                },
+                (response) => {
+                    if (response.code == 219) {
+                        setTimeout(processStoreZone(website_id), 5000);
+                    } else {
+                        console.log(response)
+                        hideAllToast()
+                        if (response.is_success || response.code == 200) {
+                            showToastSuccess('Đã tạo Zone');
+                            prependWithAnimation("#panel_zone_container_zones", response.data.html);
+                        } else {
+                            showToastError('Có lỗi khởi tạo');
+                        }
+                    }
+
+                },
+                (error) => {
+
+                }, false
+            )
         }
 
     </script>

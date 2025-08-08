@@ -1047,7 +1047,7 @@ function callAjax(method = "GET", url, data, success, error, is_loading = true, 
             if(is_loading){
                 hideLoading()
             }
-
+            hideAllToast()
             if (is_show_sweet_alert_error){
                 Swal.fire(
                     {
@@ -1153,4 +1153,44 @@ function onSortSearch(key, value) {
 
     window.location.search = searchParams.toString()
 
+}
+
+function prependWithAnimation(container, html, effect = "vibrate") {
+    let newItem = $(html);
+
+    // Hide first so we can animate
+    newItem.css({ display: "none", position: "relative" });
+
+    $(container).prepend(newItem);
+
+    // Run chosen animation
+    switch (effect) {
+        case "fade":
+            newItem.fadeIn(500);
+            break;
+        case "slide":
+            newItem.slideDown(500);
+            break;
+        case "pop":
+            newItem.css({ opacity: 0, transform: "scale(0.8)" }).show();
+            newItem.animate({ opacity: 1 }, {
+                duration: 500,
+                step: function(now, fx) {
+                    if (fx.prop === "opacity") {
+                        $(this).css("transform", "scale(" + (0.8 + now * 0.2) + ")");
+                    }
+                }
+            });
+            break;
+        case "vibrate":
+            newItem.show();
+            let distance = 3, interval = 50, times = 10;
+            for (let i = 0; i < times; i++) {
+                newItem.animate({ left: (i % 2 === 0 ? distance : -distance) }, interval)
+                    .animate({ left: 0 }, interval);
+            }
+            break;
+        default:
+            newItem.show();
+    }
 }

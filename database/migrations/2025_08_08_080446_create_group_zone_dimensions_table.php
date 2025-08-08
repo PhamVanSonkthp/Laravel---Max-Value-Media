@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateZoneDimensionsTable extends Migration
+class CreateGroupZoneDimensionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,9 @@ class CreateZoneDimensionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('zone_dimensions', function (Blueprint $table) {
+        Schema::create('group_zone_dimensions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('code');
-            $table->string('width');
-            $table->string('height');
-            $table->bigInteger('group_zone_dimension_id');
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);
@@ -36,6 +32,6 @@ class CreateZoneDimensionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('zone_dimensions');
+        Schema::dropIfExists('group_zone_dimensions');
     }
 }

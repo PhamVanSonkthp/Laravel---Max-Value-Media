@@ -64,14 +64,12 @@ class UserController extends Controller
         $items = $items->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
         $managers = (new User())->where(['is_admin' => 1])->get();
-        $users = (new User())->where('is_admin', 0)->get();
-        $websites = (new Website())->get();
         $userStatus = (new UserStatus())->get();
         $statusWebsite = (new StatusWebsite())->get();
         $isBalances = [new Balance(1,"Yes")];
         $isVerifies = [new Balance(1,"Yes"), new Balance(2,"No")];
 
-        return view('administrator.' . $this->prefixView . '.index', compact('items','managers','users','websites','userStatus','statusWebsite','isBalances','isVerifies'));
+        return view('administrator.' . $this->prefixView . '.index', compact('items','managers','userStatus','statusWebsite','isBalances','isVerifies'));
     }
 
     public function get(Request $request, $id)

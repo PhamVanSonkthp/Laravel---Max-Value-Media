@@ -15,7 +15,14 @@
         </ul>
     </td>
     <td>
-        {{$item->email_verified_at ? 'YES' : 'NO'}}
+        <div class="text-center">
+            @if($item->email_verified_at)
+                <i class="fa-solid fa-check text-success"></i>
+            @else
+                NO
+            @endif
+        </div>
+
     </td>
     <td>
         <div id="toucher_status_{{$item->id}}"
@@ -31,25 +38,31 @@
 
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
     <td>
+        <a href="" title="Report" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-chart-line"></i>
+        </a>
+        <a href="" title="Impersonate" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-user"></i>
+        </a>
+        <a href="{{route('administrator.websites.index', ['user_id' => $item->id])}}" title="Websites" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-globe"></i>
+        </a>
+
         <a id="editer_status_{{$item->id}}"
+           title="Edit"
            onclick="onDetail('toucher_status_{{$item->id}}','{{$item->id}}')"
            href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id])}}"
            data-bs-toggle="modal"
            data-bs-target="#editUserModal"
-           class="btn btn-outline-info btn-sm edit"><i
+           class="btn btn-outline-primary btn-sm edit"><i
                 class="fa-solid fa-pen"></i></a>
 
 
-        <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}" title="Xóa"
+        <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}" title="Delete"
            data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
            class="btn btn-outline-danger btn-sm delete action_delete">
             <i class="fa-solid fa-x"></i>
         </a>
 
-        {{--        <a href="{{route('administrator.'.$prefixView.'.audit' , ['id'=> $item->id])}}" title="Lịch sử tác động"--}}
-        {{--           data-url="{{route('administrator.'.$prefixView.'.audit' , ['id'=> $item->id])}}"--}}
-        {{--           class="btn btn-outline-info btn-sm action_audit">--}}
-        {{--            <i class="fa-solid fa-circle-info"></i>--}}
-        {{--        </a>--}}
     </td>
 </tr>

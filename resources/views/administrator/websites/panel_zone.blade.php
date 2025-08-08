@@ -5,26 +5,38 @@
         <div class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingTwo">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel_zone_collapse" aria-expanded="false" aria-controls="panel_zone_collapse">
                         Click here to add a new Zone
                     </button>
                 </h2>
-                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                <div id="panel_zone_collapse" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
                         <div class="mt-3">
-                            @include('administrator.components.require_input_text',['label' => 'Name', 'name' => 'zone_name'])
+                            @include('administrator.components.require_input_text',['label' => 'Name', 'name' => 'zone_name', 'id' => 'panel_zone_input_zone_name'])
+                        </div>
+
+                        @include('administrator.components.require_select2',['label' => 'Type', 'name' => 'temple', 'select2Items'=> $zoneTypes])
+
+                        <div class="mt-3">
+                            <label>Dimensions @include('administrator.components.lable_require')</label>
+                            <select id="panel_zone_select_dimensions_id" class="form-control select2_init" required multiple>
+                                @foreach($groupZoneDimensions as $groupZoneDimension)
+
+                                    <optgroup label="{{ $groupZoneDimension->name }}">
+                                        @foreach ($groupZoneDimension->zoneDimensions as $zoneDimension)
+                                            <option value="{{ $zoneDimension->id }}">{{ $zoneDimension->name }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="mt-3">
-                            @include('administrator.components.require_select2', ['label' => 'Categories', 'name' => 'category_website_id', 'select2Items' => $categoryWebsites])
-                        </div>
-
-                        <div class="mt-3">
-                            @include('administrator.components.require_select2', ['label' => 'Status', 'name' => 'status_website_id', 'select2Items' => $statusWebsites])
+                            @include('administrator.components.require_select2',['label' => 'Status', 'name' => 'zone_status_id', 'select2Items'=> $zoneStatuses, 'id' => 'panel_zone_select_zone_status_id'])
                         </div>
 
                         <div style="position: relative;">
-                            <button id="{{isset($id) ? $id : \App\Models\Helper::randomString()}}" type="submit" class="btn btn-primary mt-3">Save</button>
+                            <button onclick="onStoreZones({{$item->id}})" class="btn btn-primary mt-3">Save</button>
                         </div>
 
 
@@ -42,47 +54,18 @@
         {{$item->url}}
     </strong>
 </div>
-<div class="row">
+<div class="row" id="panel_zone_container_zones">
+
     @foreach($item->zoneWebsites as $zone)
-        <div class="col-xxl-6 col-12" id="container_zone_website_{{$zone->id}}">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #eee; border-radius: 6px; background-color: #fff; font-family: sans-serif; font-size: 14px;">
-
-                <!-- Left section -->
-                <div style="display: flex; flex-direction: column;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span><strong>{{$zone->id}}</strong> | B-Sticky ads</span>
-                        <span>(1x1)</span>
-                        <span style="color: #fff; background-color: #8B0000; padding: 2px 6px; border-radius: 50%;">✖</span>
-                    </div>
-
-                    <div style="margin-top: 6px; display: flex; align-items: center; gap: 10px;">
-                        <span>
-                            @include('administrator.components.modal_change_id', ['label' => optional($zone->zoneStatus)->name, 'select2Items' => $zoneStatuses, 'field' => 'zone_status_id', 'item' => $zone, 'removeBackdrop' => true])
-                        </span>
-
-                        <div style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                            <i class="fa-solid fa-file-code"></i>
-                            <a onclick="onGetAdCodeZone({{$zone->id}})">GET CODE</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right section -->
-                <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="color: #1a73e8; cursor: pointer;">REVIEWING</span>
-                        <span style="color: #1a73e8; cursor: pointer;">🔄</span>
-                        <span onclick="onDeleteZone('{{$zone->id}}')" title="Xóa" style="color: #dc3545; cursor: pointer;"><i class="fa-solid fa-x"></i></span>
-                    </div>
-
-                    <div style="margin-top: 6px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                        <span style="color: #1a73e8;">ℹ️</span>
-                        <span style="color: #1a73e8;">CONFIG</span>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+        @include('administrator.websites.panel_zone_item_zone', ['zone' => $zone, 'zoneStatuses' => $zoneStatuses])
     @endforeach
 
 </div>
+
+<script>
+    $( document ).ready(function() {
+        $("#panel_zone_select_dimensions_id").select2({
+            'width' : '100%'
+        });
+    });
+</script>

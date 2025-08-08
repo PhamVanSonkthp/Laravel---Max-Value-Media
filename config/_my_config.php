@@ -3,6 +3,7 @@
 return [
 
     'url_adserver' => "https://api.adsrv.net/v2/",
+    'is_connect_to_adserver' => false,
     'timeout_request_api' => 60,
     'cache_time_api' => 500,
 

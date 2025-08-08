@@ -1,7 +1,7 @@
 <div>
     @include('administrator.components.search')
 
-    <a href="{{route('administrator.'.$prefixView.'.create')}}" class="btn btn-outline-success float-end"><i
+    <a onclick="onAdd()" class="btn btn-outline-success float-end"><i
             class="fa-solid fa-plus"></i></a>
 
     <a href="{{route('administrator.'.$prefixView.'.export')}}" class="btn btn-outline-primary float-end me-2"
@@ -19,13 +19,13 @@
 
         <div class="col-md-3">
             <div>
-                @include('administrator.components.search_select2_allow_clear' , ['name' => 'user_id' , 'label' => 'Publisher', 'select2Items' => $users, 'field' => 'email'])
+                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'user_id' , 'label' => 'Publisher', 'url' => route('ajax.administrator.model.search', ['is_admin' => 0]), 'model' => 'users'])
             </div>
         </div>
 
         <div class="col-md-3">
             <div>
-                @include('administrator.components.search_select2_allow_clear' , ['name' => 'website_id' , 'label' => 'Website', 'select2Items' => $websites])
+                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'website_id' , 'label' => 'Website', 'url' => route('ajax.administrator.model.search'), 'model' => 'websites'])
             </div>
         </div>
 

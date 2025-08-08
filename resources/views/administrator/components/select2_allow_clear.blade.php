@@ -7,7 +7,7 @@
         $value = old($name);
     }
 
-    if(isset($id)) {
+    if(!isset($id)) {
         $id = \App\Models\Helper::randomString();
     }
 

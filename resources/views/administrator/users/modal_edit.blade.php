@@ -4,7 +4,7 @@
 
             @include('administrator.components.input_text', ['label'=>'Password','name' => 'password', 'id' => "input_password", 'value' => ''])
 
-            @include('administrator.components.select2_allow_clear', ['label'=>'Manager','name' => 'manager_id', 'id' => "select_manager", 'select2Items' => $managers, 'modal_id' => 'editUserModal'])
+            @include('administrator.components.select2_allow_clear', ['label'=>'Manager','name' => 'manager_id', 'id' => "select_manager_id", 'select2Items' => $managers, 'modal_id' => 'editUserModal'])
 
             @include('administrator.components.input_text', ['label'=>'Skype','name' => 'skype', 'id' => "input_skype"])
 

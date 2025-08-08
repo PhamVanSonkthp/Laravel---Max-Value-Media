@@ -55,6 +55,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateZoneDimensionSeeder::class);
         $this->call(CreateZoneStatusSeeder::class);
         $this->call(CreateDemandSeeder::class);
+        $this->call(CreateGroupZoneDimensionSeeder::class);
 
     }
 }

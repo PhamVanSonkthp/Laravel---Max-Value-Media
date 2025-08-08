@@ -51,6 +51,46 @@ function onSearchMethod(){
     }
 }
 
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
+}
+
+function getCookie(name) {
+    let nameEQ = name + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i].trim();
+        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length));
+    }
+    return null;
+}
+
+function deleteCookie(name) {
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
+
+if(getCookie('is_hide_slidebar')){
+    $('.sidebar-toggler').addClass('active');
+    $('.sidebar-toggler').removeClass('not-active');
+    $('body').addClass('sidebar-folded');
+}
+
+$('.sidebar-toggler').on('click', function () {
+
+    if (getCookie('is_hide_slidebar')){
+        deleteCookie('is_hide_slidebar')
+
+    }else{
+        setCookie('is_hide_slidebar', true, 30);
+    }
+});
+
 $(document).ready(function () {
     $(".nav-item").each(function () {
         const parent = $(this);
@@ -75,6 +115,7 @@ $(document).ready(function () {
         }
 
     });
+
 
 
 });

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 trait AdserverTrait
 {
     public static $KEY_CACHE_CREATE_WEBSITE = "CREATE_WEBSITE";
+    public static $KEY_CACHE_CREATE_ZONE = "CREATE_ZONE";
 
     private $token;
     private $urlApi;

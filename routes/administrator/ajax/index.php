@@ -1,14 +1,17 @@
 <?php
 
+use App\Components\Balance;
 use App\Components\Common;
 use App\Events\ChatPusherEvent;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Requests\PusherChatRequest;
 use App\Jobs\QueueAdserverCreateWebsite;
+use App\Jobs\QueueAdserverCreateZone;
 use App\Models\CategoryWebsite;
 use App\Models\Chat;
 use App\Models\ChatImage;
 use App\Models\Formatter;
+use App\Models\GroupZoneDimension;
 use App\Models\Helper;
 use App\Models\Image;
 use App\Models\Notification;
@@ -45,6 +48,26 @@ Route::prefix('ajax/administrator')->group(function () {
 
         Route::prefix('model')->group(function () {
 
+            Route::get('search', function (Request $request) {
+
+                $model = Helper::convertVariableToModelName(Helper::prefixToClassName($request->model), ['App', 'Models']);
+                $items = $model->searchByQuery($request);
+
+                return response()->json(Helper::successAPI(200, [
+                    'data' => $items
+                ]));
+            })->name('ajax.administrator.model.search');
+
+            Route::get('{id}', function (Request $request, $id) {
+
+                $model = Helper::convertVariableToModelName(Helper::prefixToClassName($request->model), ['App', 'Models']);
+                $item = $model->findOrFail($id);
+
+                return response()->json(Helper::successAPI(200, [
+                    'data' => $item
+                ]));
+            })->name('ajax.administrator.model.get');
+
             Route::put('/update_field', function (Request $request) {
 
                 $model = Helper::convertVariableToModelName(Helper::prefixToClassName($request->model), ['App', 'Models']);
@@ -76,7 +99,7 @@ Route::prefix('ajax/administrator')->group(function () {
                 $item->save();
                 $item->refresh();
 
-                $htmlRow = View::make('administrator.reports.row', ['item'=> $item, 'index' => $request->index])->render();
+                $htmlRow = View::make('administrator.reports.row', ['item' => $item, 'index' => $request->index])->render();
 
                 return response()->json([
                     'message' => 'saved!',
@@ -87,6 +110,48 @@ Route::prefix('ajax/administrator')->group(function () {
         });
 
         Route::prefix('zone_websites')->group(function () {
+
+            Route::post('store', function (Request $request) {
+
+                $request->validate([
+                    'id' => 'required',
+                    'dimension_ids' => 'required|array|min:1',
+                    'zone_status_id' => 'required',
+                    'name' => 'required',
+                ]);
+
+
+                $name = Formatter::trimer($request->name);
+
+                $keyCache = AdserverTrait::$KEY_CACHE_CREATE_ZONE
+                    . $name
+                    . $request->id;
+                $cacheValue = Cache::get($keyCache);
+
+                if (!empty($cacheValue)) {
+                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
+                        goto skip;
+                    }
+
+                    $zoneStatuses = ZoneStatus::all();
+                    $responseHTML = "";
+                    foreach ($cacheValue['zone_ids'] as $zone_id) {
+                        $zoneWebsite = ZoneWebsite::findOrFail($zone_id);
+                        $responseHTML .= View::make('administrator.websites.panel_zone_item_zone', ['zone' => $zoneWebsite, 'zoneStatuses' => $zoneStatuses])->render();
+                    }
+
+                    return response()->json(Helper::successAPI(200, [
+                        'html' => $responseHTML
+                    ]));
+                }
+
+                QueueAdserverCreateZone::dispatch($keyCache, $request->id, $name, $request->dimension_ids, $request->zone_status_id);
+                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
+
+                skip:
+                return response()->json(Helper::successAPI(219, [], 'Processing'));
+
+            })->name('ajax.administrator.zone_websites.store');
 
             Route::delete('delete', function (Request $request) {
 
@@ -103,12 +168,23 @@ Route::prefix('ajax/administrator')->group(function () {
                 $zoneWebsite = ZoneWebsite::findOrFail($request->zone_website_id);
 
                 return response()->json(Helper::successAPI(200, [
-                    'html' => View::make('administrator.websites.modal_ad_zone_website', ['zoneWebsite'=> $zoneWebsite])->render()
+                    'html' => View::make('administrator.websites.modal_ad_zone_website', ['zoneWebsite' => $zoneWebsite])->render()
                 ]));
             })->name('ajax.administrator.zone_websites.ad_code');
         });
 
         Route::prefix('websites')->group(function () {
+
+            Route::get('get', function (Request $request) {
+
+                $item = Website::findOrFail($request->id);
+                $modalID = $request->modal_id;
+                $users = User::where('is_admin', 0)->get();
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.websites.modal_view_and_edit_website', compact('item', 'modalID', 'users'))->render()
+                ]));
+            })->name('ajax.administrator.websites.get');
 
             Route::get('create', function (Request $request) {
 
@@ -125,11 +201,12 @@ Route::prefix('ajax/administrator')->group(function () {
             Route::get('panel_zone', function (Request $request) {
 
                 $website = Website::findOrFail($request->website_id);
-                $categoryWebsites = CategoryWebsite::get();
-                $statusWebsites = StatusWebsite::get();
+                $groupZoneDimensions = GroupZoneDimension::all();
+
                 $zoneStatuses = ZoneStatus::all();
+                $zoneTypes = [new Balance(1, "Banner")];
                 return response()->json(Helper::successAPI(200, [
-                    "html" => View::make('administrator.websites.panel_zone', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'categoryWebsites' => $categoryWebsites, 'statusWebsites' => $statusWebsites])->render()
+                    "html" => View::make('administrator.websites.panel_zone', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'groupZoneDimensions' => $groupZoneDimensions, 'zoneTypes' => $zoneTypes])->render()
                 ]));
             })->name('ajax.administrator.websites.panel_zone');
 
@@ -188,7 +265,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
             Route::get('/', function (Request $request) {
 
-                $item = User::find($request->id);
+                $item = User::findOrFail($request->id);
 
                 $managers = User::where('is_admin', '!=', 0)->get();
 
@@ -199,42 +276,46 @@ Route::prefix('ajax/administrator')->group(function () {
                 return response()->json($item);
             })->name('ajax.administrator.user.get');
 
+            Route::get('create', function (Request $request) {
+
+                $managers = User::where('is_admin', '!=', 0)->get();
+
+                $htmlRow = View::make('administrator.users.modal_create', ['managers' => $managers, 'modal_id' => $request->modal_id])->render();
+
+                return response()->json(Helper::successAPI(200, [
+                    'html' => $htmlRow
+                ], "success"));
+            })->name('ajax.administrator.user.create');
+
             Route::post('/', function (Request $request) {
 
                 $request->validate([
-                    'name' => 'required|string',
-                    'phone' => 'required|string|unique:users',
+                    'email' => 'required|string|unique:users',
                     'password' => 'required|string',
-                    'date_of_birth' => 'date_format:Y-m-d',
-                    'user_type_id' => 'required|numeric|min:1|max:3',
                 ]);
 
                 $data = [
-                    'name' => $request->name,
-                    'phone' => $request->phone,
                     'email' => $request->email,
-                    'address' => $request->address,
                     'password' => Formatter::hash($request->password),
-                    'date_of_birth' => $request->date_of_birth,
-                    'firebase_uid' => $request->firebase_uid,
-                    'provider_name' => $request->provider_name,
-                    'user_type_id' => $request->user_type_id,
-                    'user_status_id' => $request->user_status_id,
-                    'gender_id' => $request->gender_id,
+                    'manager_id' => $request->manager_id ?? 0,
+                    'skype' => $request->skype,
+                    'telegram' => $request->telegram,
+                    'whats_app' => $request->whats_app,
                 ];
 
                 $item = User::create($data);
                 $item->refresh();
 
-                $htmlRowAdd = View::make('administrator.users.row_add', compact('item'))->render();
-                $item['html_row_add'] = $htmlRowAdd;
+                $htmlRowAdd = View::make('administrator.users.row', ['item' => $item, 'prefixView' => 'users'])->render();
 
-                return response()->json($item);
+                return response()->json(Helper::successAPI(200, [
+                    'html' => $htmlRowAdd
+                ]));
             })->name('ajax.administrator.user.store');
 
             Route::put('/', function (Request $request) {
 
-                $item = User::find($request->id);
+                $item = User::findOrFail($request->id);
 
                 $dataUpdate = [];
 
@@ -265,9 +346,12 @@ Route::prefix('ajax/administrator')->group(function () {
                 if (isset($request->password) && !empty($request->password)) {
                     $dataUpdate['password'] = $request->password;
                 }
-                if (isset($request->gender_id) && !empty($request->gender_id)) {
-                    $dataUpdate['gender_id'] = $request->gender_id;
-                }
+
+
+                $dataUpdate['manager_id'] = $request->manager_id;
+                $dataUpdate['skype'] = $request->skype;
+                $dataUpdate['telegram'] = $request->telegram;
+                $dataUpdate['whats_app'] = $request->whats_app;
 
                 $item->update($dataUpdate);
                 $item->refresh();

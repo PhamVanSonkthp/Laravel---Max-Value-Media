@@ -209,13 +209,39 @@
         </div>
     </div>
 
+    <!-- Modal create user -->
+    <div class="modal fade" id="modal_create_user" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Create</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_modal_create_user">
+
+
+
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <div>
+                    </div>
+
+                    <button type="submit" class="btn btn-info" onclick="onSubmitCreate()">create</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('js')
     <script>
 
         let user_id, user_status_id, toucher_id
-
 
         function onEditStatus(toucher, id, id_status) {
             toucher_id = toucher
@@ -226,107 +252,82 @@
         }
 
         function onAdd() {
-            user_id = 0;
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.user.create')}}",
+                {
+                    'modal_id' : 'modal_create_user'
+                },
+                (response) => {
+                    showModal('modal_create_user');
+                    $('#container_modal_create_user').html(response.data.html).fadeIn(1000);
+                },
+                (error) => {
 
-            $('#input_name').val('')
-            $('#input_phone').val('')
-            $('#input_email').val('')
-            $('#input_date_of_birth').val('')
-            $('#input_address').val('')
-            $('#input_password').val('')
+                }
+            )
 
-            $('#btn_submit').removeClass('btn-info')
-            $('#btn_submit').addClass('btn-success')
-            $('#btn_submit').html('Create')
+        }
+
+        function onSubmitCreate() {
+            callAjax(
+                "POST",
+                "{{route('ajax.administrator.user.store')}}",
+                {
+                    email: $('#modal_create_input_email').val(),
+                    password: $('#modal_create_input_password').val(),
+                    manager_id: $('#modal_create_select_manager_id').val(),
+                    skype: $('#modal_create_input_skype').val(),
+                    telegram: $('#modal_create_input_telegram').val(),
+                    whats_app: $('#modal_create_input_whats_app').val(),
+                },
+                (response) => {
+                    hideModal('modal_create_user');
+                    $('#body_container_item').prepend(response.data.html).fadeIn(1000);
+                },
+                (error) => {
+
+                }
+            )
         }
 
         function onSubmitEdit() {
-            if (user_id == 0) {
-                $.ajax({
-                    type: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    cache: false,
-                    data: {
-                        name: $('#input_name').val(),
-                        phone: $('#input_phone').val(),
-                        email: $('#input_email').val(),
-                        date_of_birth: $('#input_date_of_birth').val(),
-                        address: $('#input_address').val(),
-                        user_status_id: $('#select_user_status_id').val(),
-                        user_type_id: $('#select_user_type_id').val(),
-                        password: $('#input_password').val(),
-                        gender_id: $('#radio_gender').is(':checked') ? 1 : 2,
-                    },
-                    url: "{{route('ajax.administrator.user.store')}}",
-                    beforeSend: function () {
-                        showLoading()
-                    },
-                    success: function (response) {
-                        hideModal('editUserModal')
-                        hideLoading()
-                        $('#container_row').prepend(response.html_row_add)
-                    },
-                    error: function (err) {
-                        console.log(err)
-                        hideLoading()
-                        Swal.fire(
-                            {
-                                icon: 'error',
-                                title: err.responseText,
-                            }
-                        );
-                        console.log(err)
-                    },
-                });
-            } else {
-                $.ajax({
-                    type: "PUT",
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    cache: false,
-                    data: {
-                        id: user_id,
-                        name: $('#input_name').val(),
-                        phone: $('#input_phone').val(),
-                        email: $('#input_email').val(),
-                        date_of_birth: $('#input_date_of_birth').val(),
-                        address: $('#input_address').val(),
-                        user_status_id: $('#select_user_status_id').val(),
-                        user_type_id: $('#select_user_type_id').val(),
-                        password: $('#input_password').val(),
-                        gender_id: $('#radio_gender').is(':checked') ? 1 : 2,
-                    },
-                    url: "{{route('ajax.administrator.user.update')}}",
-                    beforeSend: function () {
-                        showLoading()
-                    },
-                    success: function (response) {
-                        hideModal('editUserModal')
-                        hideLoading()
-                        $('#container_row_' + user_id).after(response.html_row).remove()
-                    },
-                    error: function (err) {
-                        console.log(err)
-                        hideLoading()
-                        Swal.fire(
-                            {
-                                icon: 'error',
-                                title: err.responseText,
-                            }
-                        );
-                        console.log(err)
-                    },
-                });
-            }
+            $.ajax({
+                type: "PUT",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                cache: false,
+                data: {
+                    id: user_id,
+                    password: $('#input_password').val(),
+                    manager_id: $('#select_manager_id').val(),
+                    skype: $('#input_skype').val(),
+                    telegram: $('#input_telegram').val(),
+                    whats_app: $('#input_whats_app').val(),
+                },
+                url: "{{route('ajax.administrator.user.update')}}",
+                beforeSend: function () {
+                    showLoading()
+                },
+                success: function (response) {
+                    hideModal('editUserModal')
+                    hideLoading()
+                    $('#container_row_' + user_id).after(response.html_row).remove()
+                },
+                error: function (err) {
+                    hideLoading()
+                    Swal.fire(
+                        {
+                            icon: 'error',
+                            title: err.responseText,
+                        }
+                    );
+                },
+            });
         }
 
         function onInfo(toucher, id, id_status) {
-            // $('#btn_submit').addClass('btn-info')
-            // $('#btn_submit').removeClass('btn-success')
-            // $('#btn_submit').html('Update')
 
             toucher_id = toucher
             user_id = id
@@ -358,12 +359,10 @@
                             title: err.responseText,
                         }
                     );
-                    console.log(err)
                 },
             });
-
-            // $('select[name="select_user_status_id"]').val(id_status).change()
         }
+
         function onDetail(toucher, id, id_status) {
             $('#btn_submit').addClass('btn-info')
             $('#btn_submit').removeClass('btn-success')
@@ -399,7 +398,6 @@
                             title: err.responseText,
                         }
                     );
-                    console.log(err)
                 },
             });
 
@@ -434,7 +432,6 @@
                             title: err.responseText,
                         }
                     );
-                    console.log(err)
                 },
             });
         }
@@ -445,7 +442,8 @@
 
     <script>
         $('#select_user_status_id').select2({
-            dropdownParent: $('#editStatus')
+            dropdownParent: $('#editStatus'),
+            width: '100%'
         });
 
     </script>

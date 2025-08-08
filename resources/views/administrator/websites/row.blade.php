@@ -2,11 +2,6 @@
     <td class="text-center">
         <input type="checkbox" class="checkbox-delete-item" value="{{$item->id}}">
     </td>
-{{--    <td>--}}
-{{--        @include('administrator.components.sort_icon_for_table', ['prefixView' => $prefixView])--}}
-
-{{--        {{$item->id}}--}}
-{{--    </td>--}}
     <td>
         <div>
             {{ optional( optional($item->user)->manager)->name}}
@@ -58,6 +53,18 @@
             <i class="fa-solid fa-cloud"></i>
         </a>
 
-        @include('administrator.components.action_table', ['prefixView' => $prefixView, 'item' => $item])
+        <a title="Sửa" onclick="onViewAndEdit({{$item->id}})"
+           class="btn btn-outline-secondary btn-sm"
+           data-id="{{$item->id}}">
+            <i class="fa-solid fa-pen"></i>
+        </a>
+
+        <a href="#" title="Xóa"
+           data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
+           class="btn btn-outline-danger btn-sm delete action_delete"
+           data-id="{{$item->id}}">
+            <i class="fa-solid fa-x"></i>
+        </a>
+
     </td>
 </tr>
