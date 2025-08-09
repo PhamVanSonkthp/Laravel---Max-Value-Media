@@ -39,6 +39,7 @@ use App\Traits\StorageImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 
@@ -236,6 +237,7 @@ Route::prefix('ajax/administrator')->group(function () {
                     . $categoryWebsite->adserver_id
                     . $user->adserver_id;
                 $cacheValue = Cache::get($keyCache);
+
 
                 if (!empty($cacheValue)) {
                     if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {

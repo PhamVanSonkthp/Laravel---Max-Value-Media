@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\AdsCampaign;
 use App\Models\Image;
 use App\Models\Order;
 use App\Models\ParticipantChat;
 use App\Models\PostComment;
 use App\Models\Report;
 use App\Models\SingleImage;
+use App\Observers\AdsCampaignObserver;
 use App\Observers\ImageObserver;
 use App\Observers\OrderObserver;
 use App\Observers\ParticipantChatObserver;
@@ -57,5 +59,6 @@ class AppServiceProvider extends ServiceProvider
         SingleImage::observe(SingleImageObserver::class);
         PostComment::observe(PostCommentObserver::class);
         Report::observe(ReportObserver::class);
+        AdsCampaign::observe(AdsCampaignObserver::class);
     }
 }

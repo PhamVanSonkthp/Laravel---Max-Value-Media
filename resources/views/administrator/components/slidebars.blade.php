@@ -256,7 +256,7 @@
                             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
-                        <span class="link-title">Giao dịch</span>
+                        <span class="link-title">Transactions</span>
                     </a>
                 </li>
             @endcan
@@ -288,7 +288,7 @@
                             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
-                        <span class="link-title">Lệnh rút tiền</span>
+                        <span class="link-title">Withdraws</span>
                     </a>
                 </li>
             @endcan
@@ -336,7 +336,7 @@
                             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
-                        <span class="link-title">Phương thức thanh toán</span>
+                        <span class="link-title">Payment methods</span>
                     </a>
                 </li>
             @endcan
@@ -609,7 +609,7 @@
                             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
-                        <span class="link-title">Cài đặt chung</span>
+                        <span class="link-title">General</span>
                     </a>
                 </li>
             @endcan
@@ -723,7 +723,7 @@
                             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
-                        <span class="link-title">Lịch sử dữ liệu</span>
+                        <span class="link-title">Data</span>
                     </a>
                 </li>
             @endcan

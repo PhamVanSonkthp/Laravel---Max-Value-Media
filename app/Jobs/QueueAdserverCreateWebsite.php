@@ -48,6 +48,7 @@ class QueueAdserverCreateWebsite implements ShouldQueue
      */
     public function handle()
     {
+
         $cacheValue = Cache::get($this->keyCache);
 
         if (!empty($cacheValue) && $cacheValue != Common::$CACHE_QUEUE_PROCESSING) {

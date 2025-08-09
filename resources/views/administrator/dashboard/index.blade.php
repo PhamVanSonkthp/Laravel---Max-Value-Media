@@ -17,37 +17,126 @@
     @can('dashboard-list')
         <div>
 
-            <div>
-                <div class="card">
-                    <div class="card-body">
-                        <div>
-                            <strong>
-                                Danh sách hồ sơ
-                            </strong>
+            <div class="row g-3 justify-content-center">
+                <div class="col-md-6 col-xl-3">
+                    <div class="card card-one">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber($totalUser)}}</h3>
+                                    <label class="card-title fw-medium text-dark mb-1">Total Publisher</label>
+                                </div>
+                                <div class="col-5">
+                                    <div id="apexChart1"></div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card card-one">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber($totalWebsite)}}</h3>
+                                    <label class="card-title fw-medium text-dark mb-1">Total Websites</label>
+                                </div>
+                                <div class="col-5">
+                                    <div id="apexChart2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card card-one">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber($totalZone)}}</h3>
+                                    <label class="card-title fw-medium text-dark mb-1">Total Zones</label>
+                                </div>
+                                <div class="col-5">
+                                    <div id="apexChart3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card card-one">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber($totalZonePending)}}</h3>
+                                    <label class="card-title fw-medium text-dark mb-1">Pending Zones</label>
+                                </div>
+                                <div class="col-5">
+                                    <div id="apexChart03"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card card-one">
+                        <div class="card-body">
+                            <div class="card-container">
+                                <div>
+                                    <label class="card-title fs-sm fw-medium mb-1">Requests</label>
+                                    <h3 class="card-value mb-1"><i class="ri-archive-line"></i>
+                                       0</h3>
+                                </div>
 
-                        <div class="row mt-3">
-                            <div class="d-flex">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                                @foreach(\App\Models\OrderStatus::all() as $order)
+                <div class="col-md-6 col-xl-3">
+                    <div class="card card-one">
+                        <div class="card-body">
+                            <div class="card-container">
+                                <div>
+                                    <label class="card-title fs-sm fw-medium mb-1">Impressions</label>
+                                    <h3 class="card-value mb-1"><i class="ri-inbox-line"></i>
+                                        0</h3>
+                                </div>
+                                <div class="card-content">
 
-                                    <div class="flex-grow-1">
-                                        <a href="{{route('administrator.orders.index', ['order_status_id' => $order->id])}}">
-                                            <div class="text-center" style="font-size: 20px;">
-                                                <strong>
-                                                    {{\App\Models\Formatter::formatNumber(\App\Models\Order::where('order_status_id', $order->id)->count())}}
-                                                </strong>
-                                            </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card card-one">
+                        <div class="card-body">
+                            <div class="card-container">
+                                <div>
+                                    <label class="card-title fs-sm fw-medium mb-1">CPM</label>
+                                    <h3 class="card-value mb-1"><i class="ri-numbers-line"></i>
+                                        0</h3>
+                                </div>
+                                <div class="card-content">
 
-                                            <div class="text-center text-dark">
-                                                {{$order->name}}
-                                            </div>
-                                        </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card card-one">
+                        <div class="card-body">
+                            <div class="card-container">
+                                <div>
+                                    <label class="card-title fs-sm fw-medium mb-1">Revenue</label>
+                                    <h3 class="card-value mb-1"><i class="ri-money-dollar-box-line"></i>
+                                        0</h3>
+                                </div>
+                                <div class="card-content">
 
-                                    </div>
-
-                                @endforeach
-
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -55,99 +144,6 @@
 
             </div>
 
-            <div>
-                <div class="card">
-                    <div class="card-body">
-                        <div>
-                            <strong>
-                                Phân tích bán hàng
-                            </strong>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="d-flex">
-
-                                <div class="flex-grow-1">
-                                    <div>
-                                        Doanh số
-                                    </div>
-
-                                    <div>
-                                        <strong style="font-size: 20px;">
-                                            {{\App\Models\Formatter::formatNumber($revenue)}}đ
-                                        </strong>
-                                    </div>
-                                </div>
-
-                                <div class="flex-grow-1">
-
-                                    <div class="d-flex">
-                                        <div class="flex-grow-1">
-                                            <div>
-                                                Lượt truy cập
-                                            </div>
-
-                                            <div>
-                                                <strong style="font-size: 20px;">
-                                                    0
-                                                </strong>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex-grow-1">
-                                            <div>
-                                                Lượt xem
-                                            </div>
-                                            <div>
-                                                <strong style="font-size: 20px;">
-                                                    0
-                                                </strong>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div>
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-baseline mb-2">
-                            <h6 class="card-title mb-0">Thông báo của InFi</h6>
-
-
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead>
-                                <tr>
-                                    <th class="pt-0">#</th>
-                                    <th class="pt-0">Nội dung</th>
-                                    <th class="pt-0">Ngày</th>
-                                    <th class="pt-0">Tạo bởi</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-                                <tr>
-                                    <td class="border-bottom">1</td>
-                                    <td class="border-bottom">Cảm ơn bạn đã sử dụng dịch vụ của InFi</td>
-                                    <td class="border-bottom">01/05/2022</td>
-                                    <td class="border-bottom">Jensen Combs</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     @else
         Bạn không có quyền truy cập Dashboard

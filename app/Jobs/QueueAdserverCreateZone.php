@@ -87,6 +87,8 @@ class QueueAdserverCreateZone implements ShouldQueue
                     'adserver_id' => $response['data']['id'],
                 ]);
                 $result['zone_ids'][] = $zoneWebsite->id;
+
+                QueueAdserverCreateCampaign::dispatch($zoneWebsite);
             } else {
                 $result['is_success'] = false;
                 Cache::put($this->keyCache, $result, config('_my_config.cache_time_api'));

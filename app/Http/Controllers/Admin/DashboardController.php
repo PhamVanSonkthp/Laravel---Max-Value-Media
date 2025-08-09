@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\User;
+use App\Models\Website;
+use App\Models\ZoneWebsite;
 use function auth;
 use function view;
 
@@ -12,13 +15,13 @@ class DashboardController extends Controller
     public function index()
     {
         if (auth()->check()) {
-            $numberOrderWaiting = Order::where('order_status_id', 1)->count();
-            $numberOrderShipping = Order::where('order_status_id', 2)->count();
-            $numberOrderCancel = Order::where('order_status_id', 4)->count();
-            $numberOrderRefund = Order::where('order_status_id', 5)->count();
-            $revenue = Order::sum('amount');
 
-            return view('administrator.dashboard.index', compact('numberOrderCancel', 'numberOrderRefund', 'numberOrderShipping', 'numberOrderWaiting', 'revenue'));
+            $totalUser = User::where('is_admin', 0)->count();
+            $totalWebsite = Website::count();
+            $totalZone = ZoneWebsite::count();
+            $totalZonePending = ZoneWebsite::where('zone_status_id', 1)->count();
+
+            return view('administrator.dashboard.index', compact('totalUser','totalWebsite','totalZone','totalZonePending'));
         }
         return redirect()->to('/admin');
     }
