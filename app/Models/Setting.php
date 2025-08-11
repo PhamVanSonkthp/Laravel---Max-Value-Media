@@ -93,6 +93,8 @@ class Setting extends Model implements Auditable
             'custom_css' => $request->custom_css,
             'facebook_link' => $request->facebook_link,
             'token_api_adserver' => $request->token_api_adserver,
+            'token_api_adscore' => $request->token_api_adscore,
+            'account_id_adscore' => $request->account_id_adscore,
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);
         return $this->findById($item->id);

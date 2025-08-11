@@ -9,18 +9,21 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-trait AdserverTrait
+trait AdScoreTrait
 {
-    public static $KEY_CACHE_CREATE_WEBSITE = "CREATE_WEBSITE";
-    public static $KEY_CACHE_CREATE_ZONE = "CREATE_ZONE";
+
+    public static $KEY_CACHE_REFRESH_TRAFFIC = "REFRESH_TRAFFIC";
 
     private $token;
+    private $accountID;
     private $urlApi;
 
     public function init()
     {
-        $this->token = optional(Setting::first())->token_api_adserver;
-        $this->urlApi = config('_my_config.url_adserver');
+        $setting = Setting::first();
+        $this->token = optional($setting)->token_api_adscore;
+        $this->accountID = optional($setting)->account_id_adscore;
+        $this->urlApi = config('_my_config.url_adscore');
     }
 
     public function callPostHTTP($url, $raw = [])
@@ -28,39 +31,11 @@ trait AdserverTrait
         $this->init();
         $headers = [
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . $this->token,
+            'Authorization' => 'Basic ' . $this->token,
         ];
 
         $response = Http::withHeaders($headers)->timeout(config('_my_config.timeout_request_api'))
-            ->send('POST', $this->urlApi . $url, [
-                'body' => json_encode($raw)
-            ]);
-
-        if ($response->successful()) {
-            return [
-                'is_success' => true,
-                'status' => $response->status(),
-                'data' => $response->json()
-            ];
-        } else {
-            return [
-                'is_success' => false,
-                'status' => $response->status(),
-                'data' => $response->body()
-            ];
-        }
-    }
-
-    public function callPutHTTP($url, $raw = [])
-    {
-        $this->init();
-        $headers = [
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . $this->token,
-        ];
-
-        $response = Http::withHeaders($headers)->timeout(config('_my_config.timeout_request_api'))
-            ->send('PUT', $this->urlApi . $url, [
+            ->send('POST', $this->urlApi . "account/" . $this->accountID . "/"  . $url, [
                 'body' => json_encode($raw)
             ]);
 
@@ -84,11 +59,11 @@ trait AdserverTrait
         $this->init();
         $headers = [
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . $this->token,
+            'Authorization' => 'Basic ' . $this->token,
         ];
 
         $response = Http::withHeaders($headers)->timeout(config('_my_config.timeout_request_api'))
-            ->get($this->urlApi . $url, $params);
+            ->get($this->urlApi . "account/" . $this->accountID . "/" . $url, $params);
 
         if ($response->successful()) {
             return [

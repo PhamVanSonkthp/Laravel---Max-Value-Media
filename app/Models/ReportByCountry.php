@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 
-class Report extends Model implements Auditable
+class ReportByCountry extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use HasFactory;
@@ -26,26 +26,10 @@ class Report extends Model implements Auditable
 
     // begin
 
-    public function reportByCountries()
+    public function national()
     {
-        return $this->hasMany(ReportByCountry::class, 'report_id', 'id');
+        return $this->hasOne(National::class, 'id', 'national_id');
     }
-
-    public function websites()
-    {
-        return $this->hasMany(Website::class, 'id', 'website_id');
-    }
-
-    public function demand()
-    {
-        return $this->hasOne(Demand::class, 'id', 'demand_id');
-    }
-
-    public function zoneWebsite()
-    {
-        return $this->hasOne(ZoneWebsite::class, 'id', 'zone_website_id');
-    }
-
     //
     //    public function multiples(){
     //        return $this->hasMany(Model::class, 'id', 'local_id');

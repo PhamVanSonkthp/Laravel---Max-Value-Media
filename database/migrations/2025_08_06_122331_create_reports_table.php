@@ -21,12 +21,15 @@ class CreateReportsTable extends Migration
             $table->bigInteger('zone_website_id')->index();
             $table->date('date')->index();
             $table->bigInteger('d_request');
+            $table->bigInteger('d_requests_empty')->default(0);
             $table->bigInteger('d_impression');
+            $table->bigInteger('d_impressions_unique')->default(0);
             $table->float('d_ecpm',8,2);
             $table->float('d_revenue',8,2);
             $table->bigInteger('count')->default(80);
             $table->bigInteger('share')->default(60);
             $table->bigInteger('p_impression')->default(0);
+            $table->float('trafq',8,2)->default(0);
             $table->float('p_ecpm',8,2)->default(0);
             $table->float('p_revenue',8,2)->default(0);
             $table->float('profit',8,2)->default(0);

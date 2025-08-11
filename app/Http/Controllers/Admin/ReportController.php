@@ -42,14 +42,12 @@ class ReportController extends Controller
 
         $items = $items->orderBy('date', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
-
-        $sites = (new Website())->get();
         $demands = (new Demand())->get();
 
         $zones = [];
 
-        if ($request->site) {
-            $zones = $this->model->where('site', $request->site);
+        if ($request->website_id) {
+            $zones = $this->model->where('website_id', $request->website_id);
 
             if ($request->from) {
                 $zones = $zones->whereDate('date', '>=', $request->from);
@@ -64,7 +62,7 @@ class ReportController extends Controller
             $zones = $zones->get();
         }
 
-        return view('administrator.' . $this->prefixView . '.index', compact('items', 'sumary', 'zones', 'sites','demands'));
+        return view('administrator.' . $this->prefixView . '.index', compact('items', 'sumary', 'zones', 'demands'));
     }
 
     public function get(Request $request, $id)

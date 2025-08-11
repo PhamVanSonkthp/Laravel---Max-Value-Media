@@ -52,7 +52,7 @@ class QueueAdserverAssignAdsForZone implements ShouldQueue
                 'zone_website_id' => $this->zoneWebsite->id,
             ]);
         } else {
-            throw new \Exception('Queue create AdsCampaign error: ' . json_encode($response));
+            throw new \Exception('Queue QueueAdserverAssignAdsForZone error: ' . json_encode($response));
         }
     }
 

@@ -23,16 +23,18 @@ class QueueAdserverCreateCampaign implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, AdserverTrait;
 
     private $zoneWebsite;
+    private $website;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($zone_website)
+    public function __construct($zone_website, $website)
     {
         //
         $this->zoneWebsite = $zone_website;
+        $this->website = $website;
     }
 
     /**
@@ -51,9 +53,9 @@ class QueueAdserverCreateCampaign implements ShouldQueue
             ]);
 
             $campaign->refresh();
-            QueueAdserverCreateAds::dispatch($campaign, $this->zoneWebsite);
+            QueueAdScroreCreateZone::dispatch($this->zoneWebsite, $this->website, $campaign);
         } else {
-            throw new \Exception('Queue create Campaign error: ' . json_encode($response));
+            throw new \Exception('Queue QueueAdserverCreateCampaign error: ' . json_encode($response));
         }
     }
 

@@ -47,16 +47,26 @@
 
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
     <td>
+
+        <a title="Detail" onclick="onViewAndEdit({{$item->id}})"
+           class="btn btn-outline-secondary btn-sm"
+           data-id="{{$item->id}}">
+            <i class="fa-solid fa-pen"></i>
+        </a>
+
+        <a title="Detail" onclick="onViewAndEditAds({{$item->id}})"
+           class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-file-lines"></i>
+        </a>
+
+        <a title="Report" target="_blank" class="btn btn-outline-primary btn-sm" href="{{route('administrator.reports.index', ['website_id' => $item->id])}}">
+            <i class="fa-solid fa-chart-line"></i>
+        </a>
+
         <a title="Zones" class="btn btn-outline-success btn-sm"
            onclick="onCreateZone('{{$item->id}}')"
            data-id="{{$item->id}}">
             <i class="fa-solid fa-cloud"></i>
-        </a>
-
-        <a title="Sửa" onclick="onViewAndEdit({{$item->id}})"
-           class="btn btn-outline-secondary btn-sm"
-           data-id="{{$item->id}}">
-            <i class="fa-solid fa-pen"></i>
         </a>
 
         <a href="#" title="Xóa"

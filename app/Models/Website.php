@@ -46,6 +46,11 @@ class Website extends Model implements Auditable
         return $this->hasOne(StatusWebsite::class, 'id', 'status_website_id');
     }
 
+    public function zoneWebsiteTraffic()
+    {
+        return $this->hasOne(ZoneWebsite::class, 'website_id', 'id')->where('zone_websites.zone_dimension_id', config('_my_config.verify_zone_dimension_id'));
+    }
+
     public function zoneWebsites()
     {
         return $this->hasMany(ZoneWebsite::class, 'website_id', 'id');
@@ -59,6 +64,45 @@ class Website extends Model implements Auditable
     public function getMaxRequestOneDay()
     {
         return Report::where('website_id', $this->id)->max('d_request');
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class,'website_id','id');
+    }
+
+    public function getAdScoreZones()
+    {
+        $adScoreZones = [];
+        foreach ($this->zoneWebsites as $zoneWebsite){
+            $adScore = $zoneWebsite->adScore;
+            if ($adScore) $adScoreZones[] = $adScore;
+        }
+
+        return $adScoreZones;
+    }
+
+    public function traffic()
+    {
+        $adScoreZones = $this->getAdScoreZones();
+
+        $result = [
+            'total_hits' => 0,
+            'valid_hits' => 0,
+            'proxy_hits' => 0,
+            'junk_hits' => 0,
+            'bot_hits' => 0,
+        ];
+
+        foreach ($adScoreZones as $adScoreZone){
+            $result['total_hits'] += $adScoreZone->total_hits;
+            $result['valid_hits'] += $adScoreZone->valid_hits;
+            $result['proxy_hits'] += $adScoreZone->proxy_hits;
+            $result['junk_hits'] += $adScoreZone->junk_hits;
+            $result['bot_hits'] += $adScoreZone->bot_hits;
+        }
+
+        return $result;
     }
 
     // end

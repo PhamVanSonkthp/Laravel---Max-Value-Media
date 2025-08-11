@@ -53,6 +53,9 @@ class CreateSettingsTable extends Migration
             $table->string('facebook_link')->nullable();
             $table->string('token_api_adserver')->nullable();
 
+            $table->string('token_api_adscore')->nullable();
+            $table->string('account_id_adscore')->nullable();
+
             $table->integer('number_point_refer_success')->default(1);
             $table->integer('number_point_taken_refer_success')->default(1);
 

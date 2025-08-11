@@ -1,10 +1,4 @@
 @php
-    if(isset($value)){
-
-    }else{
-        $value = request($name);
-    }
-
     if(!isset($id)) {
         $id = \App\Models\Helper::randomString();
     }
@@ -62,16 +56,16 @@
 
 
 
-        @if(request($name))
+        @if(isset($value))
 
             callAjax(
                 "GET",
-                "{{route('ajax.administrator.model.get', ['id' => request($name)])}}",
+                "{{route('ajax.administrator.model.get', ['id' => $value])}}",
                 {
                     model: "{{$model}}"
                 },
                 (response) => {
-                    let defaultId = '{{request($name)}}';
+                    let defaultId = '{{$value}}';
                     let defaultText;
 
                     @if(isset($fieldDisplay))
@@ -79,7 +73,6 @@
                     @else
                         defaultText = response.data.data.name;
                     @endif
-
 
                     // Manually append the default option
                     let option = new Option(defaultText, defaultId, true, true);
@@ -90,7 +83,7 @@
                 },
                 (error) => {
                     initChangeValue();
-                },false
+                },false,false
             )
 
         @else
@@ -99,7 +92,7 @@
 
         function initChangeValue() {
             $("#{{$id}}").on('change', function () {
-                addUrlParameter('{{$name}}', this.value)
+                addUrlParameter('{{$value}}', this.value)
             });
         }
 

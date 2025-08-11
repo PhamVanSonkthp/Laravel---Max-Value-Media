@@ -20,7 +20,7 @@ class Formatter extends Model
         if (!empty($limit)) {
             return (int)$limit;
         }
-        return 10;
+        return config('_my_config.items_show_in_table')[0];
     }
 
     public static function formatTimeToNow($input)

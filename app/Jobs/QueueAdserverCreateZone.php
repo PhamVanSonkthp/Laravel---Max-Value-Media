@@ -63,15 +63,16 @@ class QueueAdserverCreateZone implements ShouldQueue
         foreach ($this->dimensionIDs as $dimension_id){
             $zoneDimension = ZoneDimension::find($dimension_id);
 
+            $this->name = empty($this->name) ? $zoneDimension->name : $this->name;
             $params = [
                 'name' => $this->name,
                 'is_active' => $this->zoneStatusID == 2,
                 'idstatus' => $this->zoneStatus->adserver_id,
-                'idzoneformat' => 6,
-                'idsize' => 666,
-                'match_algo' => 1,
-                'revenue_rate' => 100,
-                'idrevenuemodel' => 2,
+                'idzoneformat' => config('_my_config.default_idzoneformat'),
+                'idsize' => config('_my_config.default_idsize'),
+                'match_algo' => config('_my_config.default_match_algo'),
+                'revenue_rate' => config('_my_config.default_revenue_rate'),
+                'idrevenuemodel' => config('_my_config.default_idrevenuemodel'),
                 'height' => $zoneDimension->height,
                 'width' => $zoneDimension->width,
             ];
@@ -88,12 +89,12 @@ class QueueAdserverCreateZone implements ShouldQueue
                 ]);
                 $result['zone_ids'][] = $zoneWebsite->id;
 
-                QueueAdserverCreateCampaign::dispatch($zoneWebsite);
+                QueueAdserverCreateCampaign::dispatch($zoneWebsite, $this->website);
             } else {
                 $result['is_success'] = false;
                 Cache::put($this->keyCache, $result, config('_my_config.cache_time_api'));
 
-                throw new \Exception('Queue create Zone error: ' . json_encode($response));
+                throw new \Exception('Queue QueueAdserverCreateZone error: ' . json_encode($response));
             }
 
         }

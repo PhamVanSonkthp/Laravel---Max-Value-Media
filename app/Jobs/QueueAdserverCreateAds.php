@@ -2,23 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Components\Common;
 use App\Models\AdsCampaign;
-use App\Models\Campaign;
-use App\Models\CampaignModel;
-use App\Models\Helper;
-use App\Models\Website;
-use App\Models\ZoneDimension;
-use App\Models\ZoneStatus;
-use App\Models\ZoneWebsite;
 use App\Traits\AdserverTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class QueueAdserverCreateAds implements ShouldQueue
 {
@@ -26,17 +16,19 @@ class QueueAdserverCreateAds implements ShouldQueue
 
     private $campaign;
     private $zoneWebsite;
+    private $adScoreZone;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($campaign, $zone_website)
+    public function __construct($campaign, $zone_website, $ad_score_zone)
     {
         //
         $this->campaign = $campaign;
         $this->zoneWebsite = $zone_website;
+        $this->adScoreZone = $ad_score_zone;
     }
 
     /**
@@ -62,23 +54,30 @@ class QueueAdserverCreateAds implements ShouldQueue
         ];
 
         $idFormat = null;
+        $idInjectionType = null;
+        $contentHTML = null;
 
         if (optional(optional($this->zoneWebsite)->zoneDimension)->group_zone_dimension_id == 1){
             $idFormat = config('_my_config.ads_fomart_ids.HTML_JS');
-            $params['details']['idinjectiontype'] = config('_my_config.idinjectiontypes.DIRECT_INJECTION');
+            $idInjectionType = config('_my_config.idinjectiontypes.DIRECT_INJECTION');
             $params['details']['is_responsive'] = 0;
-            $params['details']['content_html'] = config('_my_config.ads_html_default');
+            $contentHTML = '<script></script>';
         }else{
             $idFormat = config('_my_config.ads_fomart_ids.IMAGE');
-            $imagePath = public_path('images/adsMaxvalue/') . config('_my_config.image_ads')[optional(optional($this->zoneWebsite)->zoneDimension)->group_zone_dimension_id == 1];
+            $imagePath = public_path('images/adsMaxvalue/') . config('_my_config.image_ads')[optional(optional($this->zoneWebsite)->zoneDimension)->group_zone_dimension_id];
             $imageContent = file_get_contents($imagePath);
 
-            $params['details']['idinjectiontype'] = config('_my_config.idinjectiontypes.REDIRECT_TYPE_STANDARD');
+            $idInjectionType = config('_my_config.idinjectiontypes.REDIRECT_TYPE_STANDARD');
             $params['details']['target'] = config('_my_config.targets.blank');
             $params['details']['weight'] = config('_my_config.weight.default');
-            $params['details']['content_html'] = config('_my_config.ads_html_default');
+            $contentHTML = config('_my_config.ads_html_default');
             $params['details']['file'] = base64_encode($imageContent);
         }
+
+        $params['details']['idinjectiontype'] = $idInjectionType;
+        $params['details']['content_html'] = $contentHTML;
+
+        $params['pixel_html'] = str_replace(array("\r", "\n", "\r\n"), '', $this->adScoreZone->generate_code);
 
         $response = $this->callPostHTTP('ad?idformat=' . $idFormat, $params);
         if ($response['is_success']) {
@@ -87,16 +86,17 @@ class QueueAdserverCreateAds implements ShouldQueue
                 'adserver_id' => $response['data']['id'],
                 'campaign_id' => $this->campaign->id,
                 'zone_website_id' => $this->zoneWebsite->id,
-                'id_injection_type' => $response['data']['details']['idinjectiontype'],
-                'content_html' => $response['data']['details']['content_html'],
+                'id_injection_type' => $idInjectionType,
+                'content_html' => $contentHTML,
                 'is_responsive' => $response['data']['details']['is_responsive'],
                 'ext_label_pos' => $response['data']['details']['ext_label_pos'],
                 'ext_menu_pos' => $response['data']['details']['ext_menu_pos'],
                 'ext_brand_pos' => $response['data']['details']['ext_brand_pos'],
             ]);
+
             QueueAdserverAssignAdsForZone::dispatch($adsCampaign, $this->zoneWebsite);
         } else {
-            throw new \Exception('Queue create AdsCampaign error: ' . json_encode($response));
+            throw new \Exception('Queue QueueAdserverCreateAds error: ' . json_encode($response));
         }
     }
 

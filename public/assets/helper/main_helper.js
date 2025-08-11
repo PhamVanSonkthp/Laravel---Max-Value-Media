@@ -1043,7 +1043,11 @@ function callAjax(method = "GET", url, data, success, error, is_loading = true, 
             }
             success(response)
         },
-        error: function (err) {
+        error: function (err, textStatus, errorThrown) {
+            if(err.status == 401){
+                window.location.reload();
+                return;
+            }
             if(is_loading){
                 hideLoading()
             }
@@ -1155,12 +1159,15 @@ function onSortSearch(key, value) {
 
 }
 
-function prependWithAnimation(container, html, effect = "vibrate") {
+function prependWithAnimation(container, html, effect = "vibrate", is_append = false) {
     let newItem = $(html);
 
     // Hide first so we can animate
     newItem.css({ display: "none", position: "relative" });
 
+    if(is_append){
+        $(container).html('');
+    }
     $(container).prepend(newItem);
 
     // Run chosen animation

@@ -10,7 +10,7 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
      * @return void
      */
 
@@ -25,36 +25,29 @@ class Kernel extends ConsoleKernel
         $schedule->command('job:create_report')
             ->everyMinute();
 
-//        $schedule->command('email:job_notification')
-//            ->everyMinute();
-//
-//        $schedule->command('email:job_email')
-//            ->everyMinute();
-//
-//        $schedule->command('schedule:bank_cash_in')
-//            ->everyMinute();
+        $schedule->command('job:create_ad_score_check_traffic')
+            ->everyThreeHours();
 
-//        if (env('APP_ENV') == "local") {
-//            $schedule->command('cache:clear-expired')->everyMinute();
-//            $schedule->command('schedule:sitemap')->everyMinute();
-//            $schedule->command('backup:run')->everyMinute();
-//        } else {
-//            $schedule->command('cache:clear-expired')
-//                ->timezone('Asia/Ho_Chi_Minh')
-//                ->dailyAt('00:00');
-//
-//            $schedule->command('schedule:sitemap')
-//                ->timezone('Asia/Ho_Chi_Minh')
-//                ->dailyAt('00:00');
-//
-//            $schedule->command('backup:run')
-//                ->timezone('Asia/Ho_Chi_Minh')
-//                ->dailyAt('00:00');
-//        }
+        $schedule->command('email:job_notification')
+            ->everyMinute();
 
+        $schedule->command('email:job_email')
+            ->everyMinute();
+
+        $schedule->command('cache:clear-expired')
+            ->timezone('Asia/Ho_Chi_Minh')
+            ->dailyAt('00:00');
+
+        $schedule->command('schedule:sitemap')
+            ->timezone('Asia/Ho_Chi_Minh')
+            ->dailyAt('00:00');
+
+        $schedule->command('backup:run')
+            ->timezone('Asia/Ho_Chi_Minh')
+            ->dailyAt('00:00');
 
         // duplicate with cores of servers
-//        $schedule->command('queue:work --timeout=60')
+//        $schedule->command('queue:listen --timeout=60')
 //            ->everyMinute()
 //            ->withoutOverlapping()
 //            ->sendOutputTo(storage_path() . '/logs/queue-jobs.log');
@@ -68,7 +61,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

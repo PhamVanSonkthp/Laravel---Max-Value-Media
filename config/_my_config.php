@@ -1,10 +1,17 @@
 <?php
 
 return [
+    'url_adscore' => "https://api.adscore.com/",
+    'type_generate_code_for_zone' => "js_api",
+    'max_count_number_total_report' => 2000,
 
     'url_adserver' => "https://api.adsrv.net/v2/",
     'is_connect_to_adserver' => false,
+    'default_idzoneformat' => 6,
     'default_idsize' => 666,
+    'default_match_algo' => 1,
+    'default_revenue_rate' => 100,
+    'default_idrevenuemodel' => 2,
     'is_active' => 1,
     'ads_html_default' => '<script>if (document.body){var htmlCode=` <div id="sticky-image" class="sticky-image"><a href="https://maxvalue.media?affSource=AUTOCAMP"><img src="https://publisher.maxvalue.media/buckets/admaxvalue/logo/970x90.gif" alt="sticky MaxValue"></a><span id="sticky-close">X</span></div>`;document.body.insertAdjacentHTML("beforeend",htmlCode)}if (document.head){var styleElement=` <style>.sticky-image{width:90%!important;position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:999;display:flex;justify-content:center;align-items:center;width:fit-content;margin:0 auto;text-align:center}.sticky-image img{width:100%;height:auto}#sticky-close{position:absolute;top:5px;right:5px;font-weight:700;font-size:14px;color:#fff;background-color:#000;cursor:pointer}</style>`;document.head.insertAdjacentHTML("beforeend",styleElement)}window.addEventListener("scroll",function(){var image=document.getElementById("sticky-image");if (image){var rect=image.getBoundingClientRect();var windowHeight=window.innerHeight;if (rect.top>=0 && rect.bottom <=windowHeight){image.classList.add("sticky")}else{image.classList.remove("sticky")}}});document.addEventListener("click",function(event){if (event.target && event.target.id==="sticky-close"){var image=document.getElementById("sticky-image");if (image){image.style.display="none"}}});</script>',
     'params_create_campaign' => [
@@ -48,9 +55,10 @@ return [
     'cache_time_api' => 500,
     'default_avatar' => null,
     'default_size_avatar' => "100x100",
+    'verify_zone_dimension_id' => 43,
 
     'items_show_in_table' => [
-        10, 50, 100, 500, 1000
+        50, 100, 500, 1000
     ],
 
     'type_date' => 'Y-m-d',

@@ -42,10 +42,7 @@
 <div>
     @include('administrator.components.search')
 
-
     <a href="{{route('administrator.'.$prefixView.'.export') . "?" . request()->getQueryString()}}" class="btn btn-outline-success float-end me-2" data-bs-original-title="" title="Xuất Excel"><i class="fa-sharp fa-solid fa-download"></i></a>
-
-{{--    <a href="{{route('administrator.'.$prefixView.'.export') . "?" . request()->getQueryString()}}" class="btn btn-outline-primary float-end me-2" data-bs-original-title="" title="Nhập Excel"><i class="fa-sharp fa-solid fa-upload"></i></a>--}}
 
     <form action="{{route('administrator.'.$prefixView.'.import')}}" method="POST" enctype="multipart/form-data" style="display: contents">
         @csrf
@@ -83,83 +80,26 @@
 
             </div>
 
-
             <script>
 
                 $('select[name="demand_id"]').on('change', function () {
                     addUrlParameterObjects([{name: 'demand_id', value: this.value},{name: 'zone_id', value: ""},{name: 'website_id', value: ""}])
-
                 });
-
-            </script>
-
-        </div>
-
-        <div class="col-md-3">
-            <div class="mt-3">
-                <label>Sites</label>
-                <select name="website_id" class="form-control select2_init_allow_clear">
-                    <option value="">
-                        Chọn
-                    </option>
-                    @foreach($sites as $site)
-                        <option value="{{$site->id}}" {{request('website_id') == $site->id ? 'selected' : ''}}>{{$site->name}}</option>
-                    @endforeach
-                </select>
-
-            </div>
-
-
-            <script>
-
-                $('select[name="website_id"]').on('change', function () {
-                    addUrlParameterObjects([{name: 'website_id', value: this.value},{name: 'zone_id', value: ""}])
-
-                });
-
             </script>
 
         </div>
 
         <div class="col-md-3">
             <div>
-
-                <div class="mt-3">
-                    <label>Zones</label>
-                    <select name="zone_id" class="form-control select2_init_allow_clear">
-                        <option value="">
-                            Chọn
-                        </option>
-                        @foreach($zones as $zone)
-                            <option value="{{$zone['zone_id']}}" {{request('zone_id') == $zone['zone_id'] ? 'selected' : ''}}>{{$zone['zone_id']}}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-
-                <script>
-
-                    $('select[name="zone_id"]').on('change', function () {
-                        addUrlParameter('zone_id', this.value)
-                    });
-
-                </script>
-
+                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'website_id' , 'label' => 'Website', 'url' => route('ajax.administrator.model.search'), 'model' => 'websites'])
             </div>
         </div>
 
-{{--        <div class="col-md-3">--}}
-{{--            <ul style="float: right;">--}}
-{{--                @foreach(\App\Models\Demand::all() as $demand)--}}
-{{--                    @if(\App\Models\ReportTimeline::where(['demand_id'=> $demand->id,'report_timeline_status_id'=> 0])->first() )--}}
-{{--                        <li style="color: red;">--}}
-{{--                            {{$demand->name}}--}}
-{{--                        </li>--}}
-{{--                    @endif--}}
-
-{{--                @endforeach--}}
-{{--            </ul>--}}
-{{--        </div>--}}
+        <div class="col-md-3">
+            <div>
+                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'zone_website_id' , 'label' => 'Zone', 'url' => route('ajax.administrator.model.search'), 'model' => 'zone_websites'])
+            </div>
+        </div>
 
     </div>
 

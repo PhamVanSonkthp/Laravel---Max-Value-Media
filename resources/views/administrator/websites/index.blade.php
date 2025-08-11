@@ -96,11 +96,6 @@
                                 <tr>
                                     <th><input id="check_box_delete_all_footer" type="checkbox" class="checkbox-parent"
                                                onclick="onSelectCheckboxDeleteItemFooter()"></th>
-{{--                                    <th onclick='onSortSearch(`id`, `{{ \App\Models\Helper::getValueInFilterReuquest('id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                        <div>--}}
-{{--                                            # {!! \App\Models\Helper::getValueInFilterReuquest('id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                        </div>--}}
-{{--                                    </th>--}}
                                     <th onclick='onSortSearch(`manager_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? "desc" : "") }}`)'>
                                         <div>
                                             Account
@@ -233,18 +228,33 @@
         </div>
     </div>
 
+    <!-- Modal modal_view_and_edit_ads -->
+    <div class="modal fade" id="modal_view_and_edit_ads" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Infor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_modal_view_and_edit_ads">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('js')
     <script>
         $(function () {
 
-            $(document).on('click','tbody > tr > td > *', function (ev) {
+            $(document).on('click','#body_container_item > tr > td > *', function (ev) {
                 ev.stopPropagation();
             });
             // Click on row
-            $(document).on('click','tbody tr', function () {
-
+            $(document).on('click','#body_container_item tr', function () {
+                onViewAndEdit(this.getAttribute('data-id'))
             });
 
             // Close button
@@ -404,7 +414,7 @@
         function onViewAndEdit(website_id) {
             callAjax(
                 "GET",
-                "{{route('ajax.administrator.websites.get')}}",
+                "{{route('ajax.administrator.'.$prefixView.'.get')}}",
                 {
                     id: website_id,
                     modal_id: 'view_and_edit_website_modal',
@@ -457,6 +467,91 @@
             )
         }
 
+        function processRefreshTraffic(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.'.$prefixView.'.refresh_traffic')}}",
+                {
+                    id: website_id,
+                },
+                (response) => {
+                    if (response.code == 219) {
+                        setTimeout(processRefreshTraffic(website_id), 5000);
+                    } else {
+                        hideAllToast()
+                        if (response.is_success) {
+                            prependWithAnimation("#container_view_and_edit_website_modal", response.data.data.html, "vibrate", true);
+                            showToastSuccess('Đã lấy dữ liệu mới');
+                        } else {
+                            showToastError(response.message);
+                        }
+                    }
+
+                },
+                (error) => {
+
+                }, false
+            )
+        }
+
+        function onRefreshTraffic(website_id, url) {
+            $('#modal_view_and_edit_website_btn_refresh_traffic').hide().fadeOut(1000);
+            showToastLoading("Đang lấy dữ liệu mới: "+url+"...");
+            processRefreshTraffic(website_id);
+        }
+
+        function onUpdateWebsite(website_id) {
+            callAjax(
+                "PUT",
+                "{{route('ajax.administrator.model.update_field')}}",
+                {
+                    id: website_id,
+                    note: $('#modal_view_and_edit_website_input_note').val(),
+                    model: 'websites',
+                },
+                (response) => {
+                    showToastSuccess('Saved!');
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onViewAndEditAds(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.'.$prefixView.'.modal_view_and_edit_ads')}}",
+                {
+                    id: website_id,
+                },
+                (response) => {
+                    $('#container_modal_view_and_edit_ads').html(response.data.html);
+                    showModal('modal_view_and_edit_ads')
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onUpdateAds(website_id) {
+            callAjax(
+                "PUT",
+                "{{route('ajax.administrator.model.update_field')}}",
+                {
+                    id: website_id,
+                    ads: $('#modal_view_and_edit_ads_input_ads').val(),
+                    model: 'websites',
+                },
+                (response) => {
+                    showToastSuccess('Saved!');
+                },
+                (error) => {
+
+                }
+            )
+        }
     </script>
 @endsection
 

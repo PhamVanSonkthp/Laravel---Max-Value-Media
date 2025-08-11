@@ -12,7 +12,7 @@
                 <div id="panel_zone_collapse" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
                         <div class="mt-3">
-                            @include('administrator.components.require_input_text',['label' => 'Name', 'name' => 'zone_name', 'id' => 'panel_zone_input_zone_name'])
+                            @include('administrator.components.input_text',['label' => 'Name', 'name' => 'zone_name', 'id' => 'panel_zone_input_zone_name'])
                         </div>
 
                         @include('administrator.components.require_select2',['label' => 'Type', 'name' => 'temple', 'select2Items'=> $zoneTypes])

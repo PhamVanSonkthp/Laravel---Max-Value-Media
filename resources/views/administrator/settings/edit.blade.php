@@ -28,13 +28,23 @@
                                 </h2>
                             </div>
 
-
                             <div class="row align-items-end">
 
                                 <div class="col-6">
                                     @include('administrator.components.input_text', ['label' => 'Token API Adserver' , 'name' => 'token_api_adserver'])
                                 </div>
 
+                            </div>
+
+                            <div class="row align-items-end">
+
+                                <div class="col-6">
+                                    @include('administrator.components.input_text', ['label' => 'Token API AdScore' , 'name' => 'token_api_adscore'])
+                                </div>
+
+                                <div class="col-6">
+                                    @include('administrator.components.input_text', ['label' => 'Account ID Adscore' , 'name' => 'account_id_adscore'])
+                                </div>
 
                             </div>
 
