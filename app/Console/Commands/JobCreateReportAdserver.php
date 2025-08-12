@@ -20,7 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class JobCreateReport extends Command
+class JobCreateReportAdserver extends Command
 {
     use AdserverTrait;
 
@@ -29,14 +29,14 @@ class JobCreateReport extends Command
      *
      * @var string
      */
-    protected $signature = 'job:create_report';
+    protected $signature = 'job:create_report_adserver';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create Report';
+    protected $description = 'Create Report Adserver';
 
     /**
      * Create a new command instance.

@@ -30,8 +30,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary" onclick="onChangeID{{$randomID}}()">Cập nhật</button>
+                <button type="button" class="btn btn-primary" onclick="onChangeID{{$randomID}}()">Save</button>
             </div>
         </div>
     </div>
@@ -40,26 +39,37 @@
 <script>
 
     function onChangeID{{$randomID}}() {
+        showToastLoading("Updating status zone...");
+        processUpdateStatusZone{{$randomID}}({{$item->id}});
+    }
 
+    function processUpdateStatusZone{{$randomID}}(id) {
         callAjax(
             "PUT",
-            "{{route('ajax.administrator.model.update_field')}}",
+            "{{route('ajax.administrator.zone_websites.update_status')}}",
             {
-                'id': '{{$item->id}}',
-                '{{$field}}': $('#select_change_{{$randomID}}').val(),
-                'model': '{{$item->getTableName()}}',
+                'id': id,
+                'zone_status_id': $('#select_change_{{$randomID}}').val(),
             },
             (response) => {
-                $('#label_{{$randomID}}').html($('#select_change_{{$randomID}}').find(':selected').text())
-                hideModal('model_change_id_{{$randomID}}')
-                showToastSuccess()
+                if (response.code == 219) {
+                    setTimeout(processUpdateStatusZone{{$randomID}}(id), 5000);
+                } else {
+                    hideAllToast()
+                    if (response.is_success) {
+                        $('#label_{{$randomID}}').html($('#select_change_{{$randomID}}').find(':selected').text())
+                        hideModal('model_change_id_{{$randomID}}')
+                        showToastSuccess('Status changed!');
+                    } else {
+                        showToastError(response.message);
+                    }
+                }
             },
             (error) => {
 
             },
-            true,
+            false
         )
-
     }
 
     function onShowModalChangeID{{$randomID}}(e){

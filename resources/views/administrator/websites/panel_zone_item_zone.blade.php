@@ -7,7 +7,6 @@
             <div style="display: flex; align-items: center; gap: 8px;">
                 <span><strong>{{$zone->id}}</strong> | {{$zone->name}}</span>
                 <span>({{ optional($zone->zoneDimension)->width}}x{{optional($zone->zoneDimension)->height}})</span>
-                <span style="color: #fff; background-color: #8B0000; padding: 2px 6px; border-radius: 50%;">✖</span>
             </div>
 
             <div style="margin-top: 6px; display: flex; align-items: center; gap: 10px;">
@@ -25,15 +24,13 @@
         <!-- Right section -->
         <div style="display: flex; flex-direction: column; align-items: flex-end;">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="color: #1a73e8; cursor: pointer;">REVIEWING</span>
-                <span style="color: #1a73e8; cursor: pointer;">🔄</span>
                 <span onclick="onDeleteZone('{{$zone->id}}')" title="Xóa" style="color: #dc3545; cursor: pointer;"><i
                         class="fa-solid fa-x"></i></span>
             </div>
 
-            <div style="margin-top: 6px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                <span style="color: #1a73e8;">ℹ️</span>
-                <span style="color: #1a73e8;">CONFIG</span>
+            <div style="margin-top: 6px; display: flex; align-items: center; gap: 4px; cursor: pointer;" onclick="onDetailZone({{$item->id}})">
+                <i class="fa-solid fa-info"></i>
+                <span style="color: #1a73e8;">Config</span>
             </div>
         </div>
 

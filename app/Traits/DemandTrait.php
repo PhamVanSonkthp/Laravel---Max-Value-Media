@@ -9,24 +9,30 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-trait AdserverTrait
+trait DemandTrait
 {
-    public static $KEY_CACHE_CREATE_WEBSITE = "CREATE_WEBSITE";
-    public static $KEY_CACHE_CREATE_ZONE = "CREATE_ZONE";
-    public static $KEY_CACHE_UPDATE_STATUS_ZONE = "UPDATE_STATUS_ZONE";
-
     private $token;
     private $urlApi;
 
     public function init()
     {
-        $this->token = optional(Setting::first())->token_api_adserver;
-        $this->urlApi = config('_my_config.url_adserver');
+        $this->urlApi = config('_my_config.url_demand');
+
+        $params = [
+            'user_name' => config('_my_config.user_name'),
+            'password' => config('_my_config.password'),
+        ];
+        $response = $this->callPostHTTP("api/public/auth/sign-in", $params, false);
+
+        $this->token = $response['data']['token'];
     }
 
-    public function callPostHTTP($url, $raw = [])
+    public function callPostHTTP($url, $raw = [], $is_init = true)
     {
-        $this->init();
+        if ($is_init){
+            $this->init();
+        }
+
         $headers = [
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $this->token,

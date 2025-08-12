@@ -22,29 +22,32 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command('job:create_report')
+        $schedule->command('job:create_report_demands')
             ->everyMinute();
 
-        $schedule->command('job:create_ad_score_check_traffic')
-            ->everyThreeHours();
-
-        $schedule->command('email:job_notification')
-            ->everyMinute();
-
-        $schedule->command('email:job_email')
-            ->everyMinute();
-
-        $schedule->command('cache:clear-expired')
-            ->timezone('Asia/Ho_Chi_Minh')
-            ->dailyAt('00:00');
-
-        $schedule->command('schedule:sitemap')
-            ->timezone('Asia/Ho_Chi_Minh')
-            ->dailyAt('00:00');
-
-        $schedule->command('backup:run')
-            ->timezone('Asia/Ho_Chi_Minh')
-            ->dailyAt('00:00');
+//        $schedule->command('job:create_report_adserver')
+//            ->everyMinute();
+//
+//        $schedule->command('job:create_ad_score_check_traffic')
+//            ->everyThreeHours();
+//
+//        $schedule->command('email:job_notification')
+//            ->everyMinute();
+//
+//        $schedule->command('email:job_email')
+//            ->everyMinute();
+//
+//        $schedule->command('cache:clear-expired')
+//            ->timezone('Asia/Ho_Chi_Minh')
+//            ->dailyAt('00:00');
+//
+//        $schedule->command('schedule:sitemap')
+//            ->timezone('Asia/Ho_Chi_Minh')
+//            ->dailyAt('00:00');
+//
+//        $schedule->command('backup:run')
+//            ->timezone('Asia/Ho_Chi_Minh')
+//            ->dailyAt('00:00');
 
         // duplicate with cores of servers
 //        $schedule->command('queue:listen --timeout=60')

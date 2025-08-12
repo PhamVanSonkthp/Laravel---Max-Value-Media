@@ -38,11 +38,9 @@ class QueueAdserverCreateAds implements ShouldQueue
      */
     public function handle()
     {
-
-        $defaultParamCampaign = config('_my_config.params_create_campaign');
-
+        $zoneDimension = optional($this->zoneWebsite)->zoneDimension;
         $params = [
-            'name' => $defaultParamCampaign['name'] . ' - ' . optional(optional($this->zoneWebsite)->zoneDimension)->name,
+            'name' => (optional($zoneDimension)->group_zone_dimension_id == 1 ? 'Traffic' : 'AdUnit') . ' - ' . optional($zoneDimension)->name,
             'idcampaign' => $this->campaign->adserver_id,
             'is_active' => config('_my_config.is_active'),
             'url' => config('_my_config.url_ads'),

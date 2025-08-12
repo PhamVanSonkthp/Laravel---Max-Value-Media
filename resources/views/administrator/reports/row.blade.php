@@ -28,8 +28,8 @@
     </td>
     <td>
         <div style="max-width: 200px;overflow: hidden;">
-            <a target="_blank" href="{{ optional($item->website)->url}}">
-                {{ optional($item->website)->name}}
+            <a target="_blank" href="{{ optional(optional($item->zoneWebsite)->website)->url}}">
+                {{ optional(optional($item->zoneWebsite)->website)->name}}
             </a>
 
         </div>

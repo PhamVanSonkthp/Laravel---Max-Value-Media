@@ -80,13 +80,35 @@ class QueueAdserverCreateZone implements ShouldQueue
             $response = $this->callPostHTTP('zone?idsite='. $this->website->adserver_id, $params);
 
             if ($response['is_success']) {
-                $zoneWebsite = ZoneWebsite::create([
+                $paramCreateZoneWebsite = [
                     'website_id' => $this->websiteID,
                     'name' => $this->name,
                     'zone_dimension_id' => $dimension_id,
                     'zone_status_id' => $this->zoneStatusID,
                     'adserver_id' => $response['data']['id'],
-                ]);
+                ];
+
+                if (count($response['data']['code']) > 0){
+                    $paramCreateZoneWebsite['code_normal'] = $response['data']['code'][0]['code'];
+                }
+
+                if (count($response['data']['code']) > 1){
+                    $paramCreateZoneWebsite['code_iframe'] = $response['data']['code'][1]['code'];
+                }
+
+                if (count($response['data']['code']) > 2){
+                    $paramCreateZoneWebsite['code_amp'] = $response['data']['code'][2]['code'];
+                }
+
+                if (count($response['data']['code']) > 3){
+                    $paramCreateZoneWebsite['code_prebid'] = $response['data']['code'][3]['code'];
+                }
+
+                if (count($response['data']['code']) > 4){
+                    $paramCreateZoneWebsite['code_email'] = $response['data']['code'][4]['code'];
+                }
+
+                $zoneWebsite = ZoneWebsite::create($paramCreateZoneWebsite);
                 $result['zone_ids'][] = $zoneWebsite->id;
 
                 QueueAdserverCreateCampaign::dispatch($zoneWebsite, $this->website);

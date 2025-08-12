@@ -29,14 +29,16 @@
                      aria-labelledby="Normal-tab">
                     <div class="row mt-3">
                         <div class="bd-clipboard">
-                            <i class="ri-file-copy-line icon_copy" onclick="copyCode('textNormalG')"></i>
                         </div>
                         <div class="col-12 highlight">
-                                        <textarea style="padding-top: 30px" class="form-control" id="textNormalG" rows="8"
-                                                  placeholder="Code ..." readonly>
-                                            {!! $zoneWebsite->code !!}
-                                            </textarea>
+                            <textarea class="form-control" id="textNormalG" rows="8" placeholder="Code ..." readonly>{!! $zoneWebsite->code_normal !!}</textarea>
                         </div>
+                        <div class="text-center">
+                            <button class="btn btn-outline-primary" onclick="copyCode('textNormalG')">
+                                Click here to copy <i class="fa-solid fa-copy" ></i>
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -54,7 +56,7 @@
             // Copy the text inside the text field
             var successful = document.execCommand('copy');
             var message = successful ? 'Copied to clipboard!' : 'Copy failed!';
-            console.log(message);
+            showToastSuccess("Copied, Now add your <head> website")
         } catch (err) {
             console.error('Copy failed:', err);
         }

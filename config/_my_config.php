@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'url_demand' => "https://demands.maxvaluead.com/",
+    'user_name' => "client@gmail.com",
+    'password' => "1111",
+
     'url_adscore' => "https://api.adscore.com/",
     'type_generate_code_for_zone' => "js_api",
     'max_count_number_total_report' => 2000,
@@ -21,7 +25,6 @@ return [
         'idrunstatus' => 4010,
         'idpricemodel' => 1
     ],
-
     'idinjectiontypes' => [
         'DIRECT_INJECTION' => 33,
         'IFRAME_INJECTION' => 32,
@@ -29,22 +32,18 @@ return [
         'IFRAME_INJECTION_STRICT' => 35,
         'REDIRECT_TYPE_STANDARD' => 27
     ],
-
     'targets' => [
         'blank' => '_blank',
     ],
-
     'weight' => [
         'default' => 3,
     ],
-
     'image_ads' => [
         2 => '300x250.gif',
         4 => '728x90.gif',
         6 => '970x90.gif',
         7 => '970x250.gif',
     ],
-
     'ads_fomart_ids' => [
         'HTML_JS' => 3,
         'IMAGE' => 2,
@@ -56,17 +55,14 @@ return [
     'default_avatar' => null,
     'default_size_avatar' => "100x100",
     'verify_zone_dimension_id' => 43,
-
     'items_show_in_table' => [
         50, 100, 500, 1000
     ],
-
     'type_date' => 'Y-m-d',
     'type_time' => 'H:i:s',
     'type_time_no_second' => 'H:i',
     'type_date_time' => 'Y-m-d H:i:s',
     'type_date_time_no_second' => 'Y-m-d H:i',
-
     'days_of_week' => [
         [
             "id" => 0,

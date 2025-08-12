@@ -8,6 +8,7 @@ use App\Http\Requests\PusherChatRequest;
 use App\Jobs\QueueAdScroreCheckTrafficZone;
 use App\Jobs\QueueAdserverCreateWebsite;
 use App\Jobs\QueueAdserverCreateZone;
+use App\Jobs\QueueAdserverUpdateStatusZone;
 use App\Models\CategoryWebsite;
 use App\Models\Chat;
 use App\Models\ChatImage;
@@ -116,6 +117,17 @@ Route::prefix('ajax/administrator')->group(function () {
 
         Route::prefix('zone_websites')->group(function () {
 
+            Route::get('modal_detail_zone', function (Request $request) {
+
+                $item = ZoneWebsite::findOrFail($request->id);
+                $zoneStatus = ZoneStatus::all();
+                $websiteStatus = StatusWebsite::all();
+
+                return response()->json(Helper::successAPI(200, [
+                    'html' => View::make('administrator.websites.panel_zone_detail_zone', ['item' => $item, 'zoneStatus' => $zoneStatus, 'websiteStatus' => $websiteStatus])->render()
+                ]));
+            })->name('ajax.administrator.zone_websites.modal_detail_zone');
+
             Route::post('store', function (Request $request) {
 
                 $request->validate([
@@ -158,6 +170,31 @@ Route::prefix('ajax/administrator')->group(function () {
 
             })->name('ajax.administrator.zone_websites.store');
 
+            Route::put('update_status', function (Request $request) {
+
+                $zoneWebsite = ZoneWebsite::findOrFail($request->id);
+
+                $keyCache = AdserverTrait::$KEY_CACHE_UPDATE_STATUS_ZONE
+                    . $request->id;
+                $cacheValue = Cache::get($keyCache);
+
+                if (!empty($cacheValue)) {
+                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
+                        goto skip;
+                    }
+
+                    Cache::forget($keyCache);
+                    return response()->json($cacheValue);
+                }
+
+                QueueAdserverUpdateStatusZone::dispatch($keyCache, $zoneWebsite, $request->zone_status_id);
+                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
+
+                skip:
+                return response()->json(Helper::successAPI(219, [], 'Processing'));
+
+            })->name('ajax.administrator.zone_websites.update_status');
+
             Route::delete('delete', function (Request $request) {
 
                 $zoneWebsite = ZoneWebsite::findOrFail($request->zone_website_id);
@@ -181,8 +218,6 @@ Route::prefix('ajax/administrator')->group(function () {
         Route::prefix('websites')->group(function () {
 
             Route::get('get', function (Request $request) {
-
-                Log::error($request->all());
 
                 $item = Website::findOrFail($request->id);
                 $modalID = $request->modal_id;
@@ -304,6 +339,7 @@ Route::prefix('ajax/administrator')->group(function () {
                         goto skip;
                     }
 
+                    Cache::forget($keyCache);
                     return response()->json($cacheValue);
                 }
 

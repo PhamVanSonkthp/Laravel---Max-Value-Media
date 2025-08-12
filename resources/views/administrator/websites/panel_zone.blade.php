@@ -39,12 +39,10 @@
                             <button onclick="onStoreZones({{$item->id}})" class="btn btn-primary mt-3">Save</button>
                         </div>
 
-
                     </div>
                 </div>
             </div>
         </div>
-
 
     </div>
 </div>
