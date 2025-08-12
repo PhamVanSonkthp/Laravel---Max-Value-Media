@@ -50,9 +50,9 @@ class JobCreateReportDemands extends Command
         set_time_limit(1000);
 
         $date = Carbon::now()->addHours(7)->toDateString();
-
         $this->getReport($date);
-
+        $date = Carbon::parse($date)->subDay()->toDateString();
+        $this->getReport($date);
     }
 
     private function getReport($date){
