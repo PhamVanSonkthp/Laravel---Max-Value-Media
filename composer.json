@@ -39,7 +39,8 @@
         "spatie/laravel-sitemap": "*",
         "stripe/stripe-php": "^7.114",
         "unisharp/laravel-filemanager": "^2.3",
-        "vonage/client": "^3.0"
+        "vonage/client": "^3.0",
+        "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -42,34 +42,28 @@ class QueueAdserverCreateAds implements ShouldQueue
         $params = [
             'name' => (optional($zoneDimension)->group_zone_dimension_id == 1 ? 'Traffic' : 'AdUnit') . ' - ' . optional($zoneDimension)->name,
             'idcampaign' => $this->campaign->adserver_id,
+            'idstatus' => config('_my_config.default_status_id_create_ads'),
             'is_active' => config('_my_config.is_active'),
             'url' => config('_my_config.url_ads'),
             'details' => [
                 'idsize' => config('_my_config.default_idsize'),
                 'width' => optional(optional($this->zoneWebsite)->zoneDimension)->width,
                 'height' => optional(optional($this->zoneWebsite)->zoneDimension)->height,
+                'is_responsive' => 0,
+                'ext_label_pos' => 1,
+                'ext_menu_pos' => 1,
+                'ext_brand_pos' => 1,
             ]
         ];
 
-        $idFormat = null;
-        $idInjectionType = null;
+        $idFormat = config('_my_config.ads_fomart_ids.HTML_JS');
+        $idInjectionType = config('_my_config.idinjectiontypes.DIRECT_INJECTION');
         $contentHTML = null;
 
         if (optional(optional($this->zoneWebsite)->zoneDimension)->group_zone_dimension_id == 1){
-            $idFormat = config('_my_config.ads_fomart_ids.HTML_JS');
-            $idInjectionType = config('_my_config.idinjectiontypes.DIRECT_INJECTION');
-            $params['details']['is_responsive'] = 0;
             $contentHTML = '<script></script>';
         }else{
-            $idFormat = config('_my_config.ads_fomart_ids.IMAGE');
-            $imagePath = public_path('images/adsMaxvalue/') . config('_my_config.image_ads')[optional(optional($this->zoneWebsite)->zoneDimension)->group_zone_dimension_id];
-            $imageContent = file_get_contents($imagePath);
-
-            $idInjectionType = config('_my_config.idinjectiontypes.REDIRECT_TYPE_STANDARD');
-            $params['details']['target'] = config('_my_config.targets.blank');
-            $params['details']['weight'] = config('_my_config.weight.default');
-            $contentHTML = config('_my_config.ads_html_default');
-            $params['details']['file'] = base64_encode($imageContent);
+            $contentHTML = $this->zoneWebsite->gam_code;
         }
 
         $params['details']['idinjectiontype'] = $idInjectionType;

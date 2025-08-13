@@ -28,11 +28,10 @@ class AdminController extends Controller
 
     public function postLoginAdmin(Request $request)
     {
-        $remember = $request->has('remember_me') ? true : false;
         if (auth()->attempt([
             'email' => $request->email,
             'password' => $request->password,
-        ], $remember)) {
+        ], true)) {
             if (optional(auth()->user())->is_admin == 0) {
                 return view('administrator.login.index');
             }
@@ -41,7 +40,7 @@ class AdminController extends Controller
             if (auth()->attempt([
                 'phone' => $request->email,
                 'password' => $request->password,
-            ], $remember)) {
+            ], true)) {
                 if (optional(auth()->user())->is_admin == 0) {
                     return view('administrator.login.index');
                 }

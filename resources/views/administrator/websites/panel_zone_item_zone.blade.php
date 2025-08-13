@@ -28,7 +28,7 @@
                         class="fa-solid fa-x"></i></span>
             </div>
 
-            <div style="margin-top: 6px; display: flex; align-items: center; gap: 4px; cursor: pointer;" onclick="onDetailZone({{$item->id}})">
+            <div style="margin-top: 6px; display: flex; align-items: center; gap: 4px; cursor: pointer;" onclick="onDetailZone({{$zone->id}})">
                 <i class="fa-solid fa-info"></i>
                 <span style="color: #1a73e8;">Config</span>
             </div>

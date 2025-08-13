@@ -18,6 +18,8 @@ class CreateWebsitesTable extends Migration
             $table->string('name');
             $table->bigInteger('user_id')->index();
             $table->bigInteger('manager_id')->default(0);
+            $table->string('gam_id')->index()->nullable();
+            $table->string('game_parent_zone_id')->nullable();
             $table->string('url');
             $table->bigInteger('category_website_id');
             $table->text('description')->nullable();

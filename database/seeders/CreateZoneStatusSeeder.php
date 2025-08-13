@@ -36,6 +36,11 @@ class CreateZoneStatusSeeder extends Seeder
             "adserver_id" => "7000",
         ]);
 
+        ZoneStatus::firstOrCreate([
+            "name" => "REVIEWING",
+            "adserver_id" => "7000",
+        ]);
+
 
     }
 }
