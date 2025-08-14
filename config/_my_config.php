@@ -14,7 +14,7 @@ return [
 
     'url_adserver' => "https://api.adsrv.net/v2/",
     'is_connect_to_adserver' => false,
-    'default_idpublisher' => 44205,
+    'default_idpublisher' => 66863,
     'default_idzoneformat' => 6,
     'default_idsize' => 666,
     'default_match_algo' => 1,

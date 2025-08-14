@@ -319,6 +319,10 @@ Route::prefix('ajax/administrator')->group(function () {
 
             Route::post('store', function (Request $request) {
 
+                $request->validate([
+                    'url' => 'required|url',
+                ]);
+
                 $categoryWebsite = CategoryWebsite::findOrFail($request->category_website_id);
                 $statusWebsite = StatusWebsite::findOrFail($request->status_website_id);
                 $user = User::findOrFail($request->user_id);

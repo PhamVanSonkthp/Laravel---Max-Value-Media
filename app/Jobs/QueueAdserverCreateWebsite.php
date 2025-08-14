@@ -81,6 +81,7 @@ class QueueAdserverCreateWebsite implements ShouldQueue
             $result['website_id'] = $website->id;
         } else {
             $result['is_success'] = false;
+            Log::error("QueueAdserverCreateWebsite: " . json_encode($response));
         }
 
         Cache::put($this->keyCache, $result, config('_my_config.cache_time_api'));
