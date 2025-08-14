@@ -25,7 +25,7 @@
             @foreach($item->zoneWebsites as $index => $zoneWebsites)
                 @if($index < 3)
                     <li>
-                        {{$zoneWebsites->name}}
+                        {{\App\Models\Formatter::maxLengthString($zoneWebsites->name)}}
                     </li>
                 @else
                     <li>

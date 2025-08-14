@@ -51,6 +51,11 @@ class Website extends Model implements Auditable
         return $this->hasOne(ZoneWebsite::class, 'website_id', 'id')->where('zone_websites.zone_dimension_id', config('_my_config.verify_zone_dimension_id'));
     }
 
+    public function zoneWebsiteNotTraffics()
+    {
+        return $this->hasMany(ZoneWebsite::class, 'website_id', 'id')->where('zone_websites.zone_dimension_id','!=', config('_my_config.verify_zone_dimension_id'));
+    }
+
     public function zoneWebsites()
     {
         return $this->hasMany(ZoneWebsite::class, 'website_id', 'id');

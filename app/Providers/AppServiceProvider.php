@@ -10,6 +10,7 @@ use App\Models\PostComment;
 use App\Models\Report;
 use App\Models\SingleImage;
 use App\Models\Website;
+use App\Models\ZoneWebsite;
 use App\Observers\AdsCampaignObserver;
 use App\Observers\ImageObserver;
 use App\Observers\OrderObserver;
@@ -18,6 +19,7 @@ use App\Observers\PostCommentObserver;
 use App\Observers\ReportObserver;
 use App\Observers\SingleImageObserver;
 use App\Observers\WebsiteObserver;
+use App\Observers\ZoneWebsiteObserver;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
@@ -62,5 +64,6 @@ class AppServiceProvider extends ServiceProvider
         Report::observe(ReportObserver::class);
         AdsCampaign::observe(AdsCampaignObserver::class);
         Website::observe(WebsiteObserver::class);
+        ZoneWebsite::observe(ZoneWebsiteObserver::class);
     }
 }

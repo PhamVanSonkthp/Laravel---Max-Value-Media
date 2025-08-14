@@ -9,7 +9,7 @@
         <ul>
             @foreach($item->websites as $website)
             <li>
-                {{$website->name}}
+                {{\App\Models\Formatter::maxLengthString($website->name)}}
             </li>
             @endforeach
         </ul>

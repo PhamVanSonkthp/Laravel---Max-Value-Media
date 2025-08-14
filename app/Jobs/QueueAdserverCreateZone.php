@@ -66,7 +66,7 @@ class QueueAdserverCreateZone implements ShouldQueue
             $this->name = empty($this->name) ? $zoneDimension->name : $this->name;
             $params = [
                 'name' => $this->name,
-                'is_active' => $zoneDimension->id == config('_my_config.verify_zone_dimension_id') ? $this->zoneStatusID == 5 : config('_my_config.is_active'),
+                'is_active' => $this->zoneStatusID != 4,
                 'idstatus' => $this->zoneStatus->adserver_id,
                 'idzoneformat' => config('_my_config.default_idzoneformat'),
                 'idsize' => config('_my_config.default_idsize'),
@@ -111,10 +111,10 @@ class QueueAdserverCreateZone implements ShouldQueue
                 $zoneWebsite = ZoneWebsite::create($paramCreateZoneWebsite);
                 $result['zone_ids'][] = $zoneWebsite->id;
 
-                if ($zoneWebsite->zone_status_id == 5 && $zoneDimension->id == config('_my_config.verify_zone_dimension_id')){
+                if ($zoneDimension->id == config('_my_config.verify_zone_dimension_id')){
                     QueueAdserverCreateCampaign::dispatch($zoneWebsite, $this->website);
                 }
-                if ($zoneWebsite->zone_status_id == 2){
+                if ($zoneWebsite->zone_status_id == 2 && $zoneDimension->id != config('_my_config.verify_zone_dimension_id')){
                     QueueGAMCreateAdUnit::dispatch($zoneWebsite, $this->website);
                 }
 

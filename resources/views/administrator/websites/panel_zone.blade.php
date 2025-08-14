@@ -1,4 +1,5 @@
 
+@if($item->status_website_id == 2)
 <div class="mt-4 mb-2">
     <div class="card">
 
@@ -46,7 +47,7 @@
 
     </div>
 </div>
-
+@endif
 <div>
     <strong>
         {{$item->url}}

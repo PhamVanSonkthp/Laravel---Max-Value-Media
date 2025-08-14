@@ -28,8 +28,8 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('job:create_report_adserver')
 //            ->everyMinute();
 //
-//        $schedule->command('job:create_ad_score_check_traffic')
-//            ->everyThreeHours();
+        $schedule->command('job:create_ad_score_check_traffic')
+            ->everyThreeHours();
 //
 //        $schedule->command('email:job_notification')
 //            ->everyMinute();

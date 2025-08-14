@@ -106,8 +106,6 @@ class Formatter extends Model
         $input = $input . "";
 
         if (mb_strlen($input) > ($max + 3)) {
-            //return mb_strtoupper(mb_substr($this->first_name, 0, 1) . mb_substr($this->last_name, 0, 1));
-
             return mb_substr($input, 0, $max) . "...";
         }
         return $input;

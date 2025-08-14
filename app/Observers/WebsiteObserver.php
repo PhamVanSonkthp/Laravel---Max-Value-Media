@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\QueueAdserverUpdateStatusWebsite;
 use App\Models\Website;
 use Carbon\Carbon;
 use function PHPUnit\Framework\isNull;
@@ -33,7 +34,28 @@ class WebsiteObserver
      */
     public function updated(Website $website)
     {
+        if ($website->isDirty('status_website_id')) {
+            QueueAdserverUpdateStatusWebsite::dispatch($website);
 
+            if ($website->status_website_id != 2){
+                $this->turnOfZone($website);
+            }
+        }
+    }
+
+    private function turnOfZone($website){
+        if ($website->status_website_id == 3){
+            $zones = $website->zoneWebsiteNotTraffics;
+        }else{
+            $zones = $website->zoneWebsites;
+        }
+
+        foreach ($zones as $zone){
+            if ($zone->zone_status_id == 2){
+                $zone->zone_status_id = 4;
+                $zone->save();
+            }
+        }
     }
 
     /**
@@ -44,7 +66,7 @@ class WebsiteObserver
      */
     public function deleted(Website $website)
     {
-        //
+        $this->turnOfZone($website);
     }
 
     /**

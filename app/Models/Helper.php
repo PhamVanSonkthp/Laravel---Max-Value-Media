@@ -105,7 +105,213 @@ class Helper extends Model
         $columns = Schema::getColumnListing($object->getTableName());
         $query = $object->query();
 
-        $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name','url'];
+        $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name'];
+        $searchColumnBanned = ['limit', 'page', 'with_trashed'];
+
+        if ($request){
+            foreach ($request->all() as $key => $item) {
+                if (is_string($item)) {
+                    $item = trim($item);
+                }
+
+                if (in_array($key, $searchColumnBanned)) {
+                    continue;
+                }
+
+                if (in_array($key, $searchLikeColumns)) {
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->where(function ($query) use ($item, $columns, $searchLikeColumns, $object) {
+                            foreach ($searchLikeColumns as $searchColumn) {
+                                if (in_array($searchColumn, $columns)) {
+                                    $query->orWhere(self::getTableName($object) . '.' . $searchColumn, 'LIKE', "%{$item}%");
+                                }
+                            }
+                        });
+                    }
+                } else if ($key == "start" || $key == "from" || $key == "begin") {
+                    if (in_array("date", $columns)) {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.date', '>=', $item);
+                        }
+                    } else {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.created_at', '>=', $item);
+                        }
+                    }
+                } else if ($key == "end" || $key == "to") {
+                    if (in_array("date", $columns)) {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.date', '<=', $item);
+                        }
+                    } else {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.created_at', '<=', $item);
+                        }
+                    }
+                } else {
+                    if (!in_array($key, $columns)) {
+                        continue;
+                    }
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->where($object->getTableName() . "." . $key, $item);
+                    }
+                }
+            }
+        }
+
+
+        if (is_array($queries)) {
+            foreach ($queries as $key => $item) {
+                if (is_string($item)) {
+                    $item = trim($item);
+                }
+
+                if (in_array($key, $searchColumnBanned)) {
+                    continue;
+                }
+
+                if (in_array($key, $searchLikeColumns)) {
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->where(function ($query) use ($item, $columns, $searchLikeColumns) {
+                            foreach ($searchLikeColumns as $searchColumn) {
+                                if (in_array($searchColumn, $columns)) {
+                                    $query->orWhere($searchColumn, 'LIKE', "%{$item}%");
+                                }
+                            }
+                        });
+                    }
+                } else if ($key == "start" || $key == "from" || $key == "begin") {
+                    if (in_array("date", $columns)) {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.date', '>=', $item);
+                        }
+                    } else {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.created_at', '>=', $item);
+                        }
+                    }
+                } else if ($key == "end" || $key == "to") {
+                    if (in_array("date", $columns)) {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.date', '<=', $item);
+                        }
+                    } else {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.created_at', '<=', $item);
+                        }
+                    }
+                } else {
+                    if (!in_array($key, $columns)) {
+                        continue;
+                    }
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->where($key, $item);
+                    }
+                }
+            }
+
+            foreach ($queries as $key => $item) {
+                if (is_string($item)) {
+                    $item = trim($item);
+                }
+
+                if ($key == 'with_trashed' && $item == true) {
+                    $query = $query->withTrashed();
+                    break;
+                }
+            }
+        }
+
+        if (isset($request->filter) && !empty($request->filter)) {
+            $filter = $request->filter;
+
+            $filter = str_replace("[", "", $filter);
+            $filter = str_replace("]", "", $filter);
+
+            $values = explode(",", $filter);
+
+            foreach ($values as $value) {
+                if (count(explode("=", $value)) > 1) {
+                    $key = explode("=", $value)[0];
+                    $val = explode("=", $value)[1];
+
+                    if (in_array($key, $columns) && !empty($val)) {
+                        $query->orderBy($key, $val);
+                    }
+                }
+            }
+        }
+
+        if ($random_record) {
+            $query = $query->inRandomOrder();
+        }
+
+        if ($request && $request->trash) {
+            if (in_array('deleted_at', $columns)) {
+                $query = $query->onlyTrashed();
+            } else {
+                $query = $query->where('id', -1);
+            }
+        }
+
+        if ($is_custom) {
+            return $query;
+        }
+
+        if (in_array("priority", $columns)) {
+            $query = $query->orderBy('priority', 'DESC');
+        }
+
+        $items = $query->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+
+        if (!empty($make_hiddens) && is_array($make_hiddens)) {
+            foreach ($items as $item) {
+                $item->makeHidden($make_hiddens)->toArray();
+            }
+        }
+        return $items;
+    }
+
+    public static function roundDown($decimal, $precision)
+    {
+        $sign = $decimal > 0 ? 1 : -1;
+        $base = pow(10, $precision);
+        return floor(abs($decimal) * $base) / $base * $sign;
+    }
+
+    public static function getValueInFilterReuquest($key_request)
+    {
+
+        $request = request();
+        if (isset($request->filter) && !empty($request->filter)) {
+            $filter = $request->filter;
+
+            $filter = str_replace("[", "", $filter);
+            $filter = str_replace("]", "", $filter);
+
+            $values = explode(",", $filter);
+
+            foreach ($values as $value) {
+                if (count(explode("=", $value)) > 1) {
+                    $key = explode("=", $value)[0];
+                    $val = explode("=", $value)[1];
+
+                    if ($key == $key_request) {
+                        return $val;
+                    }
+                }
+            }
+        }
+
+        return "";
+    }
+
+    public static function searchAllByQuery($object, $request, $queries = [])
+    {
+        $columns = Schema::getColumnListing($object->getTableName());
+        $query = $object->query();
+
+        $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name'];
         $searchColumnBanned = ['limit', 'page', 'with_trashed'];
 
         foreach ($request->all() as $key => $item) {
@@ -227,9 +433,6 @@ class Helper extends Model
             }
         }
 
-        if ($random_record) {
-            $query = $query->inRandomOrder();
-        }
 
         if ($request->trash) {
             if (in_array('deleted_at', $columns)) {
@@ -239,130 +442,16 @@ class Helper extends Model
             }
         }
 
-        if ($is_custom) {
-            return $query;
-        }
 
         if (in_array("priority", $columns)) {
             $query = $query->orderBy('priority', 'DESC');
         }
 
-        $items = $query->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+        $items = $query->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC');
 
         if (!empty($make_hiddens) && is_array($make_hiddens)) {
             foreach ($items as $item) {
                 $item->makeHidden($make_hiddens)->toArray();
-            }
-        }
-        return $items;
-    }
-
-    public static function getValueInFilterReuquest($key_request)
-    {
-
-        $request = request();
-        if (isset($request->filter) && !empty($request->filter)) {
-            $filter = $request->filter;
-
-            $filter = str_replace("[", "", $filter);
-            $filter = str_replace("]", "", $filter);
-
-            $values = explode(",", $filter);
-
-            foreach ($values as $value) {
-                if (count(explode("=", $value)) > 1) {
-                    $key = explode("=", $value)[0];
-                    $val = explode("=", $value)[1];
-
-                    if ($key == $key_request) {
-                        return $val;
-                    }
-                }
-            }
-        }
-
-        return "";
-    }
-
-    public static function searchAllByQuery($object, $request, $queries = [])
-    {
-        $columns = Schema::getColumnListing($object->getTableName());
-        $query = $object->query();
-
-        $searchLikeColumns = ['name', 'title'];
-        $searchColumnBanned = ['limit', 'page', 'with_trashed'];
-
-        foreach ($request->all() as $key => $item) {
-            if (is_string($item)) {
-                $item = trim($item);
-            }
-            if ($key == "search_query") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->where(function ($query) use ($item, $columns, $searchLikeColumns) {
-                        foreach ($searchLikeColumns as $searchColumn) {
-                            if (in_array($searchColumn, $columns)) {
-                                $query->orWhere($searchColumn, 'LIKE', "%{$item}%");
-                            }
-                        }
-                    });
-                }
-            } else if ($key == "gender_id") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->where('gender_id', $item);
-                }
-            } else if ($key == "start" || $key == "from") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->whereDate('created_at', '>=', $item);
-                }
-            } else if ($key == "end" || $key == "to") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->whereDate('created_at', '<=', $item);
-                }
-            }
-        }
-
-        foreach ($queries as $key => $item) {
-            if (is_string($item)) {
-                $item = trim($item);
-            }
-
-            if (in_array($key, $searchColumnBanned)) {
-                continue;
-            }
-
-            if ($key == "search_query") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->where(function ($query) use ($item) {
-                        $query->orWhere('name', 'LIKE', "%{$item}%");
-                    });
-                }
-            } else if ($key == "gender_id") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->where('gender_id', $item);
-                }
-            } else if ($key == "start" || $key == "from") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->whereDate('created_at', '>=', $item);
-                }
-            } else if ($key == "end" || $key == "to") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->whereDate('created_at', '<=', $item);
-                }
-            } else {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->where($key, $item);
-                }
-            }
-        }
-
-        foreach ($queries as $key => $item) {
-            if (is_string($item)) {
-                $item = trim($item);
-            }
-
-            if ($key == 'with_trashed' && $item == true) {
-                $query = $query->withTrashed();
-                break;
             }
         }
 
@@ -636,7 +725,7 @@ class Helper extends Model
 
     public static function hoursBetweenTwoDates($begin, $end)
     {
-        return round((strtotime($begin) - strtotime($end))/3600, 1);
+        return round((strtotime($begin) - strtotime($end)) / 3600, 1);
     }
 
     public static function getUUID()
@@ -842,12 +931,12 @@ class Helper extends Model
     public static function distanceTwoCoordinates($lat1, $lon1, $lat2, $lon2, $unit = "M")
     {
 
-        $lat1 = (float) $lat1;
-        $lon1 = (float) $lon1;
-        $lat2 = (float) $lat2;
-        $lon2 = (float) $lon2;
+        $lat1 = (float)$lat1;
+        $lon1 = (float)$lon1;
+        $lat2 = (float)$lat2;
+        $lon2 = (float)$lon2;
         $theta = $lon1 - $lon2;
-        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
         $dist = acos($dist);
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
@@ -858,7 +947,7 @@ class Helper extends Model
         } else if ($unit == "N") {
             return ($miles * 0.8684);
         } else {
-            return round($miles * 1.609344) * 1000 ;
+            return round($miles * 1.609344) * 1000;
         }
     }
 }

@@ -39,37 +39,28 @@
 <script>
 
     function onChangeID{{$randomID}}() {
-        showToastLoading("Updating status zone...");
-        processUpdateStatusZone{{$randomID}}({{$item->id}});
-    }
-
-    function processUpdateStatusZone{{$randomID}}(id) {
         callAjax(
             "PUT",
-            "{{route('ajax.administrator.zone_websites.update_status')}}",
+            "{{route('ajax.administrator.model.update_field')}}",
             {
-                'id': id,
-                'zone_status_id': $('#select_change_{{$randomID}}').val(),
+                'id': '{{$item->id}}',
+                '{{$field}}': $('#select_change_{{$randomID}}').val(),
+                'model': '{{$item->getTableName()}}',
             },
             (response) => {
-                if (response.code == 219) {
-                    setTimeout(processUpdateStatusZone{{$randomID}}(id), 5000);
-                } else {
-                    hideAllToast()
-                    if (response.is_success) {
-                        $('#label_{{$randomID}}').html($('#select_change_{{$randomID}}').find(':selected').text())
-                        hideModal('model_change_id_{{$randomID}}')
-                        showToastSuccess('Status changed!');
-                    } else {
-                        showToastError(response.message);
-                    }
-                }
+                $('#label_{{$randomID}}').html($('#select_change_{{$randomID}}').find(':selected').text())
+                hideModal('model_change_id_{{$randomID}}')
+                showToastSuccess()
             },
             (error) => {
 
             },
-            false
+            true,
         )
+    }
+
+    function processUpdateStatusZone{{$randomID}}(id) {
+
     }
 
     function onShowModalChangeID{{$randomID}}(e){

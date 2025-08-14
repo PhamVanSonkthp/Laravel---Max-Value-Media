@@ -59,8 +59,9 @@ class QueueAdserverCreateWebsite implements ShouldQueue
             'name' => $this->name,
             'url' => $this->url,
             'idcategory' => $this->categoryWebsite->adserver_id,
-            'idpublisher' => $this->user->adserver_id,
+            'idpublisher' => config('_my_config.default_idpublisher'),
             'idstatus' => $this->statusWebsite->adserver_id,
+            'is_active' => $this->statusWebsite->id == 2,
         ];
 
         $result = [];
@@ -70,7 +71,7 @@ class QueueAdserverCreateWebsite implements ShouldQueue
         if ($response['is_success']) {
             $website = Website::create([
                 'user_id' => $this->user->id,
-                'manager_id' => 0,
+                'manager_id' => $this->user->manager_id,
                 'url' => $this->url,
                 'category_website_id' => $this->categoryWebsite->id,
                 'status_website_id' => $this->statusWebsite->id,
