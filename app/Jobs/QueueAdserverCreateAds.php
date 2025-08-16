@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class QueueAdserverCreateAds implements ShouldQueue
 {
@@ -60,7 +61,7 @@ class QueueAdserverCreateAds implements ShouldQueue
         $idInjectionType = config('_my_config.idinjectiontypes.DIRECT_INJECTION');
         $contentHTML = null;
 
-        if (optional(optional($this->zoneWebsite)->zoneDimension)->zone_dimension_type_id != 2){
+        if (optional(optional($this->zoneWebsite)->zoneDimension)->zone_dimension_type_id != 1){
             $contentHTML = '<script></script>';
         }else{
             $contentHTML = $this->zoneWebsite->gam_code;
