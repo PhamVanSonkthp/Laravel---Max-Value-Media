@@ -31,7 +31,7 @@
                         <div class="bd-clipboard">
                         </div>
                         <div class="col-12 highlight">
-                            <textarea class="form-control" id="textNormalG" rows="8" placeholder="Code ..." readonly>{!! $zoneWebsite->code_normal !!}</textarea>
+                            <textarea class="form-control" id="textNormalG" rows="8" placeholder="Code ..." readonly>{!! $zoneWebsite->gam_code ?? $zoneWebsite->code_normal !!}</textarea>
                         </div>
                         <div class="text-center">
                             <button class="btn btn-outline-primary" onclick="copyCode('textNormalG')">

@@ -106,5 +106,31 @@ trait AdserverTrait
         }
     }
 
+    public function callDeleteHTTP($url, $raw = [])
+    {
+        $this->init();
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $this->token,
+        ];
 
+        $response = Http::withHeaders($headers)->timeout(config('_my_config.timeout_request_api'))
+            ->send('DELETE', $this->urlApi . $url, [
+                'body' => json_encode($raw)
+            ]);
+
+        if ($response->successful()) {
+            return [
+                'is_success' => true,
+                'status' => $response->status(),
+                'data' => $response->json()
+            ];
+        } else {
+            return [
+                'is_success' => false,
+                'status' => $response->status(),
+                'data' => $response->body()
+            ];
+        }
+    }
 }

@@ -19,7 +19,7 @@
 
         <div class="col-md-3">
             <div>
-                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'user_id' , 'label' => 'Publisher', 'url' => route('ajax.administrator.model.search', ['is_admin' => 0]), 'model' => 'users'])
+                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'id' , 'label' => 'Publisher', 'url' => route('ajax.administrator.model.search', ['is_admin' => 0]), 'model' => 'users'])
             </div>
         </div>
 

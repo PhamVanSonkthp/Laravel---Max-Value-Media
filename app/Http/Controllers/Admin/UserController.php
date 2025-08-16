@@ -42,12 +42,13 @@ class UserController extends Controller
         $items = $this->model->searchByQuery($request, ['is_admin' => 0], null,null,true);
         if ($request->is_verify == 1){
             $items = $items->whereNotNull('email_verified_at');
-        }
-        if ($request->is_verify == 2){
+        }else if ($request->is_verify == 2){
             $items = $items->whereNull('email_verified_at');
         }
         if ($request->is_balance == 1){
             $items = $items->where('amount', ">", 0);
+        }else if ($request->is_balance == 2){
+            $items = $items->where('amount', 0);
         }
         if ($request->website_id){
             $items = $items->select('users.*')->join('websites', 'websites.user_id', '=', 'users.id')
@@ -55,10 +56,9 @@ class UserController extends Controller
         }
         if ($request->status_website_id){
             if (empty($request->website_id)){
-                $items = $items->select('users.*')->join('websites', 'websites.user_id', '=', 'users.id')
-                    ->where('websites.id', $request->website_id);
+                $items = $items->select('users.*')->join('websites', 'websites.user_id', '=', 'users.id');
             }
-            $items = $items->where('status_website_id',$request->status_website_id);
+            $items = $items->where('websites.status_website_id',$request->status_website_id);
         }
 
         $items = $items->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
@@ -66,7 +66,7 @@ class UserController extends Controller
         $managers = (new User())->where(['is_admin' => 1])->get();
         $userStatus = (new UserStatus())->get();
         $statusWebsite = (new StatusWebsite())->get();
-        $isBalances = [new Balance(1,"Yes")];
+        $isBalances = [new Balance(1,"Yes"), new Balance(2,"No")];
         $isVerifies = [new Balance(1,"Yes"), new Balance(2,"No")];
 
         return view('administrator.' . $this->prefixView . '.index', compact('items','managers','userStatus','statusWebsite','isBalances','isVerifies'));

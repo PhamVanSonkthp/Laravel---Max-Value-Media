@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use App\Jobs\QueueAdserverDeleteZone;
 use App\Jobs\QueueAdserverUpdateStatusZone;
+use App\Jobs\QueueAdserverUpdateZone;
 use App\Models\Helper;
 use App\Models\ZoneWebsite;
 
@@ -42,6 +44,11 @@ class ZoneWebsiteObserver
                 $adScore->save();
             }
         }
+
+
+        if ($zoneZoneWebsite->isDirty('width') || $zoneZoneWebsite->isDirty('height')) {
+            QueueAdserverUpdateZone::dispatch($zoneZoneWebsite);
+        }
     }
 
     /**
@@ -52,13 +59,12 @@ class ZoneWebsiteObserver
      */
     public function deleted(ZoneWebsite $zoneZoneWebsite)
     {
-        QueueAdserverUpdateStatusZone::dispatch(Helper::randomString(), $zoneZoneWebsite, 3);
-
         $adScore = $zoneZoneWebsite->adScore;
         if ($adScore){
             $adScore->ad_score_zone_status_id = 2;
             $adScore->save();
         }
+        QueueAdserverDeleteZone::dispatch($zoneZoneWebsite);
     }
 
     /**

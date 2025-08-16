@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\QueueAdserverUpdateAdsCampaign;
 use App\Models\AdsCampaign;
 use Carbon\Carbon;
 use function PHPUnit\Framework\isNull;
@@ -36,7 +37,9 @@ class AdsCampaignObserver
      */
     public function updated(AdsCampaign $adsCampaign)
     {
-
+        if ($adsCampaign->isDirty('content_html')) {
+            QueueAdserverUpdateAdsCampaign::dispatch($adsCampaign);
+        }
     }
 
     /**

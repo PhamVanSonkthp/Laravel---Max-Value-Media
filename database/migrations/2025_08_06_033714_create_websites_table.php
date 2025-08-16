@@ -26,8 +26,10 @@ class CreateWebsitesTable extends Migration
             $table->bigInteger('status_website_id');
             $table->bigInteger('adserver_id');
             $table->bigInteger('ads_status_website_id')->default(1);
+            $table->bigInteger('ads_gam_status_websites')->default(1);
             $table->text('note')->nullable();
             $table->text('ads')->nullable();
+            $table->text('ads_compared')->nullable();
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);

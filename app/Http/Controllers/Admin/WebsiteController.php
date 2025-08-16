@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Jobs\QueueGAMCreateAdUnit;
+use App\Models\Formatter;
 use App\Models\StatusWebsite;
 use App\Models\User;
 use App\Models\Website;
@@ -14,6 +15,7 @@ use App\Models\Audit;
 use App\Models\Helper;
 use App\Traits\BaseControllerTrait;
 use App\Exports\ModelExport;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\View;
@@ -34,12 +36,37 @@ class WebsiteController extends Controller
 
     public function index(Request $request)
     {
-        $items = $this->model->searchByQuery($request);
+
+        $items = $this->model->searchByQuery($request, [], null, null, true);
+
+        if ($request->zone_website_id) {
+            $items = $this->websiteJoinZone($items, $request->zone_website_id);
+        }
+
+        if ($request->zone_status_id) {
+            if (empty($request->zone_website_id)) {
+                $items = $this->websiteJoinZone($items, $request->zone_website_id, false);
+            }
+            $items = $items->where('zone_websites.zone_status_id', $request->zone_status_id);
+        }
+
+        $items = $items->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+
         $statusWebsites = StatusWebsite::all();
         $zoneStatuses = ZoneStatus::all();
         $managers = User::where(['is_admin' => 1])->get();
 
-        return view('administrator.' . $this->prefixView . '.index', compact('items', 'statusWebsites','zoneStatuses','managers'));
+        return view('administrator.' . $this->prefixView . '.index', compact('items', 'statusWebsites', 'zoneStatuses', 'managers'));
+    }
+
+    private function websiteJoinZone($query, $zone_website_id, $is_where = true)
+    {
+        $query = $query->select('websites.*')
+            ->join('zone_websites', 'zone_websites.website_id', '=', 'websites.id');
+        if ($is_where) {
+            $query = $query->where('zone_websites.id', $zone_website_id);
+        }
+        return $query;
     }
 
     public function get(Request $request, $id)

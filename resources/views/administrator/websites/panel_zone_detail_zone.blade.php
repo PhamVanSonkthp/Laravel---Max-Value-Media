@@ -2,7 +2,9 @@
     <div class="col-xl-6 col-12">
         <div class="card">
             <div class="card-header">
-                Website
+                <h3>
+                    Website
+                </h3>
             </div>
 
             <div class="card-body">
@@ -39,7 +41,8 @@
                     </div>
 
                     <div class="col-8">
-                        <span class="{{$item->website->status_website_id == 2 ? 'badge bg-success' : 'badge bg-success'}}">
+                        <span
+                            class="{{$item->website->status_website_id == 2 ? 'badge bg-success' : 'badge bg-success'}}">
                             {{$item->website->status_website_id == 2 ? 'Active' : 'In Active'}}
                         </span>
                     </div>
@@ -50,7 +53,7 @@
                     </div>
 
                     <div class="col-8">
-                        @include('administrator.components.require_select2', ['name' => 'status_website_id', 'select2Items' => $websiteStatus, 'modal_id' => 'modal_panel_zone_detail_zone'])
+                        {{optional(optional($item->website)->statusWebsite)->name}}
                     </div>
                 </div>
                 <div class="row">
@@ -88,7 +91,7 @@
     <div class="col-xl-6 col-12">
         <div class="card">
             <div class="card-header">
-                Zone
+                <h3>Zone</h3>
             </div>
 
             <div class="card-body">
@@ -127,7 +130,7 @@
                     </div>
 
                     <div class="col-8">
-                        @include('administrator.components.require_select2', ['name' => 'zone_status_id', 'select2Items' => $zoneStatus, 'modal_id' => 'modal_panel_zone_detail_zone'])
+                        {{optional($item->zoneStatus)->name}}
                     </div>
                 </div>
                 <div class="row">
@@ -139,22 +142,7 @@
 
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-4">
-                        Custom size:
-                    </div>
 
-                    <div class="col-8">
-                        <div class="row">
-                            <div class="col-6">
-                                @include('administrator.components.input_text', ['label' => 'Width', 'name' => 'width', 'item' => $item])
-                            </div>
-                            <div class="col-6">
-                                @include('administrator.components.input_text', ['label' => 'Height', 'name' => 'height', 'item' => $item])
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col-4">
                         Created by:
@@ -173,6 +161,24 @@
                         {{\App\Models\Formatter::getDateTime($item->created_at)}}
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        Custom size:
+                    </div>
+
+                    <div class="col-8">
+                        <div class="row">
+                            <div class="col-6">
+                                @include('administrator.components.input_text', ['id'=>'panel_zone_detail_zone_input_width_' . $item->id, 'label' => 'Width', 'name' => 'width', 'item' => $item])
+                            </div>
+                            <div class="col-6">
+                                @include('administrator.components.input_text', ['id'=>'panel_zone_detail_zone_input_height_' . $item->id, 'label' => 'Height', 'name' => 'height', 'item' => $item])
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -182,100 +188,56 @@
 <div>
     <div class="card">
         <div class="card-header">
-            Campaign Info
+            <h3>
+                Campaign Info
+            </h3>
         </div>
 
         <div class="card-body">
 
-            <div class="accordion">
-                <div class="accordion-item">
-                    <div class="accordion-header">
-{{--                        <div class="row">--}}
-{{--                            <div class="col-6">--}}
-{{--                                <h4>--}}
-{{--                                    ID: xxxx | xxxx--}}
-{{--                                </h4>--}}
-{{--                            </div>--}}
-
-{{--                            <div class="col-6">--}}
-{{--                                <h4 class="text-end">--}}
-{{--                                    xxxx--}}
-{{--                                </h4>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-
-                        <div class="row mt-3">
-                            <div class="col-4">
-                                <ul>
-                                    <li>
-                                        Status:
-                                    </li>
-                                    <li>
-                                        Auto Enable Logo:
-                                    </li>
-                                    <li>
-                                        Default Logo Maxvalue
-                                    </li>
-                                    <li>
-                                        Responsive layout:
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="col-4">
-                                <div>
-                                    Frequency capping
-                                </div>
-                                <ul>
-                                    <li>
-                                        Counter type:
-                                    </li>
-                                    <li>
-                                        Limit:
-                                    </li>
-                                    <li>
-                                        Time interval:
-                                    </li>
-                                    <li>
-                                        Mode:
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="col-4">
-                                <div>
-                                    Geo
-                                </div>
-                                <ul>
-                                    <li>
-                                        Exclude:
-                                    </li>
-                                </ul>
-                                <div>
-                                    Device
-                                </div>
-                                <ul>
-                                    <li>
-                                        Include:
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panel_zone_detail_zone_collapse" aria-expanded="false" aria-controls="panel_zone_detail_zone_collapse">
-                            More...
-                        </button>
-                    </div>
-                    <div id="panel_zone_detail_zone_collapse" class="accordion-collapse collapse" aria-labelledby="panel_zone_detail_zone_collapse" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-
-
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col-xl-6 col-12">
+                    @include('administrator.components.require_textarea', ['id' => 'panel_zone_detail_zone_input_content_html_' . $item->id,'name' => 'content_html', 'label' => 'Html/Javascript code', 'item' => $item->adsCampaign])
                 </div>
+
+                <div class="col-xl-6 col-12">
+                    @include('administrator.components.textarea', ['id' => 'panel_zone_detail_zone_input_generate_code_' . $item->id, 'name' => 'generate_code', 'label' => 'Pixel HTML', 'item' => $item->adScore])
+                </div>
+
             </div>
 
+
+        </div>
+
+        <div class="card-footer">
+            <div class="float-end">
+                <button class="btn btn-primary mt-3" onclick="onSaveZoneAndCampaign{{$item->id}}()">Save</button>
+            </div>
         </div>
 
     </div>
 </div>
+
+<script>
+
+
+    function onSaveZoneAndCampaign{{$item->id}}() {
+        callAjax(
+            "PUT",
+            "{{route('ajax.administrator.zone_websites.update_zone_and_campaign')}}",
+            {
+                id: {{$item->id}},
+                width: $('#panel_zone_detail_zone_input_width_{{$item->id}}').val(),
+                height: $('#panel_zone_detail_zone_input_height_{{$item->id}}').val(),
+                content_html: $('#panel_zone_detail_zone_input_content_html_{{$item->id}}').val(),
+                generate_code: $('#panel_zone_detail_zone_input_generate_code_{{$item->id}}').val(),
+            },
+            (response) => {
+                showToastSuccess("Save!")
+            },
+            (error) => {
+
+            }
+        )
+    }
+</script>

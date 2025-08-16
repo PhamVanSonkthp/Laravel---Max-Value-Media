@@ -195,6 +195,34 @@ Route::prefix('ajax/administrator')->group(function () {
 
             })->name('ajax.administrator.zone_websites.update_status');
 
+            Route::put('update_zone_and_campaign', function (Request $request) {
+                $request->validate([
+                    'width' => 'required',
+                    'height' => 'required',
+                    'content_html' => 'required',
+                ]);
+
+                $zoneWebsite = ZoneWebsite::findOrFail($request->id);
+
+                $zoneWebsite->width = $request->width;
+                $zoneWebsite->height = $request->height;
+                $zoneWebsite->save();
+
+                $adsCampaign = $zoneWebsite->adsCampaign;
+                if ($adsCampaign){
+                    $adsCampaign->content_html = $request->content_html;
+                    $adsCampaign->save();
+                }
+
+                $adScore = $zoneWebsite->adScore;
+                if ($adScore){
+                    $adScore->generate_code = $request->generate_code;
+                    $adScore->save();
+                }
+
+
+            })->name('ajax.administrator.zone_websites.update_zone_and_campaign');
+
             Route::delete('delete', function (Request $request) {
 
                 $zoneWebsite = ZoneWebsite::findOrFail($request->zone_website_id);

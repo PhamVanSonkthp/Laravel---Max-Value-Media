@@ -38,7 +38,7 @@
 
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
     <td>
-        <a href="" title="Report" class="btn btn-outline-primary btn-sm">
+        <a href="{{route('administrator.reports.index', ['user_id' => $item->id])}}" title="Report" class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-chart-line"></i>
         </a>
         <a href="" title="Impersonate" class="btn btn-outline-primary btn-sm">

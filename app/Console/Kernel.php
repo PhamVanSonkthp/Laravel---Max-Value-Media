@@ -22,21 +22,24 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command('job:create_report_demands')
-            ->everyMinute();
+        $schedule->command('job:create_check_ads_website')
+            ->everyFiveMinutes()->withoutOverlapping();
 
-//        $schedule->command('job:create_report_adserver')
-//            ->everyMinute();
-//
+        $schedule->command('job:create_report_demands')
+            ->everyMinute()->withoutOverlapping();
+
+        $schedule->command('job:create_report_adserver')
+            ->hourly()->withoutOverlapping();
+
         $schedule->command('job:create_ad_score_check_traffic')
-            ->everyThreeHours();
-//
-//        $schedule->command('email:job_notification')
-//            ->everyMinute();
-//
-//        $schedule->command('email:job_email')
-//            ->everyMinute();
-//
+            ->everyThreeHours()->withoutOverlapping();
+
+        $schedule->command('email:job_notification')
+            ->everyMinute()->withoutOverlapping();
+
+        $schedule->command('email:job_email')
+            ->everyMinute()->withoutOverlapping();
+
 //        $schedule->command('cache:clear-expired')
 //            ->timezone('Asia/Ho_Chi_Minh')
 //            ->dailyAt('00:00');

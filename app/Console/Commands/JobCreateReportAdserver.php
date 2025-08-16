@@ -130,45 +130,14 @@ class JobCreateReportAdserver extends Command
                 $zoneWebsite = ZoneWebsite::where('adserver_id',$datum['iddimension_2'])->first();
                 $website = optional($zoneWebsite)->website;
 
-                if (empty($website)){
-                    $website = Website::create([
-                        'name' => 'unknown',
-                        'user_id' => 0,
-                        'url' => "https://unknown.com",
-                        'category_website_id' => 1,
-                        'status_website_id' => 1,
-                        'adserver_id' => 0,
-                    ]);
-                }
+                if (empty($website) || empty($zoneWebsite)) continue;
 
-                if (empty($zoneWebsite)){
-                    $zoneWebsite = ZoneWebsite::create([
-                        'name' => 'unknown',
-                        'website_id' => $website->id,
-                        'adserver_id' => $datum['iddimension_2'],
-                        'zone_dimension_id' => 1,
-                        'zone_status_id' => 1,
-                    ]);
-                }
-
-                $report = Report::updateOrCreate([
+                $report = Report::where([
                     'website_id' => $website->id,
                     'user_id' => $website->user_id,
                     'zone_website_id' => $zoneWebsite->id,
-                    'demand_id' => 1,
                     'date' => $datum['dimension'],
-                ],[
-                    'website_id' => $website->id,
-                    'user_id' => $website->user_id,
-                    'zone_website_id' => $zoneWebsite->id,
-                    'demand_id' => 1,
-                    'date' => $datum['dimension'],
-                    'd_request' => $datum['requests'],
-                    'd_requests_empty' => $datum['requests_empty'],
-                    'd_impression' => $datum['impressions'],
-                    'd_impressions_unique' => $datum['impressions_unique'],
-                    'd_ecpm' => round(floatval($datum['cpm']), 2),
-                    'd_revenue' => round(floatval($datum['amount']), 2),
+                ])->update([
                     'trafq' => $datum['trafq'],
                 ]);
 

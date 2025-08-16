@@ -6,7 +6,7 @@
     }
 
     if(!isset($height)){
-        $height = 500;
+        $height = 200;
     }
 @endphp
 

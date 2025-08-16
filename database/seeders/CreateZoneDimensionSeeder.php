@@ -21,7 +21,8 @@ class CreateZoneDimensionSeeder extends Seeder
             "code" => "B-Stickyads",
             "width" => "1",
             "height" => "1",
-            "group_zone_dimension_id" => 4
+            "group_zone_dimension_id" => 4,
+            "zone_dimension_type_id" => 2,
         ]);
 
         ZoneDimension::firstOrCreate([
@@ -356,6 +357,16 @@ class CreateZoneDimensionSeeder extends Seeder
             "width" => "1",
             "height" => "1",
             "group_zone_dimension_id" => 1,
+            "zone_dimension_type_id" => 2,
+        ]);
+
+        ZoneDimension::firstOrCreate([
+            "name" => "Demand",
+            "code" => "Demand",
+            "width" => "auto",
+            "height" => "auto",
+            "group_zone_dimension_id" => 2,
+            "zone_dimension_type_id" => 3,
         ]);
 
 

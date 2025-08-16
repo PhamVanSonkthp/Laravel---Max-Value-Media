@@ -63,9 +63,10 @@ class QueueAdserverCreateZone implements ShouldQueue
         foreach ($this->dimensionIDs as $dimension_id){
             $zoneDimension = ZoneDimension::find($dimension_id);
 
-            $this->name = empty($this->name) ? $zoneDimension->name : $this->name;
+            $nameZone = $this->website->name . " " . (empty($this->name) ? $zoneDimension->name : $this->name);
+
             $params = [
-                'name' => $this->name,
+                'name' => $nameZone,
                 'is_active' => $this->zoneStatusID != 4,
                 'idstatus' => $this->zoneStatus->adserver_id,
                 'idzoneformat' => config('_my_config.default_idzoneformat'),
@@ -82,10 +83,12 @@ class QueueAdserverCreateZone implements ShouldQueue
             if ($response['is_success']) {
                 $paramCreateZoneWebsite = [
                     'website_id' => $this->websiteID,
-                    'name' => $this->name,
+                    'name' => $nameZone,
                     'zone_dimension_id' => $dimension_id,
                     'zone_status_id' => $this->zoneStatusID,
                     'adserver_id' => $response['data']['id'],
+                    'height' => $zoneDimension->height,
+                    'width' => $zoneDimension->width,
                 ];
 
                 if (count($response['data']['code']) > 0){
@@ -111,14 +114,11 @@ class QueueAdserverCreateZone implements ShouldQueue
                 $zoneWebsite = ZoneWebsite::create($paramCreateZoneWebsite);
                 $result['zone_ids'][] = $zoneWebsite->id;
 
-                if ($zoneDimension->id == config('_my_config.verify_zone_dimension_id')){
+                if ($zoneDimension->zone_dimension_type_id == 1){
+                    QueueGAMCreateAdUnit::dispatch($zoneWebsite, $this->website);
+                }else{
                     QueueAdserverCreateCampaign::dispatch($zoneWebsite, $this->website);
                 }
-                if ($zoneWebsite->zone_status_id == 2 && $zoneDimension->id != config('_my_config.verify_zone_dimension_id')){
-                    QueueGAMCreateAdUnit::dispatch($zoneWebsite, $this->website);
-                }
-
-
             } else {
                 $result['is_success'] = false;
                 Cache::put($this->keyCache, $result, config('_my_config.cache_time_api'));

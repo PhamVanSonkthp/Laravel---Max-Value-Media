@@ -55,6 +55,8 @@ return [
     ],
     'url_ads' => "https://maxvalue.media/",
 
+    'ads_text_gam' => "google.com, pub-7926125525911862, DIRECT, f08c47fec0942fa0",
+
     'timeout_request_api' => 60,
     'cache_time_api' => 500,
     'default_avatar' => null,

@@ -60,7 +60,7 @@ class QueueAdserverCreateAds implements ShouldQueue
         $idInjectionType = config('_my_config.idinjectiontypes.DIRECT_INJECTION');
         $contentHTML = null;
 
-        if (optional(optional($this->zoneWebsite)->zoneDimension)->group_zone_dimension_id == 1){
+        if (optional(optional($this->zoneWebsite)->zoneDimension)->zone_dimension_type_id != 2){
             $contentHTML = '<script></script>';
         }else{
             $contentHTML = $this->zoneWebsite->gam_code;

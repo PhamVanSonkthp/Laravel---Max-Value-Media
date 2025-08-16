@@ -27,6 +27,8 @@ class CreateZoneWebsitesTable extends Migration
             $table->text('code_prebid')->nullable();
             $table->text('code_email')->nullable();
             $table->text('gam_code')->nullable();
+            $table->string('width')->nullable();
+            $table->string('height')->nullable();
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);

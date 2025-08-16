@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\AdsCampaign;
+use App\Models\AdScoreZone;
 use App\Models\Image;
 use App\Models\Order;
 use App\Models\ParticipantChat;
@@ -12,6 +13,7 @@ use App\Models\SingleImage;
 use App\Models\Website;
 use App\Models\ZoneWebsite;
 use App\Observers\AdsCampaignObserver;
+use App\Observers\AdScoreZoneObserver;
 use App\Observers\ImageObserver;
 use App\Observers\OrderObserver;
 use App\Observers\ParticipantChatObserver;
@@ -65,5 +67,6 @@ class AppServiceProvider extends ServiceProvider
         AdsCampaign::observe(AdsCampaignObserver::class);
         Website::observe(WebsiteObserver::class);
         ZoneWebsite::observe(ZoneWebsiteObserver::class);
+        AdScoreZone::observe(AdScoreZoneObserver::class);
     }
 }

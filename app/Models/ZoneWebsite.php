@@ -28,7 +28,7 @@ class ZoneWebsite extends Model implements Auditable
 
     public function adsCampaign()
     {
-        return $this->hasOne(AdsCampaign::class, 'id', 'campaign_id');
+        return $this->hasOne(AdsCampaign::class, 'zone_website_id', 'id');
     }
 
     public function adScore()

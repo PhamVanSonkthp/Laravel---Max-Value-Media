@@ -67,6 +67,12 @@
     <div class="row">
 
         <div class="col-md-3">
+            <div>
+                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'user_id' , 'label' => 'Publishers', 'url' => route('ajax.administrator.model.search'), 'model' => 'users'])
+            </div>
+        </div>
+
+        <div class="col-md-3">
             <div class="mt-3">
                 <label>Demands</label>
                 <select name="demand_id" class="form-control select2_init_allow_clear">
