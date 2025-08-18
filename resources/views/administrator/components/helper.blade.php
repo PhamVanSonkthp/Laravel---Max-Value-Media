@@ -19,6 +19,7 @@
         $('.open-jquery-date-range').flatpickr({
             mode: "range",
             dateFormat: "Y-m-d",
+            maxDate: '{{\Carbon\Carbon::today()->toDateString()}}',
             onClose: function (selectedDates, dateStr, instance) {
                 var dateStart = instance.formatDate(selectedDates[0], "{{config('_my_config.type_date')}}");
                 var dateEnd = instance.formatDate(selectedDates[1], "{{config('_my_config.type_date')}}");
@@ -27,7 +28,7 @@
                 input_query_to = dateEnd
             },
             @if(!empty(request('from')) && !empty(request('to')))
-            defaultDate: ["{{request('from')}}", "{{request('to')}}"]
+            defaultDate: ["{{request('from')}}", "{{request('to')}}"],
             @endif
 
         });

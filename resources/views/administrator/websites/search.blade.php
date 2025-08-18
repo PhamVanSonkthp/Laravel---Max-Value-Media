@@ -2,7 +2,7 @@
     @include('administrator.components.search')
 
     @if(!isset($hideCreate))
-        <a href="#" onclick="onShowModalCreateWebsite()" class="btn btn-outline-success float-end" title="Tạo"><i
+        <a onclick="onShowModalCreateWebsite()" class="btn btn-outline-success float-end" title="Tạo"><i
                 class="fa-solid fa-plus"></i></a>
     @endif
 

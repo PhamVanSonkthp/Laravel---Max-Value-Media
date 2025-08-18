@@ -134,3 +134,8 @@ tr th:first-child {
 body{
     padding-right: 0 !important;
 }
+
+.container-fluid > div > div > div .card-header{
+    position: sticky;top: 60px;background-color: white;
+    z-index: 10;
+}
