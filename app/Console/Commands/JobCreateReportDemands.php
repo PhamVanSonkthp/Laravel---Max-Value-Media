@@ -53,6 +53,19 @@ class JobCreateReportDemands extends Command
         $this->getReport($date);
         $date = Carbon::parse($date)->subDay()->toDateString();
         $this->getReport($date);
+
+        $date = Carbon::parse($date)->subDay()->toDateString();
+        $this->getReport($date);
+
+        $date = Carbon::parse($date)->subDay()->toDateString();
+        $this->getReport($date);
+
+        $date = Carbon::parse($date)->subDay()->toDateString();
+        $this->getReport($date);
+
+        $date = Carbon::parse($date)->subDay()->toDateString();
+        $this->getReport($date);
+
     }
 
     private function getReport($date){
@@ -62,14 +75,13 @@ class JobCreateReportDemands extends Command
             'to' => $date,
             'demand_id' => 2,
             'limit' => 1000000,
+            'is_show_all' => true,
         ];
 
         $response = $this->callGetHTTP('api/user/netpub', $params);
 
         if ($response['is_success']){
             foreach ($response['data']['data'] as $datum){
-                $zoneWebsite = ZoneWebsite::where('gam_id',$datum['zone_id'])->first();
-
                 //
 
                 $website = Website::firstOrCreate([
