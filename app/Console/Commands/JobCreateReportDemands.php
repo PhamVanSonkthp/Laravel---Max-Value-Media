@@ -54,18 +54,6 @@ class JobCreateReportDemands extends Command
         $date = Carbon::parse($date)->subDay()->toDateString();
         $this->getReport($date);
 
-        $date = Carbon::parse($date)->subDay()->toDateString();
-        $this->getReport($date);
-
-        $date = Carbon::parse($date)->subDay()->toDateString();
-        $this->getReport($date);
-
-        $date = Carbon::parse($date)->subDay()->toDateString();
-        $this->getReport($date);
-
-        $date = Carbon::parse($date)->subDay()->toDateString();
-        $this->getReport($date);
-
     }
 
     private function getReport($date){
