@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Jobs\QueueAdserverUpdateStatusWebsite;
+use App\Models\Formatter;
 use App\Models\Website;
 use Carbon\Carbon;
 use function PHPUnit\Framework\isNull;
@@ -12,7 +13,8 @@ class WebsiteObserver
 
     public function creating(Website $website)
     {
-        if (empty($website->name)) $website->name = $website->url;
+        $website->url = Formatter::addHttps($website->url);
+        if (empty($website->name)) $website->name = Formatter::removeHttps($website->url);
     }
 
     /**

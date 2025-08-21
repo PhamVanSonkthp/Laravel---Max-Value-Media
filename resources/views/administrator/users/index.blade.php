@@ -52,12 +52,6 @@
                                         </div>
                                     </th>
 
-                                    <th onclick='onSortSearch(`is_verify`, `{{ \App\Models\Helper::getValueInFilterReuquest('is_verify') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('is_verify') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Verified {!! \App\Models\Helper::getValueInFilterReuquest('is_verify') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('is_verify') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-
                                     <th onclick='onSortSearch(`user_status_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('user_status_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('user_status_id') != "desc" ? "desc" : "") }}`)'>
                                         <div>
                                             Active {!! \App\Models\Helper::getValueInFilterReuquest('user_status_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('user_status_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
@@ -110,12 +104,6 @@
                                     <th >
                                         <div>
                                             Websites
-                                        </div>
-                                    </th>
-
-                                    <th onclick='onSortSearch(`is_verify`, `{{ \App\Models\Helper::getValueInFilterReuquest('is_verify') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('is_verify') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Verified {!! \App\Models\Helper::getValueInFilterReuquest('is_verify') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('is_verify') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
 

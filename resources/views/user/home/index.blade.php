@@ -29,10 +29,72 @@
 
 @section('content')
 
-    <div class="text-center mt-5">
-        <h1>
-            Welcome to index
-        </h1>
+    <div>
+
+        <div class="row g-3 justify-content-center">
+            <div class="col-md-6 col-xl-3">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber(0)}}</h3>
+                                <label class="card-title fw-medium text-dark mb-1">Now</label>
+                            </div>
+                            <div class="col-5">
+                                <div id="apexChart1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber(0)}}</h3>
+                                <label class="card-title fw-medium text-dark mb-1">Yesterday</label>
+                            </div>
+                            <div class="col-5">
+                                <div id="apexChart2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber(0)}}</h3>
+                                <label class="card-title fw-medium text-dark mb-1">This Month</label>
+                            </div>
+                            <div class="col-5">
+                                <div id="apexChart3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber(0)}}</h3>
+                                <label class="card-title fw-medium text-dark mb-1">Total Earning</label>
+                            </div>
+                            <div class="col-5">
+                                <div id="apexChart03"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
 @endsection

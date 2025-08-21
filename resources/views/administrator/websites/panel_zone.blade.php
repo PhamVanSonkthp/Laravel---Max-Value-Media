@@ -12,24 +12,55 @@
                 </h2>
                 <div id="panel_zone_collapse" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                        <div class="mt-3">
-                            @include('administrator.components.input_text',['label' => 'Name', 'name' => 'zone_name', 'id' => 'panel_zone_input_zone_name'])
-                        </div>
+                        <div>
+                            <div class="row" style="">
+                                <div class="col-xl-6 col-12">
+                                    @foreach($groupZoneDimensions as $groupZoneDimensionIndex => $groupZoneDimension)
+                                        @if($groupZoneDimensionIndex != 1)
+                                            <div class="group blue">
+                                                <div class="group-title">
+                                                    {{ $groupZoneDimension->name }}
+                                                    <button onclick="panelZoneToggleGroup(this)">Select All</button>
+                                                </div>
+                                                @foreach ($groupZoneDimension->zoneDimensions as $zoneDimension)
 
-                        @include('administrator.components.require_select2',['label' => 'Type', 'name' => 'temple', 'select2Items'=> $zoneTypes])
+                                                    <label class="checkbox-item">
+                                                        <div>
+                                                            <input name="panel_zone_checkbox_dimension" type="checkbox" value="{{ $zoneDimension->id }}">
+                                                            <span class="checkmark"></span>
+                                                            <span class="label-text">{{ $zoneDimension->name }}</span>
+                                                        </div>
+                                                        <input type="number" min="1" value="1">
+                                                    </label>
 
-                        <div class="mt-3">
-                            <label>Dimensions @include('administrator.components.lable_require')</label>
-                            <select id="panel_zone_select_dimensions_id" class="form-control select2_init" required multiple>
-                                @foreach($groupZoneDimensions as $groupZoneDimension)
-
-                                    <optgroup label="{{ $groupZoneDimension->name }}">
-                                        @foreach ($groupZoneDimension->zoneDimensions as $zoneDimension)
-                                            <option value="{{ $zoneDimension->id }}">{{ $zoneDimension->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                @endforeach
-                            </select>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                <div class="col-xl-6 col-12">
+                                    @foreach($groupZoneDimensions as $groupZoneDimensionIndex => $groupZoneDimension)
+                                        @if($groupZoneDimensionIndex == 1)
+                                            <div class="group blue">
+                                                <div class="group-title">
+                                                    {{ $groupZoneDimension->name }}
+                                                    <button onclick="panelZoneToggleGroup(this)">Select All</button>
+                                                </div>
+                                                @foreach ($groupZoneDimension->zoneDimensions as $zoneDimension)
+                                                    <label class="checkbox-item">
+                                                        <div>
+                                                            <input name="panel_zone_checkbox_dimension" type="checkbox" value="{{ $zoneDimension->id }}">
+                                                            <span class="checkmark"></span>
+                                                            <span class="label-text">{{ $zoneDimension->name }}</span>
+                                                        </div>
+                                                        <input type="number" min="1" max="10" maxlength="2" value="1">
+                                                    </label>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mt-3">
@@ -48,11 +79,7 @@
     </div>
 </div>
 @endif
-<div>
-    <strong>
-        {{$item->url}}
-    </strong>
-</div>
+
 <div class="row" id="panel_zone_container_zones">
 
     @foreach($item->zoneWebsites as $zone)

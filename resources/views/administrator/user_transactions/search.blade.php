@@ -4,21 +4,15 @@
     <a class="btn btn-outline-success float-end" data-bs-toggle="modal" data-bs-target="#createModal"><i
             class="fa-solid fa-plus"></i></a>
 
-    <button onclick="exportExcel()" class="btn btn-primary float-end me-2 " title="Export excel"><i class="fa-sharp fa-solid fa-file-excel"></i></button>
+    <a href="{{route('administrator.'.$prefixView.'.export') . "?" . request()->getQueryString()}}" class="btn btn-outline-primary float-end me-2" data-bs-original-title="" title="Excel"><i class="fa-sharp fa-solid fa-file-excel"></i></a>
+
 
     <div class="clearfix"></div>
 
     <div class="row">
         <div class="col-md-3">
-            <div class="mt-3">
-                <label>Khách hàng</label>
-                <select name="user_id" class="form-control select2_init_allow_clear">
-                    <option value=""></option>
-                    @foreach($users as $itemUser)
-                        <option value="{{$itemUser->id}}" {{request('user_id') == $itemUser->id ? 'selected' : ''}}>#{{$itemUser->id}} - {{$itemUser->name}} - {{$itemUser->phone}}</option>
-                    @endforeach
-                </select>
-
+            <div>
+                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'user_id' , 'label' => 'Publisher', 'url' => route('ajax.administrator.model.search', ['is_admin' => 0]), 'model' => 'users'])
             </div>
         </div>
         <div class="col-md-3">
@@ -29,7 +23,6 @@
                     <option value="1" {{request('type_money') == 1 ? 'selected' : ''}}>Tất cả</option>
                     <option value="2" {{request('type_money') == 2 ? 'selected' : ''}}>Tiền nạp</option>
                     <option value="3" {{request('type_money') == 3 ? 'selected' : ''}}>Tiền trừ</option>
-                    <option value="4" {{request('type_money') == 4 ? 'selected' : ''}}>Tiền đổi thưởng</option>
 
                 </select>
 

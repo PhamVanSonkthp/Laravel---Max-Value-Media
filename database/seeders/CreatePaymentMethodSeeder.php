@@ -15,43 +15,49 @@ class CreatePaymentMethodSeeder extends Seeder
     public function run()
     {
         PaymentMethod::firstOrCreate([
-            "name" => "COD",
-            "public_token" => "public_token",
-            "private_token" => "private_token",
-        ]);
-
-        PaymentMethod::firstOrCreate([
-            "name" => "Ví",
-            "public_token" => "public_token",
-            "private_token" => "private_token",
-        ]);
-
-        PaymentMethod::firstOrCreate([
-            "name" => "Chuyển khoản",
-            "public_token" => "public_token",
-            "private_token" => "private_token",
-        ]);
-
-        PaymentMethod::firstOrCreate([
-            "name" => "VN Pay",
-            "public_token" => "public_token",
-            "private_token" => "private_token",
-        ]);
-
-        PaymentMethod::firstOrCreate([
-            "name" => "MoMo",
-            "public_token" => "public_token",
-            "private_token" => "private_token",
-        ]);
-
-        PaymentMethod::firstOrCreate([
-            "name" => "One Pay",
-            "public_token" => "public_token",
-            "private_token" => "private_token",
-        ]);
-
-        PaymentMethod::firstOrCreate([
             "name" => "Paypal",
+            "public_token" => "public_token",
+            "private_token" => "private_token",
+        ]);
+
+        PaymentMethod::firstOrCreate([
+            "name" => "Payoneer",
+            "public_token" => "public_token",
+            "private_token" => "private_token",
+        ]);
+
+        PaymentMethod::firstOrCreate([
+            "name" => "Crypto",
+            "public_token" => "public_token",
+            "private_token" => "private_token",
+        ]);
+
+        PaymentMethod::firstOrCreate([
+            "name" => "USDT",
+            "public_token" => "public_token",
+            "private_token" => "private_token",
+        ]);
+
+        PaymentMethod::firstOrCreate([
+            "name" => "Ethereum",
+            "public_token" => "public_token",
+            "private_token" => "private_token",
+        ]);
+
+        PaymentMethod::firstOrCreate([
+            "name" => "Bitcoin",
+            "public_token" => "public_token",
+            "private_token" => "private_token",
+        ]);
+
+        PaymentMethod::firstOrCreate([
+            "name" => "Wire Transfer",
+            "public_token" => "public_token",
+            "private_token" => "private_token",
+        ]);
+
+        PaymentMethod::firstOrCreate([
+            "name" => "Pingpong",
             "public_token" => "public_token",
             "private_token" => "private_token",
         ]);

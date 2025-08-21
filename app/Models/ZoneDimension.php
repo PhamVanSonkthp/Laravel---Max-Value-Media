@@ -26,9 +26,10 @@ class ZoneDimension extends Model implements Auditable
 
     // begin
 
-    //    public function one(){
-    //        return $this->hasOne(Model::class, 'id', 'local_id');
-    //    }
+    public function zoneDimensionPosition()
+    {
+        return $this->hasOne(ZoneDimensionPosition::class, 'id', 'zone_dimension_position_id');
+    }
     //
     //    public function multiples(){
     //        return $this->hasMany(Model::class, 'id', 'local_id');

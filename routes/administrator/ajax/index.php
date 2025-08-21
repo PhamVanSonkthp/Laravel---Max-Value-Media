@@ -12,10 +12,12 @@ use App\Jobs\QueueAdserverUpdateStatusZone;
 use App\Models\CategoryWebsite;
 use App\Models\Chat;
 use App\Models\ChatImage;
+use App\Models\ExportReport;
 use App\Models\Formatter;
 use App\Models\GroupZoneDimension;
 use App\Models\Helper;
 use App\Models\Image;
+use App\Models\ImportReport;
 use App\Models\National;
 use App\Models\Notification;
 use App\Models\Order;
@@ -113,6 +115,34 @@ Route::prefix('ajax/administrator')->group(function () {
                     'row_html' => $htmlRow,
                 ]);
             })->name('ajax.administrator.reports.update_field');
+
+            Route::get('refresh_export', function (Request $request) {
+
+                $itemExports = ExportReport::latest()->limit(10)->get();
+                $itemImports = ImportReport::latest()->limit(10)->get();
+
+                foreach ($itemExports as $item){
+                    $textColor = "text-danger";
+
+                    if ($item->export_report_status_id == 1) $textColor = "text-warning";
+                    if ($item->export_report_status_id == 2) $textColor = "text-success";
+                    $item['text_color'] = $textColor;
+                }
+
+                foreach ($itemImports as $item){
+                    $textColor = "text-danger";
+
+                    if ($item->import_report_status_id == 1) $textColor = "text-warning";
+                    if ($item->import_report_status_id == 2) $textColor = "text-success";
+                    $item['text_color'] = $textColor;
+                }
+
+                return response()->json(Helper::successAPI(200,[
+                    'export_html' => View::make('administrator.reports.row_refresh_export', ['items'=> $itemExports])->render(),
+                    'import_html' => View::make('administrator.reports.row_refresh_import', ['items'=> $itemImports])->render(),
+                ], "success"));
+            })->name('ajax.administrator.reports.refresh_export');
+
         });
 
         Route::prefix('zone_websites')->group(function () {
@@ -133,6 +163,7 @@ Route::prefix('ajax/administrator')->group(function () {
                 $request->validate([
                     'id' => 'required',
                     'dimension_ids' => 'required|array|min:1',
+                    'numbers' => 'required|array|min:1',
                     'zone_status_id' => 'required',
                 ]);
 
@@ -162,7 +193,7 @@ Route::prefix('ajax/administrator')->group(function () {
                     ]));
                 }
 
-                QueueAdserverCreateZone::dispatch($keyCache, $request->id, $name, $request->dimension_ids, $request->zone_status_id);
+                QueueAdserverCreateZone::dispatch($keyCache, $request->id, $name, $request->dimension_ids, $request->numbers, $request->zone_status_id);
                 Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
 
                 skip:
@@ -318,9 +349,10 @@ Route::prefix('ajax/administrator')->group(function () {
                 $website = Website::findOrFail($request->website_id);
                 $groupZoneDimensions = GroupZoneDimension::all();
 
-                $zoneStatuses = ZoneStatus::all();
+                $zoneStatuses = Helper::searchAllByQuery(new ZoneStatus(), null);
                 $zoneTypes = [new Balance(1, "Banner")];
                 return response()->json(Helper::successAPI(200, [
+                    'website' => $website,
                     "html" => View::make('administrator.websites.panel_zone', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'groupZoneDimensions' => $groupZoneDimensions, 'zoneTypes' => $zoneTypes])->render()
                 ]));
             })->name('ajax.administrator.websites.panel_zone');
@@ -348,7 +380,13 @@ Route::prefix('ajax/administrator')->group(function () {
             Route::post('store', function (Request $request) {
 
                 $request->validate([
-                    'url' => 'required|url',
+                    'url' => [
+                        'required',
+                        'regex:/^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i'
+                    ],[
+                        'url.required' => 'Please enter a website.',
+                        'url.regex'    => 'The website format is invalid. Example: example.com or https://example.com.',
+                    ]
                 ]);
 
                 $categoryWebsite = CategoryWebsite::findOrFail($request->category_website_id);
@@ -647,7 +685,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $request->validate([
                     'user_id' => 'required',
-                    'amount' => 'required',
+                    'amount' => ['required', 'regex:/^\d+(\.\d+)?$/'],
                 ]);
 
                 $user = User::findOrFail($request->user_id);

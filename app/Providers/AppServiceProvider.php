@@ -38,11 +38,11 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
-        Health::checks([
-            UsedDiskSpaceCheck::new()
-                ->warnWhenUsedSpaceIsAbovePercentage(70)
-                ->failWhenUsedSpaceIsAbovePercentage(90),
-        ]);
+//        Health::checks([
+//            UsedDiskSpaceCheck::new()
+//                ->warnWhenUsedSpaceIsAbovePercentage(70)
+//                ->failWhenUsedSpaceIsAbovePercentage(90),
+//        ]);
     }
 
     /**

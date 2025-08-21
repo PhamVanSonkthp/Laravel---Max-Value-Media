@@ -135,7 +135,23 @@ body{
     padding-right: 0 !important;
 }
 
-.container-fluid > div > div > div .card-header{
-    position: sticky;top: 60px;background-color: white;
-    z-index: 10;
+@media (min-width: 1024px) {
+    .container-fluid > div > div > div .card-header{
+        position: sticky;top: 60px;background-color: white;
+        z-index: 10;
+    }
+}
+
+.btn {
+    flex: 1;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+}
+.btn:hover {
+    transform: translateY(-1px);
 }

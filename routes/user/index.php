@@ -5,15 +5,26 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-Route::prefix('/user')->group(function () {
-});
 
-Route::prefix('/')->group(function () {
+Route::group(['middleware' => ['auth']], function () {
+
     Route::get('/', [
         'as'=>'user.index',
         'uses'=>'App\Http\Controllers\User\UserController@index',
     ]);
+
+    Route::get('website', [
+        'as'=>'user.website',
+        'uses'=>'App\Http\Controllers\User\UserController@website',
+    ]);
+
 });
+
+Route::get('faqs', [
+    'as'=>'user.faqs',
+    'uses'=>'App\Http\Controllers\User\UserController@faqs',
+]);
+
 
 Route::get('download-app', function (Request $request) {
 

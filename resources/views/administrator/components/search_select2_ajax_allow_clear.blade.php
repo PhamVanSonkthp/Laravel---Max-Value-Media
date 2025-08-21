@@ -26,6 +26,7 @@
             placeholder: "Search...",
             minimumInputLength: 0, // start searching after 2 characters
             allowClear: true,
+            width: "100%",
             @if(isset($modal_id))
             dropdownParent: $('#{{$modal_id}}'),
             @endif

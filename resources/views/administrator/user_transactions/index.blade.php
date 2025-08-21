@@ -85,21 +85,25 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+{{--                    <div class="mt-3">--}}
+{{--                        <label>Khách hàng</label>--}}
+{{--                        <select id="user_id" class="form-control">--}}
+{{--                            @foreach($users as $itemUser)--}}
+{{--                                <option--}}
+{{--                                    value="{{$itemUser->id}}" {{request('user_id') == $itemUser->id ? 'selected' : ''}}>--}}
+{{--                                    #{{$itemUser->id}} - {{$itemUser->name}} - {{$itemUser->email}}--}}
+{{--                                    - {{$itemUser->phone}}</option>--}}
+{{--                            @endforeach--}}
+{{--                        </select>--}}
+{{--                    </div>--}}
                     <div class="mt-3">
-                        <label>Khách hàng</label>
-                        <select id="user_id" class="form-control">
-                            @foreach($users as $itemUser)
-                                <option
-                                    value="{{$itemUser->id}}" {{request('user_id') == $itemUser->id ? 'selected' : ''}}>
-                                    #{{$itemUser->id}} - {{$itemUser->name}} - {{$itemUser->email}}
-                                    - {{$itemUser->phone}}</option>
-                            @endforeach
-                        </select>
+                        @include('administrator.components.require_select2_ajax' , ['id' => 'modal_create_select_user_id','name' => 'user_id' , 'label' => 'Publisher', 'url' => route('ajax.administrator.model.search', ['is_admin' => 0]), 'model' => 'users','modal_id' => 'createModal'])
                     </div>
+
 
                     <div class="mt-3">
                         <label>Số tiền @include('administrator.components.lable_require')</label>
-                        <input id="amount" type="number" class="form-control" autocomplete="off">
+                        <input id="amount" class="form-control" autocomplete="off">
                         <i>(* Để trừ tiền hãy nhập số âm: -100.000)</i>
                     </div>
 
@@ -137,7 +141,7 @@
                 "POST",
                 "{{route('ajax.administrator.user_transaction.store')}}",
                 {
-                    user_id: $('#user_id').val(),
+                    user_id: $('#modal_create_select_user_id').val(),
                     amount: $('#amount').val(),
                     description: $('#description').val(),
                 },

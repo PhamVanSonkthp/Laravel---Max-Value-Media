@@ -3,7 +3,7 @@
 @endphp
 
 <div>
-    <a style="cursor: pointer;" onclick="onShowModalChangeID{{$randomID}}(event)" id="label_{{$randomID}}" class="text-primary">
+    <a style="cursor: pointer;{{isset($style) ? $style : ''}}" onclick="onShowModalChangeID{{$randomID}}(event)" id="label_{{$randomID}}" class="{{isset($class) ? $class : 'text-primary'}}">
         {{$label}}
     </a>
 </div>
@@ -26,7 +26,6 @@
                         @endforeach
                     </select>
                 </div>
-
 
             </div>
             <div class="modal-footer">

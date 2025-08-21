@@ -69,7 +69,6 @@
 
         @endif
 
-        {!! optional(\App\Models\Setting::first())->custom_css !!}
     </style>
 
 </head>

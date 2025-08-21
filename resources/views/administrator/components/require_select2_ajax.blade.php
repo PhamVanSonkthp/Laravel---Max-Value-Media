@@ -7,7 +7,7 @@
 
 <div class="mt-3">
     <label>{{$label}}</label>
-    <select style="width: 100%;" id="{{$id}}" name="{{$name}}" class="form-control select2_init_allow_clear">
+    <select id="{{$id}}" name="{{$name}}" class="form-control">
 
     </select>
 </div>
@@ -19,7 +19,7 @@
         $("#{{$id}}").select2({
             placeholder: "Search...",
             minimumInputLength: 0, // start searching after 2 characters
-            allowClear: true,
+            width: '100%',
             @if(isset($modal_id))
             dropdownParent: $('#{{$modal_id}}'),
             @endif
@@ -78,23 +78,14 @@
                     let option = new Option(defaultText, defaultId, true, true);
                     $("#{{$id}}").append(option).trigger('change');
 
-                    initChangeValue();
-
                 },
                 (error) => {
-                    initChangeValue();
+
                 },false,false
             )
 
-        @else
-            initChangeValue();
         @endif
 
-        function initChangeValue() {
-            $("#{{$id}}").on('change', function () {
-                addUrlParameter('{{$value}}', this.value)
-            });
-        }
 
     });
 

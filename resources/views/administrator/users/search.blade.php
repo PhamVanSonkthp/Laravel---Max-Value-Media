@@ -29,27 +29,15 @@
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div>
-                @include('administrator.components.search_select2_allow_clear' , ['name' => 'is_verify' , 'label' => 'Verify', 'select2Items' => $isVerifies])
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div>
-                @include('administrator.components.search_select2_allow_clear' , ['name' => 'is_balance' , 'label' => 'Balance', 'select2Items' => $isBalances])
-            </div>
-        </div>
-
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div>
                 @include('administrator.components.search_select2_allow_clear' , ['name' => 'user_status_id' , 'label' => 'Status', 'select2Items' => $userStatus])
             </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-1">
             <div>
-                @include('administrator.components.search_select2_allow_clear' , ['name' => 'status_website_id' , 'label' => 'Website status', 'select2Items' => $statusWebsite])
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'is_balance' , 'label' => 'Have money', 'select2Items' => $isBalances])
             </div>
         </div>
 

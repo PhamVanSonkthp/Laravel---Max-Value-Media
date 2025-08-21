@@ -19,11 +19,13 @@ class CreateStatusWebsiteSeeder extends Seeder
         StatusWebsite::firstOrCreate([
             "name" => "Pending",
             "adserver_id" => "3520",
+            "background_color" => "#f59e0b",
         ]);
 
         StatusWebsite::firstOrCreate([
             "name" => "Approved",
             "adserver_id" => "3500",
+            "background_color" => "#22c55e",
         ]);
 
         StatusWebsite::firstOrCreate([
@@ -34,6 +36,7 @@ class CreateStatusWebsiteSeeder extends Seeder
         StatusWebsite::firstOrCreate([
             "name" => "Rejected",
             "adserver_id" => "3510",
+            "background_color" => "#ef4444",
         ]);
 
     }

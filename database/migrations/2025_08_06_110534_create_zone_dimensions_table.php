@@ -21,6 +21,7 @@ class CreateZoneDimensionsTable extends Migration
             $table->string('height');
             $table->bigInteger('zone_dimension_type_id')->default(1);
             $table->bigInteger('group_zone_dimension_id');
+            $table->bigInteger('zone_dimension_position_id')->default(1);
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);

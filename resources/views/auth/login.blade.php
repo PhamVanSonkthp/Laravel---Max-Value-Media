@@ -1,159 +1,118 @@
-@extends('user.layouts.master')
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-@section('content')
-    <div class="accountbg"
-         style="background: url({{asset('user/assets/images/banner2000x1333.jpg')}});background-size: cover;background-position: center;z-index: -1;left: 370px;position: fixed;"></div>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Admin Infinity Ltd" name="description">
+    <meta content="Pham Son" name="author">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{{ env('APP_URL') . \App\Models\Helper::logoImagePath() }}">
 
-    <div class="wrapper-page account-page-full">
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
-            <div class="card shadow-none">
-                <div class="card-block">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- End fonts -->
 
-                    <div class="account-box">
+    <!-- core:css -->
+    <link rel="stylesheet" href="{{asset('/assets/administrator/NobleUI/assets/vendors/core/core.css')}}">
+    <!-- endinject -->
 
-                        <div class="card-box shadow-none p-4">
-                            <div class="p-2">
-                                <div class="text-center mt-4">
-                                    <a href="{{ route('user.index') }}">
-                                        <img style="max-width: 50%;object-fit: contain;"
-                                                                             src="{{ env('APP_URL') . \App\Models\Helper::logoImagePath() }}"
-                                                                             height="150"
-                                                                             alt="logo"></a>
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{asset('/assets/user/fonts/feather-font/css/iconfont.css')}}">
+    <link rel="stylesheet" href="{{asset('/assets/user/vendors/flag-icon-css/css/flag-icon.min.css')}}">
+    <!-- endinject -->
+
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="{{asset('/assets/user/css/demo1/style.css')}}">
+    <!-- End layout styles -->
+
+
+    <script src="{{asset('/assets/administrator/js/jquery-3.5.1.min.js')}}"></script>
+    <script src="{{asset('/assets/administrator/js/jquery.ui.min.js')}}"></script>
+    <script src="{{asset('/assets/administrator/NobleUI/assets/vendors/flatpickr/flatpickr.min.js')}}"></script>
+    <script src="{{asset('/assets/administrator/NobleUI/assets/vendors/apexcharts/apexcharts.min.js')}}"></script>
+
+    @include('administrator.components.helper')
+
+    @yield('css')
+
+</head>
+
+<body>
+
+<div class="main-wrapper">
+    <div class="page-wrapper full-page">
+        <div class="page-content d-flex align-items-center justify-content-center">
+
+            <div class="row w-100 mx-0 auth-page">
+                <div class="col-md-8 col-xl-6 mx-auto">
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-md-4 pe-md-0">
+                                <div class="auth-side-wrapper">
+
                                 </div>
+                            </div>
+                            <div class="col-md-8 ps-md-0">
+                                <div class="auth-form-wrapper px-4 py-5">
+                                    <a href="#" class="noble-ui-logo d-block mb-2">Maxvalue.<span>Media</span></a>
+                                    <h5 class="text-muted fw-normal mb-4">Welcome back! Log in to your account.</h5>
 
-                                <h4 class="font-size-18 mt-5 text-center">Welcome To {{env('APP_NAME')}}</h4>
-                                {{--                                <p class="text-muted text-center">Đăng nhập để tiếp tục với {{ config('app.name', 'Laravel') }}.</p>--}}
-
-                                <form class="mt-4" action="#">
-
-                                    <div class="mb-3">
-                                        <label for="email"
-                                               class="col-form-label text-md-end">Email</label>
-
-                                        <div>
-                                            <input id="email" type="email"
-                                                   class="form-control @error('email') is-invalid @enderror"
-                                                   name="email" value="{{ old('email') }}" required autocomplete="email"
-                                                   autofocus>
+                                    <form class="forms-sample" method="POST" action="{{ route('login') }}">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label for="userEmail" class="form-label @error('email') is-invalid @enderror">Email address</label>
+                                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="userEmail" placeholder="Email"
+                                                   name="email" value="{{ old('email') }}" required autocomplete="email">
                                             @error('email')
                                             <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                             @enderror
                                         </div>
-                                    </div>
 
-                                    <div class="mb-3">
-                                        <label for="password"
-                                               class="col-form-label text-md-end">{{ __('Password') }}</label>
-
-                                        <div>
-                                            <input id="password" type="password"
-                                                   class="form-control @error('password') is-invalid @enderror"
-                                                   name="password" required autocomplete="current-password">
-
+                                        <div class="mb-3">
+                                            <label for="userPassword" class="form-label">Password</label>
+                                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required autocomplete="current-password">
                                             @error('password')
                                             <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                             @enderror
                                         </div>
-                                    </div>
 
-                                    <div class="mb-3">
                                         <div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="remember"
-                                                       id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                                <label class="form-check-label" for="remember">
-                                                    {{ __('Remember Me') }}
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-0">
-                                        <div>
-                                            <button type="submit" class="btn text-white button-register"
-                                                    style="background-color: #D3AB56;">
-                                                Đăng nhập
-                                            </button>
-
-                                            @if (Route::has('password.request'))
-                                                <a class="btn btn-link" href="{{ route('password.request') }}">
-                                                    <strong class="text-dark">Bạn đã quên mật khẩu?</strong>
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                </form>
-
-                                <div class="mb-0 row">
-                                    <div class="col-12 mt-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value=""
-                                                   id="flexCheckDefault" checked>
-                                            <label class="form-check-label" for="flexCheckDefault">
-                                                <p class=" text-muted mb-0">Bằng cách đăng nhập, bạn đồng ý với <a
-                                                        href="">Điều khoản thanh toán</a> của chúng tôi</p>
-                                            </label>
+                                            <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0 text-white">Login</button>
                                         </div>
 
-                                    </div>
+                                        <div class="mt-2">
+                                            <a class="btn-link" href="{{ route('password.request') }}">
+                                                Forgot password?
+                                            </a>
+                                        </div>
+
+
+                                        <a href="{{ route('register') }}" class="d-block mt-3 text-muted">Not a user? Sign up</a>
+                                    </form>
                                 </div>
-
-
-                                <div class="mt-5" style="text-align: center;">
-                                    <a href="https://discord.com/api/oauth2/authorize?client_id=1163762400701468784&redirect_uri=https%3A%2F%2Fvip.maubuifinance.com%2Fprocess-login-with-discord&response_type=code&scope=identify%20guilds%20email">
-                                        <img style="height: 30px;" src="{{asset('/assets/images/906361.png')}}"> Login
-                                        with discord
-                                    </a>
-                                </div>
-
-                                <div class="mt-3 pt-4 text-center position-relative">
-
-                                    @guest
-                                        @if (Route::has('register'))
-                                            <div>Bạn chưa có tài khoản ?</div>
-                                            <a href="{{ route('register') }}"
-                                               class=" mt-2 mb-2 btn fw-medium text-white"
-                                               style="background-color: #D3AB56;"> Đăng ký ngay </a>
-                                        @endif
-
-                                    @endguest
-                                    <p>
-                                        <script>document.write(new Date().getFullYear())</script>
-                                        © {{ config('app.name', 'Laravel') }}.
-                                    </p>
-                                </div>
-
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-        </form>
+
+        </div>
     </div>
-@endsection
+</div>
 
-<script src="{{asset('administrator/assets/libs/jquery/jquery.min.js')}}"></script>
-
-<script>
+</body>
 
 
-    $(document).ready(function () {
-        $('#flexCheckDefault').change(function () {
-            if (this.checked) {
-                $('.button-register').prop('disabled', false);
-            } else {
-                $('.button-register').prop('disabled', true);
-            }
-        });
-    });
-
-</script>
+</html>

@@ -16,6 +16,7 @@ class CreateZoneStatusesTable extends Migration
         Schema::create('zone_statuses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('background_color')->nullable();
             $table->bigInteger('adserver_id');
 
             $table->bigInteger('priority')->default(0)->index();

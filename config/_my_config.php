@@ -62,6 +62,8 @@ return [
     'default_avatar' => null,
     'default_size_avatar' => "100x100",
     'verify_zone_dimension_id' => 43,
+
+    'max_row_export' => 20000,
     'items_show_in_table' => [
         50, 100, 500, 1000
     ],

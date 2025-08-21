@@ -47,8 +47,6 @@ class JobCreateReportDemands extends Command
     public function handle()
     {
 
-        set_time_limit(1000);
-
         $date = Carbon::now()->addHours(7)->toDateString();
         $this->getReport($date);
         $date = Carbon::parse($date)->subDay()->toDateString();
@@ -108,7 +106,7 @@ class JobCreateReportDemands extends Command
                     'zone_website_id' => $zoneWebsite->id,
                     'demand_id' => 2,
                     'date' => $datum['date'],
-                    'd_request' => 0,
+                    'd_request' => $datum['d_request'],
                     'd_requests_empty' => 0,
                     'd_impression' => $datum['p_impression'],
                     'd_impressions_unique' => 0,

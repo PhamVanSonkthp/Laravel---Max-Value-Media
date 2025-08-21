@@ -15,15 +15,15 @@ class CreateUserTypeSeeder extends Seeder
     public function run()
     {
         UserType::firstOrCreate([
-            "name" => "Khách lẻ",
+            "name" => "Publisher",
         ]);
 
         UserType::firstOrCreate([
-            "name" => "Đại lý",
+            "name" => "Nhân viên",
         ]);
 
         UserType::firstOrCreate([
-            "name" => "Cộng tác viên",
+            "name" => "CS",
         ]);
     }
 }

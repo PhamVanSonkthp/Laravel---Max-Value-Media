@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\ModelExport;
 use App\Http\Controllers\Controller;
 use App\Models\Audit;
+use App\Models\Formatter;
 use App\Models\Helper;
 use App\Models\User;
 use App\Models\UserTransaction;
@@ -28,35 +29,20 @@ class UserTransactionController extends Controller
 
     public function index(Request $request)
     {
-        $users = User::where('is_admin', 0)->latest()->get();
+        $query = $this->model->searchByQuery($request, [], null, null, true);
 
-        $query = $this->model->select('user_transactions.*');
-        if (isset($request->from) && !empty($request->from)) {
-            $query = $query->whereDate('created_at', '>=', $request->from);
-        }
 
-        if (isset($request->to) && !empty($request->to)) {
-            $query = $query->whereDate('created_at', '<=', $request->to);
-        }
-        if (isset($request->user_id) && !empty($request->user_id)) {
-            $query = $query->where('user_id', $request->user_id);
-        }
+        $query = $query->select('user_transactions.*');
 
         if (isset($request->type_money) && $request->type_money == 2) {
             $query = $query->where('amount', '>=', 0);
-            $query = $query->where('description', 'not like', '%'."điểm thành"."%");
         }
 
         if (isset($request->type_money) && $request->type_money == 3) {
             $query = $query->where('amount', '<', 0);
-            $query = $query->where('description', 'not like', '%'."điểm thành"."%");
         }
 
-        if (isset($request->type_money) && $request->type_money == 4) {
-            $query = $query->where('description', 'like', '%'."điểm thành"."%");
-        }
-
-        $items = $query->latest()->paginate($request->limit ?? 10)->appends(request()->query());
+        $items = $query->latest()->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
         $total = 0;
         $deposit = 0;
         $deduction = 0;
@@ -69,7 +55,7 @@ class UserTransactionController extends Controller
                 $deduction = $deduction + $item->amount;
             }
         }
-        return view('administrator.' . $this->prefixView . '.index', compact('items', 'users', 'total', 'deposit', 'deduction'));
+        return view('administrator.' . $this->prefixView . '.index', compact('items',  'total', 'deposit', 'deduction'));
     }
 
     public function get(Request $request, $id)

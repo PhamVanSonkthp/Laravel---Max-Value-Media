@@ -4,9 +4,120 @@
 
 @section('css')
     <style>
-        tr:hover{
-            cursor: pointer;
+        /*tr:hover{*/
+        /*    cursor: pointer;*/
+        /*}*/
+    </style>
+
+{{--    Zone stype--}}
+    <style>
+
+        .group {
+            margin-bottom: 18px;
+            border-left: 4px solid transparent;
+            padding-left: 10px;
         }
+        .group-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .group-title button {
+            font-size: 12px;
+            padding: 4px 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #e5e7eb;
+            color: #111827;
+        }
+        .group-title button:hover {
+            background: #d1d5db;
+        }
+
+        /* Custom checkbox */
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+        }
+        .checkbox-item:hover {
+            background: #eef2ff;
+            transform: translateX(2px);
+        }
+        .checkbox-item input {
+            display: none;
+        }
+        .checkmark {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            border: 2px solid #9ca3af;
+            display: inline-block;
+            margin-right: 10px;
+            position: relative;
+            transition: border .2s, background .2s;
+            top: 4px;
+        }
+        .checkbox-item input:checked + .checkmark {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .checkbox-item input:checked + .checkmark::after {
+            content: "✓";
+            color: white;
+            font-size: 12px;
+            position: absolute;
+            top: -2px; left: 3px;
+        }
+        .label-text {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .group.blue { border-color: #3b82f6; --accent: #3b82f6; }
+    </style>
+
+    <style>
+
+        .card:hover {
+            border-color: #cbd5e1; /* darker border on hover */
+        }
+
+        .name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+
+        .btn svg { width: 18px; height: 18px; }
+
+        .btn-code { background: #3b82f6; color: white; }
+        .btn-config { background: #10b981; color: white; }
+        .btn-delete { background: #ef4444; color: white; }
+
+        .checkbox-item input[type="number"] {
+            width: 60px;
+            padding: 4px;
+            font-size: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            text-align: center;
+            display: block !important;
+        }
+
+
     </style>
 @endsection
 
@@ -168,7 +279,9 @@
                 <i class="fa-solid fa-x"></i>
             </a>
         </div>
-        <h4>Zones</h4>
+        <h4 id="panel_zone_label_url_website">
+
+        </h4>
         <div id="panelContent">Loading...</div>
     </div>
 
@@ -264,7 +377,7 @@
             });
             // Click on row
             $(document).on('click','#body_container_item tr', function () {
-                onViewAndEdit(this.getAttribute('data-id'))
+                // onViewAndEdit(this.getAttribute('data-id'))
             });
 
             // Close button
@@ -364,6 +477,7 @@
                     'website_id': website_id
                 },
                 (response) => {
+                    $('#panel_zone_label_url_website').html(response.data.website.url)
                     $('#panelContent').html(response.data.html)
                 },
                 (error) => {
@@ -447,20 +561,29 @@
 
         function processStoreZone(website_id) {
 
+            const dimension_ids = [];
+            const numbers = [];
+
+            document.querySelectorAll("input[name='panel_zone_checkbox_dimension']:checked").forEach(cb => {
+                const numberInput = cb.closest('.checkbox-item').querySelector('input[type="number"]');
+                dimension_ids.push(cb.value);
+                numbers.push(numberInput.value);
+            });
+
             callAjax(
                 "POST",
                 "{{route('ajax.administrator.zone_websites.store')}}",
                 {
                     id: website_id,
                     name: $('#panel_zone_input_zone_name').val(),
-                    dimension_ids: $('#panel_zone_select_dimensions_id').val(),
+                    dimension_ids: dimension_ids,
+                    numbers: numbers,
                     zone_status_id: $('#panel_zone_select_zone_status_id').val(),
                 },
                 (response) => {
                     if (response.code == 219) {
                         setTimeout(processStoreZone(website_id), 5000);
                     } else {
-                        console.log(response)
                         hideAllToast()
                         if (response.is_success || response.code == 200) {
                             showToastSuccess('Đã tạo Zone');
@@ -580,6 +703,15 @@
                 }
             )
         }
+
+        function panelZoneToggleGroup(btn) {
+            const group = btn.closest('.group');
+            const checkboxes = group.querySelectorAll('input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+            btn.textContent = allChecked ? "Select All" : "Deselect All";
+        }
+
     </script>
 @endsection
 

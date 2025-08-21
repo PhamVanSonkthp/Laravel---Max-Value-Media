@@ -25,7 +25,7 @@
             @foreach($item->zoneWebsites as $index => $zoneWebsites)
                 @if($index < 3)
                     <li>
-                        {{\App\Models\Formatter::maxLengthString($zoneWebsites->name)}}
+                        @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($zoneWebsites->name), 'style' => 'color: '.optional($zoneWebsites->zoneStatus)->background_color.';'])
                     </li>
                 @else
                     <li>
@@ -42,7 +42,13 @@
         </div>
     </td>
     <td>
-        @include('administrator.components.modal_change_id', ['label' => optional($item->statusWebsite)->name, 'select2Items' => $statusWebsites, 'field' => 'status_website_id'])
+        @include('administrator.components.modal_change_id', ['label' => optional($item->statusWebsite)->name, 'select2Items' => $statusWebsites, 'field' => 'status_website_id', 'style' => 'display: inline-block;
+                margin-top: 6px;
+                padding: 2px 8px;
+                border-radius: 999px;
+                font-size: 11px;
+                font-weight: 600;
+                color: white !important;background: '.optional($item->statusWebsite)->background_color.';'])
     </td>
 
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
@@ -52,11 +58,6 @@
            class="btn btn-outline-secondary btn-sm"
            data-id="{{$item->id}}">
             <i class="fa-solid fa-pen"></i>
-        </a>
-
-        <a title="Detail" onclick="onViewAndEditAds({{$item->id}})"
-           class="btn btn-outline-secondary btn-sm">
-            <i class="fa-solid fa-file-lines"></i>
         </a>
 
         <a title="Report" target="_blank" class="btn btn-outline-primary btn-sm" href="{{route('administrator.reports.index', ['website_id' => $item->id])}}">

@@ -177,8 +177,8 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
     public function addAmount($amount, $description)
     {
 
-        $amount = Formatter::getOnlyNumber($amount);
-        $amountNow = $this->amount + ($amount);
+        $amount = floatval($amount);
+        $amountNow = $this->amount + $amount;
 
         UserTransaction::create([
             'user_id' => $this->id,
@@ -307,7 +307,7 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
             return Formatter::getThumbnailImage($image->image_path, $size);
         }
 
-        return config('_my_config.default_avatar') ?? $this->front_id_image_path;
+        return \App\Models\Helper::logoImagePath();
     }
 
     public function image()
@@ -450,7 +450,7 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         }
 
 
-        if (isset($request->back_id_image_path)) {
+        if (isset($request->portrait_image_path)) {
             $item = Image::create([
                 'uuid' => Helper::randomString(),
                 'table' => $user->getTableName(),

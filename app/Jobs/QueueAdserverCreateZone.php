@@ -26,6 +26,7 @@ class QueueAdserverCreateZone implements ShouldQueue
     private $website;
     private $name;
     private $dimensionIDs;
+    private $numbers;
     private $zoneStatusID;
     private $zoneStatus;
 
@@ -34,13 +35,14 @@ class QueueAdserverCreateZone implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($key_cache, $website_id, $name, $dimension_ids, $zone_status_id)
+    public function __construct($key_cache, $website_id, $name, $dimension_ids, $numbers, $zone_status_id)
     {
         //
         $this->keyCache = $key_cache;
         $this->websiteID = $website_id;
         $this->name = $name;
         $this->dimensionIDs = $dimension_ids;
+        $this->numbers = $numbers;
         $this->zoneStatusID = $zone_status_id;
         $this->zoneStatus = ZoneStatus::find($this->zoneStatusID);
         $this->website = Website::find($this->websiteID);
@@ -59,8 +61,12 @@ class QueueAdserverCreateZone implements ShouldQueue
             goto skip;
         }
         $result = [];
+        $counter = 0;
 
-        foreach ($this->dimensionIDs as $dimension_id){
+        foreach ($this->dimensionIDs as $index => $dimension_id){
+            $counter = 1;
+            repeat:
+
             $zoneDimension = ZoneDimension::find($dimension_id);
 
             $nameZone = $this->website->name . " " . (empty($this->name) ? $zoneDimension->name : $this->name);
@@ -126,6 +132,7 @@ class QueueAdserverCreateZone implements ShouldQueue
                 throw new \Exception('Queue QueueAdserverCreateZone error: ' . json_encode($response));
             }
 
+            if (min($this->numbers[$index], 10) > $counter++) goto repeat;
         }
 
         $result['is_success'] = true;

@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\ReportExport;
+use App\Jobs\QueueCreateReport;
+use App\Jobs\QueueImportReport;
 use App\Models\Demand;
+use App\Models\ExportReport;
 use App\Models\Formatter;
+use App\Models\ImportReport;
+use App\Models\Permission;
 use App\Models\Report;
 use App\Http\Controllers\Controller;
 use App\Models\Website;
@@ -56,13 +61,49 @@ class ReportController extends Controller
                 $zones = $zones->whereDate('date', '<=', $request->to);
             }
             if ($request->demand_id) {
-                $zones = $zones->whereDate('demand_id', $request->demand_id);
+                $zones = $zones->where('demand_id', $request->demand_id);
             }
 
             $zones = $zones->get();
         }
 
-        return view('administrator.' . $this->prefixView . '.index', compact('items', 'sumary', 'zones', 'demands'));
+        $modelColums = [];
+
+        $tempModelColums = Helper::getAllColumsOfTable($this->model);
+
+        foreach ($tempModelColums as $modelColum){
+
+            $CheckKeyCodes = [];
+
+            // get permission report from database
+            $permissionReports = Permission::where('parent_id', 61)->get();
+            foreach ($permissionReports as $permissionReport){
+                $keyCode = str_replace("reports_list_","", $permissionReport->key_code);
+
+                $CheckKeyCodes[] = [
+                    'key_code' => $permissionReport->key_code,
+                    'column' => $keyCode,
+                ];
+            }
+
+            $keyExist = collect($CheckKeyCodes)->firstWhere('column', $modelColum);
+
+
+            if ($keyExist && auth()->user()->can("reports-list-" . $keyExist['column'])){
+                $modelColums[] = $keyExist['column'];
+            }
+
+        }
+
+        $showColums = [];
+
+
+        if ($request->show_colums){
+            $showColums = explode( ',', $request->show_colums);
+        }
+
+
+        return view('administrator.' . $this->prefixView . '.index', compact('items', 'sumary', 'zones', 'demands','modelColums','showColums'));
     }
 
     public function get(Request $request, $id)
@@ -110,51 +151,44 @@ class ReportController extends Controller
 
     public function export(Request $request)
     {
-        return Excel::download(new ReportExport($this->model, $request), $this->prefixView . "_" . Carbon::today()->toDateString() . '.xlsx');
+        $filePath = $this->prefixView . "_" . Carbon::now()->toDateString() . "_" . Carbon::now()->timestamp . ".xlsx";
+
+        $exportReport = ExportReport::create([
+            'name' => "Report ". Carbon::now()->toDateTimeString(). ".xlsx",
+            'path' => '/app/'. $filePath,
+        ]);
+
+        QueueCreateReport::dispatch($filePath, $request->all(), $exportReport);
+
+        return response()->json([
+            'message' => 'Export started! You will find the file at: storage/app/' . $filePath
+        ]);
+    }
+
+    public function downloadExport(Request $request)
+    {
+        $exportReport = ExportReport::findOrFail($request->id);
+        $filePath = storage_path($exportReport->path);
+
+        return response()->download($filePath, $exportReport->name);
     }
 
     public function import(Request $request)
     {
-        set_time_limit(36000);
+        $file = request()->file('import_file');
 
-        $path = storage_path() . '/app/' . request()->file('import_file')->store('tmp');
+        $path = storage_path() . '/app/' . $file->store('tmp');
 
-        if (empty($path)) {
-            return back();
-        }
+        $importReport = ImportReport::create([
+            'name' => $file->getClientOriginalName(),
+            'path' => $path,
+        ]);
 
+        QueueImportReport::dispatch($path, $importReport);
 
-        $reader = ReaderEntityFactory::createReaderFromFile($path);
-
-        $reader->open($path);
-
-
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $index => $row) {
-                // do stuff with the row
-
-                if ($index < 2) {
-                    continue;
-                }
-                $cells = $row->getCells();
-
-
-                $id = trim($cells[0]->getValue());
-
-                $count = trim($cells[11]->getValue());
-                $share = trim($cells[12]->getValue());
-
-                $report = Report::find($id);
-                if ($report) {
-                    $report->count = $count;
-                    $report->share = $share;
-                    $report->save();
-                    $report->touch();
-                }
-            }
-        }
-
-        return response()->json('ok');
+        return response()->json([
+            'message' => 'Import started!'
+        ]);
     }
 
     public function audit(Request $request, $id)

@@ -31,9 +31,14 @@ class Report extends Model implements Auditable
         return $this->hasMany(ReportByCountry::class, 'report_id', 'id');
     }
 
-    public function websites()
+    public function user()
     {
-        return $this->hasMany(Website::class, 'id', 'website_id');
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    public function website()
+    {
+        return $this->hasOne(Website::class, 'id', 'website_id');
     }
 
     public function demand()
@@ -44,6 +49,11 @@ class Report extends Model implements Auditable
     public function zoneWebsite()
     {
         return $this->hasOne(ZoneWebsite::class, 'id', 'zone_website_id');
+    }
+
+    public function reportStatus()
+    {
+        return $this->hasOne(ReportStatus::class, 'id', 'report_status_id');
     }
 
     //

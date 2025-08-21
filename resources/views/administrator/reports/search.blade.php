@@ -5,22 +5,6 @@
         justify-content: center;
     }
 
-    .wrapper .file-upload {
-        height: 37px;
-        width: 50px;
-        border-radius: 100px;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        background-image: linear-gradient(to bottom, #2590eb 50%, #fff 50%);
-        background-size: 100% 200%;
-        transition: all 1s;
-        color: #fff;
-        font-size: 20px;
-    }
-
     .wrapper .file-upload input[type='file'] {
         height: 200px;
         width: 200px;
@@ -36,29 +20,63 @@
         color: #2590eb;
     }
 
+    #exportDropdown::after{
+        display: none;
+    }
+
+    #importDropdown::after{
+        display: none;
+    }
+
 </style>
 
 
 <div>
     @include('administrator.components.search')
 
-    <a href="{{route('administrator.'.$prefixView.'.export') . "?" . request()->getQueryString()}}" class="btn btn-outline-success float-end me-2" data-bs-original-title="" title="Xuất Excel"><i class="fa-sharp fa-solid fa-download"></i></a>
+    <div class="float-end">
+        <a class="p-0 nav-link dropdown-toggle btn btn-outline-success" href="#" id="exportDropdown" role="button"
+           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa-sharp fa-solid fa-download" style="margin: 10px;color: green;"></i>
+        </a>
+        <div class="p-0 dropdown-menu" aria-labelledby="exportDropdown" id="container_export_dropdown">
+            <a onclick="onCreateReport()" href="javascript:;" class="dropdown-item py-2">
+                <span class="ms-1"> Tạo báo cáo mới </span></a>
 
-    <form action="{{route('administrator.'.$prefixView.'.import')}}" method="POST" enctype="multipart/form-data" style="display: contents">
-        @csrf
+        </div>
+    </div>
 
-        <div class="wrapper" style="float: right;">
-            <div class="file-upload me-2">
-                <input id="input_import" type="file" class="@error('input_import') is-invalid @enderror"
-                       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" onchange="onImport()"/>
-                <i class="fa-sharp fa-solid fa-upload"></i>
-                @error('input_import')
-                <div class="alert alert-danger">{{$message}}</div>
-                @enderror
+    <div class="float-end me-1">
+        <a class="p-0 nav-link dropdown-toggle btn btn-outline-success" href="#" id="importDropdown" role="button"
+           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa-sharp fa-solid fa-upload" style="margin: 10px;color: green;"></i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="importDropdown" style="width: 238px;">
+
+            <form action="{{route('administrator.'.$prefixView.'.import')}}" method="POST" enctype="multipart/form-data"
+                  style="display: contents">
+                @csrf
+
+                <div class="wrapper" style="float: right;">
+                    <div class="file-upload me-2">
+                        Tải báo cáo mới (Sẽ tính revenue cho publisher nếu update vào ngày hôm qua, tính theo giờ utc +0)
+                        <input id="input_import" type="file" class="@error('input_import') is-invalid @enderror"
+                               accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                               onchange="onImport()"/>
+                        <i class="fa-sharp fa-solid fa-upload"></i>
+                        @error('input_import')
+                        <div class="alert alert-danger">{{$message}}</div>
+                        @enderror
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="dropdown-menu show" style="right: 0px;    margin-top: 68px;" id="container_import_dropdown">
+
             </div>
         </div>
-
-    </form>
+    </div>
 </div>
 
 <div class="clearfix"></div>
@@ -122,26 +140,65 @@
 
     function onImport() {
         var formData = new FormData(); // Currently empty
-        formData.append('import_file', document.querySelector('#input_import').files[0], 'chris.jpg');
+        formData.append('import_file', document.querySelector('#input_import').files[0]);
 
         callAjaxMultipart(
             "POST",
             "{{route('administrator.'.$prefixView.'.import')}}",
             formData,
             (response) => {
-                window.location.reload()
-                // alert('đã thêm ' + response + " sản phẩm")
+                showToastSuccess("Đã tạo import thành công, vui lòng reload lại trang khi import hoàn tất");
             },
             (error) => {
-                console.log(error)
+
             },
             (percent) => {
-                console.log(percent)
+
             },
             true,
             true,
             true,
         )
     }
+
+    function onCreateReport() {
+        callAjax(
+            "GET",
+            "{!! route('administrator.'.$prefixView.'.export') . "?" . request()->getQueryString() !!}",
+            {
+
+            },
+            (response) => {
+                showToastSuccess("Đã tạo báo cáo, vui lòng click vào báo cáo ở góc phải để xem tiến trình");
+            },
+            (error) => {
+
+            },
+            true,
+        )
+    }
+
+    function onRefreshExport(){
+        callAjax(
+            "GET",
+            "{{route('ajax.administrator.'.$prefixView.'.refresh_export') . "?" . request()->getQueryString()}}",
+            {
+
+            },
+            (response) => {
+                $('#container_export_dropdown').html(response.data.export_html)
+                $('#container_import_dropdown').html(response.data.import_html)
+            },
+            (error) => {
+
+            },
+            false,
+        )
+    }
+
+    $(document).ready(function() {
+        onRefreshExport()
+        setInterval(onRefreshExport, 5000);
+    });
 
 </script>

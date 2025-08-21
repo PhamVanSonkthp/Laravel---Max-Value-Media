@@ -74,22 +74,23 @@ function getCookie(name) {
 function deleteCookie(name) {
     document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 }
-
-if(getCookie('is_hide_slidebar')){
-    $('.sidebar-toggler').addClass('active');
-    $('.sidebar-toggler').removeClass('not-active');
-    $('body').addClass('sidebar-folded');
-}
-
-$('.sidebar-toggler').on('click', function () {
-
-    if (getCookie('is_hide_slidebar')){
-        deleteCookie('is_hide_slidebar')
-
-    }else{
-        setCookie('is_hide_slidebar', true, 30);
+if(!isMobile()){
+    if(getCookie('is_hide_slidebar')){
+        $('.sidebar-toggler').addClass('active');
+        $('.sidebar-toggler').removeClass('not-active');
+        $('body').addClass('sidebar-folded');
     }
-});
+
+    $('.sidebar-toggler').on('click', function () {
+
+        if (getCookie('is_hide_slidebar')){
+            deleteCookie('is_hide_slidebar')
+
+        }else{
+            setCookie('is_hide_slidebar', true, 30);
+        }
+    });
+}
 
 $(document).ready(function () {
     $(".nav-item").each(function () {

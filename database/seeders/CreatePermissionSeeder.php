@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Helper;
 use App\Models\Permission;
+use App\Models\Report;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -50,6 +52,21 @@ class CreatePermissionSeeder extends Seeder
                 'parent_id' => $permision->id,
                 'key_code' => $module_item . '_' . 'delete',
             ]);
+
+            if ($index == 12){
+
+                $modelColums = Helper::getAllColumsOfTable(new Report());
+
+                foreach ($modelColums as $modelColum){
+                    Permission::firstOrCreate([
+                        'name' => 'View ' . $modelColum,
+                        'display_name' => 'list',
+                        'parent_id' => $permision->id,
+                        'key_code' => $module_item . '_' . 'list_' . $modelColum,
+                    ]);
+                }
+            }
+
         }
     }
 }

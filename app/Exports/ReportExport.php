@@ -2,7 +2,9 @@
 
 namespace App\Exports;
 
+use App\Models\Formatter;
 use App\Models\Helper;
+use App\Models\Report;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -26,20 +28,19 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
     private $approvedColums;
     private $currentRow = 1;
 
-    public function __construct($model, $request, $queries = [], $heading = null, $approvedColums = null)
+    public function __construct($request, $queries = [], $heading = null, $approvedColums = null)
     {
         $this->request = $request;
-        $this->model = $model;
+        $this->model = new Report();
         $this->queries = $queries;
 
         $heading = [
             "ID",
-            "Site",
             "Date",
-            "Demand ID",
-            "Demand name",
+            "Demand",
+            "Site",
             "Zone ID",
-            "zone_name",
+            "zone name",
             "D.request",
             "D.impression",
             "D.ecpm",
@@ -49,6 +50,7 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
             "P.impression",
             "P.ecpm",
             "P.revenue",
+            "Profit",
         ];
 
         $this->heading = $heading;
@@ -61,17 +63,18 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
     public function collection()
     {
         $items = Helper::searchByQuery($this->model, $this->request, $this->queries, null, null, true);
-        $items = $items->limit(5000)->get();
+
+        $items = $items->orderBy('date', 'DESC')->orderBy('id', 'DESC')->paginate(config('_my_config.max_row_export'))->appends(request()->query());
+
 
         $itemFilters = [];
 
         foreach ($items as $key => $item) {
             $itemFilters[] = [
                 'id' => $item->id,
-                'site' => $item->site,
                 'date' => $item->date,
-                'demand_id' => $item->demand_id,
                 'demand_name' => optional($item->demand)->name,
+                'site' => $item->site,
                 'zone_id' => $item->zone_id,
                 'zone_name' => $item->zone_name,
                 'd_request' => $item->d_request,
@@ -83,6 +86,7 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
                 'p_impression' => $item->p_impression,
                 'p_ecpm' => $item->p_ecpm,
                 'p_revenue' => $item->p_revenue,
+                'profit' => $item->profit,
             ];
         }
 
@@ -95,10 +99,9 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
         $this->currentRow++;
         return [
             $row['id'],
-            $row['site'],
             $row['date'],
-            $row['demand_id'],
             $row['demand_name'],
+            $row['site'],
             $row['zone_id'],
             $row['zone_name'],
             $row['d_request'],
@@ -110,6 +113,7 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
             "=ROUND(I{$this->currentRow}*L{$this->currentRow}/100,0)",
             "=ROUND(J{$this->currentRow}*M{$this->currentRow}/100,2)",
             "=ROUND(N{$this->currentRow}*O{$this->currentRow}/1000,2)",
+            $row['profit'],
         ];
     }
 

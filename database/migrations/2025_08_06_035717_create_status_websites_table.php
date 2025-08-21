@@ -16,6 +16,7 @@ class CreateStatusWebsitesTable extends Migration
         Schema::create('status_websites', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('background_color')->nullable();
             $table->bigInteger('adserver_id');
 
             $table->bigInteger('priority')->default(0)->index();

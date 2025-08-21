@@ -19,16 +19,19 @@ class CreateZoneStatusSeeder extends Seeder
         ZoneStatus::firstOrCreate([
             "name" => "PENDING",
             "adserver_id" => "7010",
+            "background_color" => "#f59e0b",
         ]);
 
         ZoneStatus::firstOrCreate([
             "name" => "APPROVED",
             "adserver_id" => "7000",
+            "background_color" => "#22c55e",
         ]);
 
         ZoneStatus::firstOrCreate([
             "name" => "REJECTED",
             "adserver_id" => "7020",
+            "background_color" => "#ef4444",
         ]);
 
         ZoneStatus::firstOrCreate([
@@ -39,6 +42,7 @@ class CreateZoneStatusSeeder extends Seeder
         ZoneStatus::firstOrCreate([
             "name" => "REVIEWING",
             "adserver_id" => "7000",
+            "background_color" => "#3b82f6",
         ]);
 
 

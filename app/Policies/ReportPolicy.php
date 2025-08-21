@@ -32,6 +32,135 @@ class ReportPolicy
         return $user->checkPermissionAccess(config('permissions.access.reports-list'));
     }
 
+    public function viewID(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-id'));
+    }
+
+    public function viewWebsiteID(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-website_id'));
+    }
+
+    public function viewUserID(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-user_id'));
+    }
+
+    public function viewZoneWebsiteID(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-zone_website_id'));
+    }
+
+    public function viewDemandID(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-demand_id'));
+    }
+
+    public function viewDate(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-date'));
+    }
+
+    public function viewDRequest(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-d_request'));
+    }
+
+    public function viewDRequestsEmpty(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-d_requests_empty'));
+    }
+
+    public function viewDImpression(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-d_impression'));
+    }
+
+    public function viewDImpressionsUnique(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-d_impressions_unique'));
+    }
+
+    public function viewDEcpm(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-d_ecpm'));
+    }
+
+    public function viewDRevenue(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-d_revenue'));
+    }
+    public function viewCount(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-count'));
+    }
+
+    public function viewShare(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-share'));
+    }
+
+    public function viewPImpression(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-p_impression'));
+    }
+
+    public function viewTrafq(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-trafq'));
+    }
+
+    public function viewPEcpm(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-p_ecpm'));
+    }
+
+    public function viewPRevenue(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-p_revenue'));
+    }
+
+    public function viewProfit(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-profit'));
+    }
+
+    public function viewSalePercent(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-sale_percent'));
+    }
+
+    public function viewSystemPercent(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-system_percent'));
+    }
+
+    public function viewTax(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-tax'));
+    }
+
+    public function viewFixCost(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-fix_cost'));
+    }
+
+    public function viewSalary(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-salary'));
+    }
+
+    public function viewDeduction(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-deduction'));
+    }
+
+    public function viewNetProfit(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-net_profit'));
+    }
+
     /**
      * Determine whether the user can create models.
      *

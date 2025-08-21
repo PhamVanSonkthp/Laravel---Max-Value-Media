@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Policies\ReportPolicy;
 use Illuminate\Support\Facades\Gate;
 
 class PermissionGateAndPolicyAccess
@@ -99,6 +100,34 @@ class PermissionGateAndPolicyAccess
         Gate::define('reports-add', 'App\Policies\ReportPolicy@create');
         Gate::define('reports-edit', 'App\Policies\ReportPolicy@update');
         Gate::define('reports-delete', 'App\Policies\ReportPolicy@delete');
+
+        Gate::define('reports-list-id', 'App\Policies\ReportPolicy@viewID');
+        Gate::define('reports-list-website_id', [ReportPolicy::class, 'viewWebsiteID']);
+        Gate::define('reports-list-user_id', [ReportPolicy::class, 'viewUserID']);
+        Gate::define('reports-list-zone_website_id', [ReportPolicy::class, 'viewZoneWebsiteID']);
+        Gate::define('reports-list-demand_id', [ReportPolicy::class, 'viewDemandID']);
+        Gate::define('reports-list-date', [ReportPolicy::class, 'viewDate']);
+        Gate::define('reports-list-d_request', [ReportPolicy::class, 'viewDRequest']);
+        Gate::define('reports-list-d_requests_empty', [ReportPolicy::class, 'viewDRequestsEmpty']);
+        Gate::define('reports-list-d_impression', [ReportPolicy::class, 'viewDImpression']);
+        Gate::define('reports-list-d_impressions_unique', [ReportPolicy::class, 'viewDImpressionsUnique']);
+        Gate::define('reports-list-d_ecpm', [ReportPolicy::class, 'viewDEcpm']);
+        Gate::define('reports-list-d_revenue', [ReportPolicy::class, 'viewDRevenue']);
+        Gate::define('reports-list-count', [ReportPolicy::class, 'viewCount']);
+        Gate::define('reports-list-share', [ReportPolicy::class, 'viewShare']);
+        Gate::define('reports-list-p_impression', [ReportPolicy::class, 'viewPImpression']);
+        Gate::define('reports-list-trafq', [ReportPolicy::class, 'viewTrafq']);
+        Gate::define('reports-list-p_ecpm', [ReportPolicy::class, 'viewPEcpm']);
+        Gate::define('reports-list-p_revenue', [ReportPolicy::class, 'viewPRevenue']);
+        Gate::define('reports-list-profit', [ReportPolicy::class, 'viewProfit']);
+        Gate::define('reports-list-sale_percent', [ReportPolicy::class, 'viewSalePercent']);
+        Gate::define('reports-list-system_percent', [ReportPolicy::class, 'viewSystemPercent']);
+        Gate::define('reports-list-tax', [ReportPolicy::class, 'viewTax']);
+        Gate::define('reports-list-fix_cost', [ReportPolicy::class, 'viewFixCost']);
+        Gate::define('reports-list-salary', [ReportPolicy::class, 'viewSalary']);
+        Gate::define('reports-list-deduction', [ReportPolicy::class, 'viewDeduction']);
+        Gate::define('reports-list-net_profit', [ReportPolicy::class, 'viewNetProfit']);
+
     }/*step_2*/
 
     public function defineGateUserTypes()

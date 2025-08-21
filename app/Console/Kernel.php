@@ -23,7 +23,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         $schedule->command('job:create_check_ads_website')
-            ->everyFiveMinutes()->withoutOverlapping();
+            ->everyMinute()->withoutOverlapping();
 
         $schedule->command('job:create_report_demands')
             ->everyMinute()->withoutOverlapping();

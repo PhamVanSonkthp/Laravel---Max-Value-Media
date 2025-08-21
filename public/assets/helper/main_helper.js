@@ -187,10 +187,9 @@ function removeCookie(name) {
 String.prototype.replaceAllTxt = function replaceAll(search, replace) {
     return this.split(search).join(replace)
 }
-
-// if (window.location.href.length > window.location.origin.length + 1 && !getCookie("token") && !window.location.href.includes("profile")) {
-//     window.location.replace("./../../../../")
-// }
+function isMobile() {
+    return window.innerWidth <= 768; // adjust breakpoint as needed
+}
 
 var entityMap = {
     "&": "&amp;",

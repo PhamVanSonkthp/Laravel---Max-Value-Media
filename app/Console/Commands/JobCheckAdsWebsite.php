@@ -10,6 +10,7 @@ use App\Traits\AdScoreTrait;
 use App\Traits\AdserverTrait;
 use App\Traits\DemandTrait;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -49,11 +50,6 @@ class JobCheckAdsWebsite extends Command
     public function handle()
     {
         $websites = Website::latest('id')->where('updated_at' , '<', Carbon::now()->subDay()->toDateTimeString())->limit(50)->get();
-        $headers = [
-            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36',
-            'Cookie' => 'Maxvalue_cookie',
-            'Accept-Encoding' => 'identity'
-        ];
 
         foreach ($websites as $website) {
             if (!$website->ads) {
@@ -62,7 +58,7 @@ class JobCheckAdsWebsite extends Command
                 $adsDB = explode("\n", $website->ads);
             }
 
-            $dataCrawl = Helper::callGetHTTP(trim($website->url, '/ ') . '/ads.txt?v=' . time(), [], $headers);
+            $dataCrawl = Helper::callGetHTTP(trim($website->url, '/ ') . '/ads.txt?v=' . time(), [], []);
             $website->updated_at = Carbon::now()->toDateTimeString();
 
             if ($dataCrawl) {
@@ -92,7 +88,6 @@ class JobCheckAdsWebsite extends Command
                 } else if (count($missingLines) > 0) {
                     $website->ads_compared = implode("\n", $missingLines);
                     $website->ads_status_website_id = 3;
-
                 } else {
                     $website->ads_compared = '';
                     $website->ads_status_website_id = 2;

@@ -35,279 +35,354 @@
                             <table class="table table-hover table-bordered">
                                 <thead>
                                 <tr>
-                                    <th colspan="4">
+                                    <th>
+                                        <div class="dropdown">
+                                            <button
+                                                class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
+                                                type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                aria-expanded="false">
+                                                <i class="fa fa-filter"></i>
+                                            </button>
+                                            <ul class="dropdown-menu p-3">
+                                                <li class="mb-2">
+                                                    <button class="btn btn-sm btn-primary w-100"
+                                                            id="filter_btn_select_all">Select All
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+
+                                                @foreach($modelColums as $modelColum)
+                                                    <li>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input items-research"
+                                                                   type="checkbox" value="{{$modelColum}}"
+                                                                   id="item{{$modelColum}}" {{in_array($modelColum, $showColums) ? 'checked' : ''}} >
+                                                            <label class="form-check-label"
+                                                                   for="item{{$modelColum}}">{{$modelColum}}</label>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                                <li>
+                                                    <button class="btn btn-outline-primary mt-2" onclick="onResearch()"
+                                                            type="button"><i class="fa-solid fa-magnifying-glass"></i>Research
+                                                    </button>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </th>
+
+                                    <th colspan="{{count($showColums) + 4}}">
                                         Sumary
                                     </th>
-                                    <th>
-                                        {{\App\Models\Formatter::formatNumber($sumary->d_request)}}
-                                    </th>
-                                    <th>
-                                        {{\App\Models\Formatter::formatNumber($sumary->d_impression)}}
-                                    </th>
-                                    <th>
-                                        {{\App\Models\Formatter::formatNumber(round($sumary->d_ecpm, 2),2)}}
-                                    </th>
-                                    <th>
-                                        {{\App\Models\Formatter::formatNumber(round($sumary->d_revenue,2), 2)}}
-                                    </th>
-                                    <th>
-                                        {{round($sumary->count,2)}}
-                                    </th>
-                                    <th>
-                                        {{round($sumary->share,2)}}
-                                    </th>
-                                    <th>
-                                        {{\App\Models\Formatter::formatNumber(round($sumary->p_impression))}}
-                                    </th>
-                                    <th>
-                                        {{round($sumary->p_ecpm,2)}}
-                                    </th>
-                                    <th>
-                                        {{\App\Models\Formatter::formatNumber(round($sumary->p_revenue,2),2)}}
-                                    </th>
-                                    <th>
-                                        {{\App\Models\Formatter::formatNumber(round($sumary->profit,2),2)}}
-                                    </th>
-                                    <th>
-                                        {{\App\Models\Formatter::formatNumber(round($sumary->net_profit,2),2)}}
-                                    </th>
+                                    @if(in_array("d_request",$modelColums))
+                                        <th>
+                                            {{\App\Models\Formatter::formatNumber($sumary->d_request)}}
+                                        </th>
+                                    @endif
+                                    @if(in_array("d_impression",$modelColums))
+                                        <th>
+                                            {{\App\Models\Formatter::formatNumber($sumary->d_impression)}}
+                                        </th>
+                                    @endif
+                                    @if(in_array("d_ecpm",$modelColums))
+                                        <th>
+                                            {{\App\Models\Formatter::formatNumber(round($sumary->d_ecpm, 2),2)}}
+                                        </th>
+                                    @endif
+                                    @if(in_array("d_revenue",$modelColums))
+                                        <th>
+                                            {{\App\Models\Formatter::formatNumber(round($sumary->d_revenue,2), 2)}}
+                                        </th>
+                                    @endif
+                                    @if(in_array("count",$modelColums))
+                                        <th>
+                                            {{round($sumary->count,2)}}
+                                        </th>
+                                    @endif
+                                    @if(in_array("share",$modelColums))
+                                        <th>
+                                            {{round($sumary->share,2)}}
+                                        </th>
+                                    @endif
+                                    @if(in_array("p_impression",$modelColums))
+                                        <th>
+                                            {{\App\Models\Formatter::formatNumber(round($sumary->p_impression))}}
+                                        </th>
+                                    @endif
+                                    @if(in_array("p_ecpm",$modelColums))
+                                        <th>
+                                            {{round($sumary->p_ecpm,2)}}
+                                        </th>
+                                    @endif
+                                    @if(in_array("p_revenue",$modelColums))
+                                        <th>
+                                            {{\App\Models\Formatter::formatNumber(round($sumary->p_revenue,2),2)}}
+                                        </th>
+                                    @endif
+                                    @if(in_array("profit",$modelColums))
+                                        <th>
+                                            {{\App\Models\Formatter::formatNumber(round($sumary->profit,2),2)}}
+                                        </th>
+                                    @endif
                                 </tr>
 
                                 <tr>
-                                    <th onclick='onSortSearch(`date`, `{{ \App\Models\Helper::getValueInFilterReuquest('date') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('date') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Date {!! \App\Models\Helper::getValueInFilterReuquest('date') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('date') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`demand`, `{{ \App\Models\Helper::getValueInFilterReuquest('demand') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('demand') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Demand {!! \App\Models\Helper::getValueInFilterReuquest('demand') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('demand') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`site`, `{{ \App\Models\Helper::getValueInFilterReuquest('site') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('site') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Site {!! \App\Models\Helper::getValueInFilterReuquest('site') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('site') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
+                                    @foreach($showColums as $showColum)
+                                        <th onclick='onSortSearch($showColum, `{{ \App\Models\Helper::getValueInFilterReuquest($showColum) == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest($showColum) != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                {{$showColum}} {!! \App\Models\Helper::getValueInFilterReuquest($showColum) == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest($showColum) != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endforeach
 
-{{--                                    <th onclick='onSortSearch(`zone_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('zone_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('zone_id') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                        <div>--}}
-{{--                                            Zone ID {!! \App\Models\Helper::getValueInFilterReuquest('zone_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('zone_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                        </div>--}}
-{{--                                    </th>--}}
-                                    <th onclick='onSortSearch(`zone_name`, `{{ \App\Models\Helper::getValueInFilterReuquest('zone_name') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('zone_name') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Zone name {!! \App\Models\Helper::getValueInFilterReuquest('zone_name') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('zone_name') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`d_request`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_request') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_request') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            D.Request {!! \App\Models\Helper::getValueInFilterReuquest('d_request') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_request') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`d_impression`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_impression') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_impression') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            D.Impression {!! \App\Models\Helper::getValueInFilterReuquest('d_impression') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_impression') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`d_ecpm`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_ecpm') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_ecpm') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            D.eCPM ($) {!! \App\Models\Helper::getValueInFilterReuquest('d_ecpm') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_ecpm') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`d_revenue`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_revenue') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_revenue') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            D.Revenue ($) {!! \App\Models\Helper::getValueInFilterReuquest('d_revenue') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_revenue') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`count`, `{{ \App\Models\Helper::getValueInFilterReuquest('count') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('count') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            -Count (%)- {!! \App\Models\Helper::getValueInFilterReuquest('count') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('count') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`share`, `{{ \App\Models\Helper::getValueInFilterReuquest('share') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('share') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            -Share (%)- {!! \App\Models\Helper::getValueInFilterReuquest('share') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('share') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`p_impression`, `{{ \App\Models\Helper::getValueInFilterReuquest('p_impression') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('p_impression') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            P.impression {!! \App\Models\Helper::getValueInFilterReuquest('p_impression') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_impression') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`p_ecpm`, `{{ \App\Models\Helper::getValueInFilterReuquest('p_ecpm') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('p_ecpm') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            P.eCPM ($) {!! \App\Models\Helper::getValueInFilterReuquest('p_ecpm') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_ecpm') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`p_revenue`, `{{ \App\Models\Helper::getValueInFilterReuquest('p_revenue') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('p_revenue') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            P.Revenue ($) {!! \App\Models\Helper::getValueInFilterReuquest('p_revenue') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_revenue') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th onclick='onSortSearch(`profit`, `{{ \App\Models\Helper::getValueInFilterReuquest('profit') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('profit') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Profit {!! \App\Models\Helper::getValueInFilterReuquest('profit') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('profit') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-{{--                                    <th onclick='onSortSearch(`sale_percent`, `{{ \App\Models\Helper::getValueInFilterReuquest('sale_percent') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('sale_percent') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                        <div>--}}
-{{--                                            Sale (15% DT) {!! \App\Models\Helper::getValueInFilterReuquest('sale_percent') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('sale_percent') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                        </div>--}}
-{{--                                    </th>--}}
-{{--                                    <th onclick='onSortSearch(`system_percent`, `{{ \App\Models\Helper::getValueInFilterReuquest('system_percent') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('system_percent') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                        <div>--}}
-{{--                                            System (8%) {!! \App\Models\Helper::getValueInFilterReuquest('system_percent') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('system_percent') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                        </div>--}}
-{{--                                    </th>--}}
-{{--                                    <th onclick='onSortSearch(`tax`, `{{ \App\Models\Helper::getValueInFilterReuquest('tax') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('tax') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                        <div>--}}
-{{--                                            Tax (10%) {!! \App\Models\Helper::getValueInFilterReuquest('tax') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('tax') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                        </div>--}}
-{{--                                    </th>--}}
-{{--                                    <th onclick='onSortSearch(`fix_cost`, `{{ \App\Models\Helper::getValueInFilterReuquest('fix_cost') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('fix_cost') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                        <div>--}}
-{{--                                            Fix Cost(10%) {!! \App\Models\Helper::getValueInFilterReuquest('fix_cost') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('fix_cost') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                        </div>--}}
-{{--                                    </th>--}}
-{{--                                    <th onclick='onSortSearch(`salary`, `{{ \App\Models\Helper::getValueInFilterReuquest('salary') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('salary') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                        <div>--}}
-{{--                                            --Salary-- {!! \App\Models\Helper::getValueInFilterReuquest('salary') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('salary') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                        </div>--}}
-{{--                                    </th>--}}
-{{--                                    <th onclick='onSortSearch(`deduction`, `{{ \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                        <div>--}}
-{{--                                            Deduction ($) {!! \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                        </div>--}}
-{{--                                    </th>--}}
-                                    <th onclick='onSortSearch(`net_profit`, `{{ \App\Models\Helper::getValueInFilterReuquest('net_profit') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('net_profit') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Net Profit ($) {!! \App\Models\Helper::getValueInFilterReuquest('net_profit') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('net_profit') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody class="" id="body_container_item">
-                                @foreach($items as $index => $item)
-                                    @include('administrator.'.$prefixView.'.row', ['item' => $item, 'prefixView' => $prefixView, 'index' => $index])
-                                @endforeach
-
-                                </tbody>
-
-                                <tfoot>
-                                    <tr>
+                                    @if(in_array("date",$modelColums))
                                         <th onclick='onSortSearch(`date`, `{{ \App\Models\Helper::getValueInFilterReuquest('date') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('date') != "desc" ? "desc" : "") }}`)'>
                                             <div>
                                                 Date {!! \App\Models\Helper::getValueInFilterReuquest('date') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('date') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
-                                        <th onclick='onSortSearch(`demand`, `{{ \App\Models\Helper::getValueInFilterReuquest('demand') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('demand') != "desc" ? "desc" : "") }}`)'>
+                                    @endif
+                                    @if(in_array("demand_id",$modelColums))
+                                        <th onclick='onSortSearch(`demand_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('demand_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('demand_id') != "desc" ? "desc" : "") }}`)'>
                                             <div>
-                                                Demand {!! \App\Models\Helper::getValueInFilterReuquest('demand') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('demand') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                Demand {!! \App\Models\Helper::getValueInFilterReuquest('demand_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('demand_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
-                                        <th onclick='onSortSearch(`site`, `{{ \App\Models\Helper::getValueInFilterReuquest('site') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('site') != "desc" ? "desc" : "") }}`)'>
+                                    @endif
+                                    @if(in_array("demand_id",$modelColums))
+                                        <th onclick='onSortSearch(`website_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('website_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('website_id') != "desc" ? "desc" : "") }}`)'>
                                             <div>
-                                                Site {!! \App\Models\Helper::getValueInFilterReuquest('site') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('site') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                Site {!! \App\Models\Helper::getValueInFilterReuquest('website_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('website_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("zone_website_id",$modelColums))
+                                        <th onclick='onSortSearch(`zone_website_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('zone_website_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('zone_website_id') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Zone
+                                                ID {!! \App\Models\Helper::getValueInFilterReuquest('zone_website_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('zone_website_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
 
-{{--                                        <th onclick='onSortSearch(`zone_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('zone_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('zone_id') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                            <div>--}}
-{{--                                                Zone ID {!! \App\Models\Helper::getValueInFilterReuquest('zone_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('zone_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                            </div>--}}
-{{--                                        </th>--}}
-                                        <th onclick='onSortSearch(`zone_name`, `{{ \App\Models\Helper::getValueInFilterReuquest('zone_name') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('zone_name') != "desc" ? "desc" : "") }}`)'>
+                                        <th>
                                             <div>
-                                                Zone name {!! \App\Models\Helper::getValueInFilterReuquest('zone_name') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('zone_name') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                Zone name
                                             </div>
                                         </th>
+                                    @endif
+
+                                    @if(in_array("d_request",$modelColums))
                                         <th onclick='onSortSearch(`d_request`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_request') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_request') != "desc" ? "desc" : "") }}`)'>
                                             <div>
                                                 D.Request {!! \App\Models\Helper::getValueInFilterReuquest('d_request') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_request') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
+                                    @endif
+                                    @if(in_array("d_impression",$modelColums))
                                         <th onclick='onSortSearch(`d_impression`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_impression') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_impression') != "desc" ? "desc" : "") }}`)'>
                                             <div>
                                                 D.Impression {!! \App\Models\Helper::getValueInFilterReuquest('d_impression') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_impression') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
+                                    @endif
+                                    @if(in_array("d_ecpm",$modelColums))
                                         <th onclick='onSortSearch(`d_ecpm`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_ecpm') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_ecpm') != "desc" ? "desc" : "") }}`)'>
                                             <div>
-                                                D.eCPM ($) {!! \App\Models\Helper::getValueInFilterReuquest('d_ecpm') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_ecpm') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                D.eCPM
+                                                ($) {!! \App\Models\Helper::getValueInFilterReuquest('d_ecpm') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_ecpm') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
+                                    @endif
+                                    @if(in_array("d_revenue",$modelColums))
                                         <th onclick='onSortSearch(`d_revenue`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_revenue') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_revenue') != "desc" ? "desc" : "") }}`)'>
                                             <div>
-                                                D.Revenue ($) {!! \App\Models\Helper::getValueInFilterReuquest('d_revenue') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_revenue') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                D.Revenue
+                                                ($) {!! \App\Models\Helper::getValueInFilterReuquest('d_revenue') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_revenue') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
+                                    @endif
+                                    @if(in_array("count",$modelColums))
                                         <th onclick='onSortSearch(`count`, `{{ \App\Models\Helper::getValueInFilterReuquest('count') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('count') != "desc" ? "desc" : "") }}`)'>
                                             <div>
-                                                Count (%) {!! \App\Models\Helper::getValueInFilterReuquest('count') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('count') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                -Count
+                                                (%)- {!! \App\Models\Helper::getValueInFilterReuquest('count') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('count') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
+                                    @endif
+                                    @if(in_array("share",$modelColums))
                                         <th onclick='onSortSearch(`share`, `{{ \App\Models\Helper::getValueInFilterReuquest('share') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('share') != "desc" ? "desc" : "") }}`)'>
                                             <div>
-                                                Share (%) {!! \App\Models\Helper::getValueInFilterReuquest('share') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('share') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                -Share
+                                                (%)- {!! \App\Models\Helper::getValueInFilterReuquest('share') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('share') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
+                                    @endif
+                                    @if(in_array("p_impression",$modelColums))
                                         <th onclick='onSortSearch(`p_impression`, `{{ \App\Models\Helper::getValueInFilterReuquest('p_impression') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('p_impression') != "desc" ? "desc" : "") }}`)'>
                                             <div>
                                                 P.impression {!! \App\Models\Helper::getValueInFilterReuquest('p_impression') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_impression') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
+                                    @endif
+                                    @if(in_array("p_ecpm",$modelColums))
                                         <th onclick='onSortSearch(`p_ecpm`, `{{ \App\Models\Helper::getValueInFilterReuquest('p_ecpm') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('p_ecpm') != "desc" ? "desc" : "") }}`)'>
                                             <div>
-                                                P.eCPM ($) {!! \App\Models\Helper::getValueInFilterReuquest('p_ecpm') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_ecpm') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                P.eCPM
+                                                ($) {!! \App\Models\Helper::getValueInFilterReuquest('p_ecpm') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_ecpm') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
+                                    @endif
+                                    @if(in_array("p_revenue",$modelColums))
                                         <th onclick='onSortSearch(`p_revenue`, `{{ \App\Models\Helper::getValueInFilterReuquest('p_revenue') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('p_revenue') != "desc" ? "desc" : "") }}`)'>
                                             <div>
-                                                P.Revenue ($) {!! \App\Models\Helper::getValueInFilterReuquest('p_revenue') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_revenue') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                P.Revenue
+                                                ($) {!! \App\Models\Helper::getValueInFilterReuquest('p_revenue') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_revenue') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
+                                    @endif
+                                    @if(in_array("profit",$modelColums))
                                         <th onclick='onSortSearch(`profit`, `{{ \App\Models\Helper::getValueInFilterReuquest('profit') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('profit') != "desc" ? "desc" : "") }}`)'>
                                             <div>
                                                 Profit {!! \App\Models\Helper::getValueInFilterReuquest('profit') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('profit') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
-{{--                                        <th onclick='onSortSearch(`sale_percent`, `{{ \App\Models\Helper::getValueInFilterReuquest('sale_percent') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('sale_percent') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                            <div>--}}
-{{--                                                Sale (15% DT) {!! \App\Models\Helper::getValueInFilterReuquest('sale_percent') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('sale_percent') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                            </div>--}}
-{{--                                        </th>--}}
-{{--                                        <th onclick='onSortSearch(`system_percent`, `{{ \App\Models\Helper::getValueInFilterReuquest('system_percent') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('system_percent') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                            <div>--}}
-{{--                                                System (8%) {!! \App\Models\Helper::getValueInFilterReuquest('system_percent') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('system_percent') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                            </div>--}}
-{{--                                        </th>--}}
-{{--                                        <th onclick='onSortSearch(`tax`, `{{ \App\Models\Helper::getValueInFilterReuquest('tax') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('tax') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                            <div>--}}
-{{--                                                Tax (10%) {!! \App\Models\Helper::getValueInFilterReuquest('tax') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('tax') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                            </div>--}}
-{{--                                        </th>--}}
-{{--                                        <th onclick='onSortSearch(`fix_cost`, `{{ \App\Models\Helper::getValueInFilterReuquest('fix_cost') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('fix_cost') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                            <div>--}}
-{{--                                                Fix Cost(10%) {!! \App\Models\Helper::getValueInFilterReuquest('fix_cost') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('fix_cost') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                            </div>--}}
-{{--                                        </th>--}}
-{{--                                        <th onclick='onSortSearch(`salary`, `{{ \App\Models\Helper::getValueInFilterReuquest('salary') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('salary') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                            <div>--}}
-{{--                                                Salary {!! \App\Models\Helper::getValueInFilterReuquest('salary') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('salary') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                            </div>--}}
-{{--                                        </th>--}}
-{{--                                        <th onclick='onSortSearch(`deduction`, `{{ \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? "desc" : "") }}`)'>--}}
-{{--                                            <div>--}}
-{{--                                                Deduction ($) {!! \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}--}}
-{{--                                            </div>--}}
-{{--                                        </th>--}}
-                                        <th onclick='onSortSearch(`net_profit`, `{{ \App\Models\Helper::getValueInFilterReuquest('net_profit') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('net_profit') != "desc" ? "desc" : "") }}`)'>
+                                    @endif
+                                </tr>
+                                </thead>
+                                <tbody class="" id="body_container_item">
+                                @foreach($items as $index => $item)
+                                    @include('administrator.'.$prefixView.'.row', ['item' => $item, 'prefixView' => $prefixView, 'index' => $index, 'showColums'=>$showColums])
+                                @endforeach
+
+                                </tbody>
+
+                                <tfoot>
+
+                                <tr>
+                                    @foreach($showColums as $showColum)
+                                        <th onclick='onSortSearch($showColum, `{{ \App\Models\Helper::getValueInFilterReuquest($showColum) == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest($showColum) != "desc" ? "desc" : "") }}`)'>
                                             <div>
-                                                Net Profit ($) {!! \App\Models\Helper::getValueInFilterReuquest('net_profit') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('net_profit') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                {{$showColum}} {!! \App\Models\Helper::getValueInFilterReuquest($showColum) == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest($showColum) != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
-                                    </tr>
+                                    @endforeach
+
+                                    @if(in_array("date",$modelColums))
+                                        <th onclick='onSortSearch(`date`, `{{ \App\Models\Helper::getValueInFilterReuquest('date') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('date') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Date {!! \App\Models\Helper::getValueInFilterReuquest('date') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('date') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("demand_id",$modelColums))
+                                        <th onclick='onSortSearch(`demand_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('demand_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('demand_id') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Demand {!! \App\Models\Helper::getValueInFilterReuquest('demand_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('demand_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("demand_id",$modelColums))
+                                        <th onclick='onSortSearch(`website_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('website_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('website_id') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Site {!! \App\Models\Helper::getValueInFilterReuquest('website_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('website_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("zone_website_id",$modelColums))
+                                        <th onclick='onSortSearch(`zone_website_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('zone_website_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('zone_website_id') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Zone
+                                                ID {!! \App\Models\Helper::getValueInFilterReuquest('zone_website_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('zone_website_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+
+                                        <th>
+                                            <div>
+                                                Zone name
+                                            </div>
+                                        </th>
+                                    @endif
+
+                                    @if(in_array("d_request",$modelColums))
+                                        <th onclick='onSortSearch(`d_request`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_request') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_request') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                D.Request {!! \App\Models\Helper::getValueInFilterReuquest('d_request') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_request') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("d_impression",$modelColums))
+                                        <th onclick='onSortSearch(`d_impression`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_impression') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_impression') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                D.Impression {!! \App\Models\Helper::getValueInFilterReuquest('d_impression') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_impression') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("d_ecpm",$modelColums))
+                                        <th onclick='onSortSearch(`d_ecpm`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_ecpm') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_ecpm') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                D.eCPM
+                                                ($) {!! \App\Models\Helper::getValueInFilterReuquest('d_ecpm') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_ecpm') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("d_revenue",$modelColums))
+                                        <th onclick='onSortSearch(`d_revenue`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_revenue') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_revenue') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                D.Revenue
+                                                ($) {!! \App\Models\Helper::getValueInFilterReuquest('d_revenue') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_revenue') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("count",$modelColums))
+                                        <th onclick='onSortSearch(`count`, `{{ \App\Models\Helper::getValueInFilterReuquest('count') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('count') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                -Count
+                                                (%)- {!! \App\Models\Helper::getValueInFilterReuquest('count') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('count') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("share",$modelColums))
+                                        <th onclick='onSortSearch(`share`, `{{ \App\Models\Helper::getValueInFilterReuquest('share') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('share') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                -Share
+                                                (%)- {!! \App\Models\Helper::getValueInFilterReuquest('share') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('share') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("p_impression",$modelColums))
+                                        <th onclick='onSortSearch(`p_impression`, `{{ \App\Models\Helper::getValueInFilterReuquest('p_impression') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('p_impression') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                P.impression {!! \App\Models\Helper::getValueInFilterReuquest('p_impression') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_impression') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("p_ecpm",$modelColums))
+                                        <th onclick='onSortSearch(`p_ecpm`, `{{ \App\Models\Helper::getValueInFilterReuquest('p_ecpm') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('p_ecpm') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                P.eCPM
+                                                ($) {!! \App\Models\Helper::getValueInFilterReuquest('p_ecpm') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_ecpm') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("p_revenue",$modelColums))
+                                        <th onclick='onSortSearch(`p_revenue`, `{{ \App\Models\Helper::getValueInFilterReuquest('p_revenue') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('p_revenue') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                P.Revenue
+                                                ($) {!! \App\Models\Helper::getValueInFilterReuquest('p_revenue') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('p_revenue') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                    @if(in_array("profit",$modelColums))
+                                        <th onclick='onSortSearch(`profit`, `{{ \App\Models\Helper::getValueInFilterReuquest('profit') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('profit') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Profit {!! \App\Models\Helper::getValueInFilterReuquest('profit') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('profit') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                    @endif
+                                </tr>
                                 </tfoot>
                             </table>
                         </div>
@@ -326,6 +401,27 @@
 
 @section('js')
 
+    <script>
+        const checkboxes = document.querySelectorAll('.form-check-input');
 
+        const selectAllBtn = document.getElementById('filter_btn_select_all');
+
+
+        // Toggle Select All / Clear All
+        selectAllBtn.addEventListener('click', () => {
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+            selectAllBtn.textContent = allChecked ? 'Select All' : 'Clear All';
+        });
+
+        function onResearch() {
+            const checked = document.querySelectorAll('.items-research:checked');
+
+            // Convert NodeList to array of values
+            const values = Array.from(checked).map(cb => cb.value);
+
+            addUrlParameter("show_colums", values)
+        }
+    </script>
 @endsection
 

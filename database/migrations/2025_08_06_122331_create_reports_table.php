@@ -20,6 +20,7 @@ class CreateReportsTable extends Migration
             $table->bigInteger('user_id')->index();
             $table->bigInteger('zone_website_id')->index();
             $table->date('date')->index();
+            $table->bigInteger('report_status_id')->default(1);
             $table->bigInteger('d_request');
             $table->bigInteger('d_requests_empty')->default(0);
             $table->bigInteger('d_impression');

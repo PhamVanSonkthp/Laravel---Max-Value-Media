@@ -16,8 +16,8 @@ class CreateUserTransactionsTable extends Migration
         Schema::create('user_transactions', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->index();
-            $table->bigInteger('amount');
-            $table->bigInteger('amount_now')->default(0);
+            $table->float('amount',8,2);
+            $table->float('amount_now',8,2)->default(0);
             $table->text('description');
 
             $table->bigInteger('priority')->default(0)->index();

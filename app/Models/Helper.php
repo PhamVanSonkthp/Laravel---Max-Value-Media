@@ -105,7 +105,7 @@ class Helper extends Model
         $columns = Schema::getColumnListing($object->getTableName());
         $query = $object->query();
 
-        $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name'];
+        $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name','description'];
         $searchColumnBanned = ['limit', 'page', 'with_trashed'];
 
         if ($request){
@@ -158,7 +158,6 @@ class Helper extends Model
                 }
             }
         }
-
 
         if (is_array($queries)) {
             foreach ($queries as $key => $item) {
@@ -262,7 +261,7 @@ class Helper extends Model
             $query = $query->orderBy('priority', 'DESC');
         }
 
-        $items = $query->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+        $items = $query->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
         if (!empty($make_hiddens) && is_array($make_hiddens)) {
             foreach ($items as $item) {
@@ -314,54 +313,57 @@ class Helper extends Model
         $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name'];
         $searchColumnBanned = ['limit', 'page', 'with_trashed'];
 
-        foreach ($request->all() as $key => $item) {
-            if (is_string($item)) {
-                $item = trim($item);
-            }
+        if ($request){
+            foreach ($request->all() as $key => $item) {
+                if (is_string($item)) {
+                    $item = trim($item);
+                }
 
-            if (in_array($key, $searchColumnBanned)) {
-                continue;
-            }
-
-            if (in_array($key, $searchLikeColumns)) {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->where(function ($query) use ($item, $columns, $searchLikeColumns, $object) {
-                        foreach ($searchLikeColumns as $searchColumn) {
-                            if (in_array($searchColumn, $columns)) {
-                                $query->orWhere(self::getTableName($object) . '.' . $searchColumn, 'LIKE', "%{$item}%");
-                            }
-                        }
-                    });
-                }
-            } else if ($key == "start" || $key == "from" || $key == "begin") {
-                if (in_array("date", $columns)) {
-                    if (!empty($item) || strlen($item) > 0) {
-                        $query = $query->whereDate($object->getTableName() . '.date', '>=', $item);
-                    }
-                } else {
-                    if (!empty($item) || strlen($item) > 0) {
-                        $query = $query->whereDate($object->getTableName() . '.created_at', '>=', $item);
-                    }
-                }
-            } else if ($key == "end" || $key == "to") {
-                if (in_array("date", $columns)) {
-                    if (!empty($item) || strlen($item) > 0) {
-                        $query = $query->whereDate($object->getTableName() . '.date', '<=', $item);
-                    }
-                } else {
-                    if (!empty($item) || strlen($item) > 0) {
-                        $query = $query->whereDate($object->getTableName() . '.created_at', '<=', $item);
-                    }
-                }
-            } else {
-                if (!in_array($key, $columns)) {
+                if (in_array($key, $searchColumnBanned)) {
                     continue;
                 }
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->where($object->getTableName() . "." . $key, $item);
+
+                if (in_array($key, $searchLikeColumns)) {
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->where(function ($query) use ($item, $columns, $searchLikeColumns, $object) {
+                            foreach ($searchLikeColumns as $searchColumn) {
+                                if (in_array($searchColumn, $columns)) {
+                                    $query->orWhere(self::getTableName($object) . '.' . $searchColumn, 'LIKE', "%{$item}%");
+                                }
+                            }
+                        });
+                    }
+                } else if ($key == "start" || $key == "from" || $key == "begin") {
+                    if (in_array("date", $columns)) {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.date', '>=', $item);
+                        }
+                    } else {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.created_at', '>=', $item);
+                        }
+                    }
+                } else if ($key == "end" || $key == "to") {
+                    if (in_array("date", $columns)) {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.date', '<=', $item);
+                        }
+                    } else {
+                        if (!empty($item) || strlen($item) > 0) {
+                            $query = $query->whereDate($object->getTableName() . '.created_at', '<=', $item);
+                        }
+                    }
+                } else {
+                    if (!in_array($key, $columns)) {
+                        continue;
+                    }
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->where($object->getTableName() . "." . $key, $item);
+                    }
                 }
             }
         }
+
 
         if (is_array($queries)) {
             foreach ($queries as $key => $item) {
@@ -434,20 +436,21 @@ class Helper extends Model
         }
 
 
-        if ($request->trash) {
-            if (in_array('deleted_at', $columns)) {
-                $query = $query->onlyTrashed();
-            } else {
-                $query = $query->where('id', -1);
+        if ($request){
+            if ($request->trash) {
+                if (in_array('deleted_at', $columns)) {
+                    $query = $query->onlyTrashed();
+                } else {
+                    $query = $query->where('id', -1);
+                }
             }
         }
-
 
         if (in_array("priority", $columns)) {
             $query = $query->orderBy('priority', 'DESC');
         }
 
-        $items = $query->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC');
+        $items = $query->orderBy('created_at', 'DESC')->orderBy('id', 'DESC');
 
         if (!empty($make_hiddens) && is_array($make_hiddens)) {
             foreach ($items as $item) {
@@ -455,7 +458,7 @@ class Helper extends Model
             }
         }
 
-        return $query->latest()->get();
+        return $query->latest()->limit(10000)->get();
     }
 
     public static function storeByQuery($object, $request, $data_create)
@@ -781,7 +784,7 @@ class Helper extends Model
 
             $response = $client->request('GET', $url, $params);
 
-            return json_decode($response->getBody(), true);
+            return $response->getBody()->getContents();
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return null;

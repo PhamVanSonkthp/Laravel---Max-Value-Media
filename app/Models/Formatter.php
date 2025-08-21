@@ -156,12 +156,12 @@ class Formatter extends Model
         return number_format($input, 0, ".", ".");
     }
 
-    public static function formatMoney($input)
+    public static function formatMoney($input, $decima = 0)
     {
         if (empty($input)) {
             return 0;
         }
-        return number_format($input);
+        return number_format($input, $decima);
     }
 
     public static function formatNumber($input, $decima = 0)
@@ -253,5 +253,26 @@ class Formatter extends Model
 
             return substr($number, 0, $part_size) . $middle_string . substr($number, -$part_size);
         }
+    }
+
+    public static function addHttps($url)
+    {
+        if (!Str::startsWith($url, ['http://', 'https://'])) {
+            $url = "https://" . $url;
+        }
+        return $url;
+    }
+
+    public static function removeHttps($url)
+    {
+        return preg_replace("~^(?:https?://)~i", '', $url);
+    }
+
+    public static function isDomain($domain)
+    {
+        $domain = self::removeHttps($domain);
+
+        return preg_match('/^(?!:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/i', $domain);
+
     }
 }

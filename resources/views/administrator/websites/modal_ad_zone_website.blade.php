@@ -22,7 +22,7 @@
         </div>
         <div class="getcode__info--code mt-3">
             <div class="alert alert-primary" role="alert">
-                Please add our script into the <code>&lt;head&gt;</code> tag of your website
+                {!! optional(optional($zoneWebsite->zoneDimension)->zoneDimensionPosition)->description !!}
             </div>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="Normal" role="tabpanel"

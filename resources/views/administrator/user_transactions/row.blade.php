@@ -12,15 +12,12 @@
             <div>
                 #{{ optional($item->user)->id}} - {{ optional($item->user)->name}}
             </div>
-            <div>
-                {{ optional($item->user)->phone}}
-            </div>
         </div>
     </td>
 
     <td>
         <h4 style="color: {{$item->amount >= 0 ? "#008943;" : "#f54848;"}}">
-            {{\App\Models\Formatter::formatMoney( $item->amount)}}
+            {{\App\Models\Formatter::formatMoney( $item->amount, 2)}}
         </h4>
     </td>
 
@@ -31,9 +28,9 @@
     </td>
 
     <td>
-        <div>
-            {{\App\Models\Formatter::formatMoney( $item->amount_now)}}
-        </div>
+        <h4  style="color: {{$item->amount >= 0 ? "#008943;" : "#f54848;"}}">
+            {{\App\Models\Formatter::formatMoney( $item->amount_now, 2)}}
+        </h4>
     </td>
 
     <td>
