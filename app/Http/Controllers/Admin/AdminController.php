@@ -90,4 +90,23 @@ class AdminController extends Controller
 
         return back();
     }
+
+    public function impersonate(Request $request)
+    {
+        session(['impersonate' => auth()->id()]);
+        auth()->loginUsingId($request->id);
+        return redirect('/dashboard')->with('success', 'Now impersonating user.');
+    }
+
+    public function leave(Request $request)
+    {
+        $adminId = session('impersonate');
+
+        if ($adminId) {
+            auth()->loginUsingId($adminId);
+            session()->forget('impersonate');
+        }
+
+        return redirect()->route('administrator.dashboard.index');
+    }
 }

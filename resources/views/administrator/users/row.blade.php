@@ -45,7 +45,7 @@
            class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-chart-line"></i>
         </a>
-        <a href="" title="Impersonate" class="btn btn-outline-primary btn-sm">
+        <a href="{{route('administrator.impersonate', ['id' => $item->id])}}" title="Impersonate" class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-user"></i>
         </a>
         <a href="{{route('administrator.websites.index', ['user_id' => $item->id])}}" title="Websites"

@@ -29,13 +29,14 @@ class QueueAdserverCreateZone implements ShouldQueue
     private $numbers;
     private $zoneStatusID;
     private $zoneStatus;
+    private $moreCacheResults;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($key_cache, $website_id, $name, $dimension_ids, $numbers, $zone_status_id)
+    public function __construct($key_cache, $website_id, $name, $dimension_ids, $numbers, $zone_status_id, $more_cache_results = [])
     {
         //
         $this->keyCache = $key_cache;
@@ -44,6 +45,7 @@ class QueueAdserverCreateZone implements ShouldQueue
         $this->dimensionIDs = $dimension_ids;
         $this->numbers = $numbers;
         $this->zoneStatusID = $zone_status_id;
+        $this->moreCacheResults = $more_cache_results;
         $this->zoneStatus = ZoneStatus::find($this->zoneStatusID);
         $this->website = Website::find($this->websiteID);
     }
@@ -135,6 +137,9 @@ class QueueAdserverCreateZone implements ShouldQueue
             if (min($this->numbers[$index], 10) > $counter++) goto repeat;
         }
 
+        foreach ($this->moreCacheResults as $key => $moreCacheResult){
+            $result[$key] = $moreCacheResult;
+        }
         $result['is_success'] = true;
 
         Cache::put($this->keyCache, $result, config('_my_config.cache_time_api'));

@@ -39,5 +39,11 @@ class CreateStatusWebsiteSeeder extends Seeder
             "background_color" => "#ef4444",
         ]);
 
+        StatusWebsite::firstOrCreate([
+            "name" => "Not verfied",
+            "adserver_id" => "3520",
+            "background_color" => "#f59e0b",
+        ]);
+
     }
 }

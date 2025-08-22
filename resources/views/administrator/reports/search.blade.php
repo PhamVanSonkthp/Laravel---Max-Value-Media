@@ -34,6 +34,7 @@
 <div>
     @include('administrator.components.search')
 
+    @can('reports-edit_import')
     <div class="float-end">
         <a class="p-0 nav-link dropdown-toggle btn btn-outline-success" href="#" id="exportDropdown" role="button"
            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -46,6 +47,10 @@
         </div>
     </div>
 
+    @endcan
+
+
+    @can('reports-list_export')
     <div class="float-end me-1">
         <a class="p-0 nav-link dropdown-toggle btn btn-outline-success" href="#" id="importDropdown" role="button"
            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -77,6 +82,8 @@
             </div>
         </div>
     </div>
+
+    @endcan
 </div>
 
 <div class="clearfix"></div>

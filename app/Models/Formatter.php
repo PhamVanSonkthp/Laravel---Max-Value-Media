@@ -265,7 +265,7 @@ class Formatter extends Model
 
     public static function removeHttps($url)
     {
-        return preg_replace("~^(?:https?://)~i", '', $url);
+        return trim(preg_replace("~^(?:https?://)~i", '', $url), '/');
     }
 
     public static function isDomain($domain)

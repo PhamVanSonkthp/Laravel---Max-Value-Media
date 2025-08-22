@@ -14,6 +14,7 @@ trait AdserverTrait
     public static $KEY_CACHE_CREATE_WEBSITE = "CREATE_WEBSITE";
     public static $KEY_CACHE_CREATE_ZONE = "CREATE_ZONE";
     public static $KEY_CACHE_UPDATE_STATUS_ZONE = "UPDATE_STATUS_ZONE";
+    public static $KEY_CACHE_CHECK_VERIFY_ZONE = "KEY_CACHE_CHECK_VERIFY_ZONE";
 
     private $token;
     private $urlApi;

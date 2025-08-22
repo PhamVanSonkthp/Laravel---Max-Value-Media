@@ -161,6 +161,16 @@ class ReportPolicy
         return $user->checkPermissionAccess(config('permissions.access.reports-list-net_profit'));
     }
 
+    public function editImport(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-edit-import'));
+    }
+
+    public function listExport(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-export'));
+    }
+
     /**
      * Determine whether the user can create models.
      *

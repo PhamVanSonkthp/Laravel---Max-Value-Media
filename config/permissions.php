@@ -208,6 +208,8 @@ return [
         'reports-list-salary' => 'reports_list_salary',
         'reports-list-deduction' => 'reports_list_deduction',
         'reports-list-net_profit' => 'reports_list_net_profit',
+        'reports-edit-import' => 'reports_edit_import',
+        'reports-list-export' => 'reports_list_export',
 
         /*step_1*/
 

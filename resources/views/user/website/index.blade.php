@@ -32,7 +32,7 @@
 
                     <div class="card-header">
                         <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                data-bs-target="#mediumModal">
+                                data-bs-target="#modal_craete_website">
                             Create new website <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
@@ -47,7 +47,7 @@
                             <table class="table table-hover m-0">
                                 <thead>
                                 <tr>
-                                    <th class="border-0 fw-bold">
+                                    <th class="border-0 fw-bold text-start">
                                         <span>Website</span>
                                     </th>
                                     <th class="border-0 fw-bold text-center">
@@ -65,9 +65,9 @@
 
                                 </tr>
                                 </thead>
-                                <tbody class="accordion table-list-website">
-                                @foreach($items as $index => $item)
-                                    @include('user.website.row', ['item' => $item,  'index' => $index])
+                                <tbody class="accordion table-list-website" id="container_row_website">
+                                @foreach($items as $item)
+                                    @include('user.website.row', ['item' => $item])
                                 @endforeach
                                 </tbody>
                             </table>
@@ -86,18 +86,31 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="mediumModal" tabindex="-1" aria-labelledby="mediumModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal_craete_website" tabindex="-1" aria-labelledby="modal_craete_websiteLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="mediumModalLabel">Medium Modal</h5>
+                    <h5 class="modal-title" id="modal_craete_websiteLabel">Create new Website</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     @include('user.website.modal_create')
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal get ad zone website -->
+    <div class="modal fade" id="ad_zone_website_modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verify site ownership
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_ad_zone_website_modal">
+
                 </div>
             </div>
         </div>
@@ -108,12 +121,136 @@
 @section('js')
     <script>
         function onStoreWebsite() {
-
-
-
-
-
-            _LoaderOrverlay.show("Checking url...")
+            _LoaderOrverlay.show("Creating your website...");
+            processStoreWebsite();
         }
+
+        function processStoreWebsite() {
+            callAjax(
+                "POST",
+                "{{route('ajax.user.website.store')}}",
+                {
+                    'url': $('#require_input_ajax_checking_input').val(),
+                },
+                (response) => {
+                    if (response.code == 219) {
+                        setTimeout(processStoreWebsite(), 5000);
+                    } else {
+                        if (response.is_success) {
+                            hideModal('modal_craete_website');
+                            _LoaderOrverlay.hide();
+                            showToastSuccess('created');
+                            addRowAffterStoreWebsite(response.website_id);
+                            onShowModalAdCode(response.zone_ids[0]);
+                        } else {
+                            showToastError('Error');
+                        }
+                    }
+
+                },
+                (error) => {
+                    _LoaderOrverlay.hide();
+                }, false
+            )
+        }
+
+        function showModalAddZone(website_id) {
+
+        }
+
+        function processStoreZone(website_id) {
+
+        }
+
+        function addRowAffterStoreWebsite(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.user.website.row')}}",
+                {
+                    'website_id': website_id
+                },
+                (response) => {
+                    const row_html = response.data.html;
+                    prependWithAnimation("#container_row_website", row_html)
+                },
+                (error) => {
+
+                }, false
+            )
+        }
+
+        function onShowModalAdCode(zone_id) {
+
+            _LoaderOrverlay.show();
+
+            callAjax(
+                "GET",
+                "{{route('ajax.user.zone_website.ad_code')}}",
+                {
+                    'zone_website_id': zone_id
+                },
+                (response) => {
+                    _LoaderOrverlay.hide();
+                    $('#container_ad_zone_website_modal').html(response.data.html);
+                    showModal('ad_zone_website_modal');
+                },
+                (error) => {
+                    _LoaderOrverlay.hide();
+                }, false
+            )
+
+        }
+
+        function onVerifyZone(zone_id) {
+            _LoaderOrverlay.show();
+            processVerifyZone(zone_id);
+        }
+
+        function processVerifyZone(zone_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.user.zone_website.verify')}}",
+                {
+                    id: zone_id
+                },
+                (response) => {
+                    if (response.code == 219) {
+                        setTimeout(processVerifyZone(zone_id), 5000);
+                    } else {
+                        if (response.is_success) {
+                            _LoaderOrverlay.hide();
+                            if(response.is_verified){
+                                $('#modal_ad_zone_website_label_verified').show();
+                                $('#modal_ad_zone_website_label_not_verified').hide();
+
+                                callAjax(
+                                    "GET",
+                                    "{{route('ajax.user.website.row')}}",
+                                    {
+                                        'website_id': response.website_id
+                                    },
+                                    (response) => {
+                                        $('#row_website_id_' + response.website_id).html(response.data.html)
+                                    },
+                                    (error) => {
+
+                                    }, false
+                                )
+
+                            }else{
+                                $('#modal_ad_zone_website_label_not_verified').show();
+                                $('#modal_ad_zone_website_label_verified').hide();
+                            }
+                        } else {
+                            showToastError('Error');
+                        }
+                    }
+                },
+                (error) => {
+                    _LoaderOrverlay.hide();
+                }, false
+            )
+        }
+
     </script>
 @endsection

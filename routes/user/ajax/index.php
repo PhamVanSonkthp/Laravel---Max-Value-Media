@@ -9,6 +9,7 @@ use App\Jobs\QueueAdScroreCheckTrafficZone;
 use App\Jobs\QueueAdserverCreateWebsite;
 use App\Jobs\QueueAdserverCreateZone;
 use App\Jobs\QueueAdserverUpdateStatusZone;
+use App\Jobs\QueueCheckZoneVerified;
 use App\Models\CategoryWebsite;
 use App\Models\Chat;
 use App\Models\ChatImage;
@@ -44,11 +45,13 @@ use App\Traits\AdserverTrait;
 use App\Traits\StorageImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
+use Weidner\Goutte\GoutteFacade;
 
 // ajax
 Route::prefix('ajax/user')->group(function () {
@@ -56,34 +59,91 @@ Route::prefix('ajax/user')->group(function () {
 
         Route::prefix('website')->group(function () {
 
-            Route::get('store', function (Request $request) {
+            Route::post('store', function (Request $request) {
+                $request->validate([
+                    'url' => [
+                        'required',
+                        'regex:/^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i'
+                    ], [
+                        'url.required' => 'Please enter a website.',
+                        'url.regex' => 'The website format is invalid. Example: example.com or https://example.com.',
+                    ]
+                ]);
 
+                $request->validate([
+                    'url' => [
+                        'required',
+                        'regex:/^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i'
+                    ], [
+                        'url.required' => 'Please enter a website.',
+                        'url.regex' => 'The website format is invalid. Example: example.com or https://example.com.',
+                    ]
+                ]);
+
+                $categoryWebsite = CategoryWebsite::findOrFail(config('_my_config.default_category_website_id'));
+                $statusWebsite = StatusWebsite::findOrFail(config('_my_config.default_status_website_id'));
+
+                $name = Formatter::removeHttps(Formatter::trimer($request->url));
+                $url = Formatter::removeHttps(Formatter::trimer($request->url));
+
+                $keyCache = AdserverTrait::$KEY_CACHE_CREATE_WEBSITE
+                    . $name
+                    . $url
+                    . $categoryWebsite->adserver_id
+                    . auth()->user()->adserver_id;
+                $cacheValue = Cache::get($keyCache);
+
+
+                if (!empty($cacheValue)) {
+                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
+                        goto skip;
+                    }
+
+                    Cache::forget($keyCache);
+                    return response()->json($cacheValue);
+                }
+
+                QueueAdserverCreateWebsite::dispatch(Helper::randomString(), $name, $url, $categoryWebsite, $statusWebsite, auth()->user(), true, $keyCache);
+
+                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
+
+                skip:
+                return response()->json(Helper::successAPI(219, [], 'Processing'));
 
 
             })->name('ajax.user.website.store');
 
+            Route::get('row', function (Request $request) {
+
+                $website = Website::findOrFail($request->website_id);
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('user.website.row', ['item' => $website])->render()
+                ]));
+            })->name('ajax.user.website.row');
+
             Route::get('checking_url_valid', function (Request $request) {
 
-                if (empty($request->url)){
-                    return response()->json(Helper::successAPI(400,[
+                if (empty($request->url)) {
+                    return response()->json(Helper::successAPI(400, [
                         'url' => $request->url,
                     ], "Please enter a URL"));
                 }
 
-                if (!Formatter::isDomain($request->url)){
-                    return response()->json(Helper::successAPI(400,[
+                if (!Formatter::isDomain($request->url)) {
+                    return response()->json(Helper::successAPI(400, [
                         'url' => $request->url,
                     ], "The URL format is invalid. Example: example.com or https://example.com."));
                 }
 
                 $website = Website::where('name', Formatter::removeHttps($request->url))->first();
-                if (!empty($website)){
-                    return response()->json(Helper::successAPI(400,[
+                if (!empty($website)) {
+                    return response()->json(Helper::successAPI(400, [
                         'url' => $request->url,
                     ], "The URL is exist"));
                 }
 
-                return response()->json(Helper::successAPI(200,[
+                return response()->json(Helper::successAPI(200, [
                     'url' => $request->url,
                 ], "You can use this URL"));
 
@@ -116,5 +176,42 @@ Route::prefix('ajax/user')->group(function () {
             })->name('ajax.user.model.update_field');
         });
 
+        Route::prefix('zone_website')->group(function () {
+
+            Route::get('ad_code', function (Request $request) {
+
+                $zoneWebsite = ZoneWebsite::findOrFail($request->zone_website_id);
+
+                return response()->json(Helper::successAPI(200, [
+                    'html' => View::make('user.website.modal_ad_zone_website', ['zoneWebsite' => $zoneWebsite])->render()
+                ]));
+            })->name('ajax.user.zone_website.ad_code');
+
+            Route::get('verify', function (Request $request) {
+
+                $zone = ZoneWebsite::findOrFail($request->id);
+
+                $keyCache = AdserverTrait::$KEY_CACHE_CHECK_VERIFY_ZONE
+                    . $zone->id;
+                $cacheValue = Cache::get($keyCache);
+
+                if (!empty($cacheValue)) {
+                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
+                        goto skip;
+                    }
+
+                    Cache::forget($keyCache);
+                    return response()->json($cacheValue);
+                }
+
+                QueueCheckZoneVerified::dispatch($keyCache, $zone);
+
+                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
+
+                skip:
+                return response()->json(Helper::successAPI(219, [], 'Processing'));
+            })->name('ajax.user.zone_website.verify');
+
+        });
     });
 });

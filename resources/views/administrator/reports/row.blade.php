@@ -1,4 +1,5 @@
-<tr class="" id="tr_container_index_{{$index}}" data-id="{{$item->id}}" style="background-color: {{optional($item->reportStatus)->background_color}}">
+<tr class="" id="tr_container_index_{{$index}}" data-id="{{$item->id}}"
+    style="background-color: {{optional($item->reportStatus)->background_color}}">
     @foreach($showColums as $showColum)
         <td>
             {{$item->$showColum}}
@@ -56,12 +57,20 @@
     @endif
     @if(in_array("count",$modelColums))
         <td>
-            @include('administrator.components.require_input_number_add_on', ['no_margin' => true,'name' => "input_count",'id' => "input_count_". $item->id, 'value'=> $item->count])
+            @if(auth()->user()->can('reports-edit'))
+                @include('administrator.components.require_input_number_add_on', ['no_margin' => true,'name' => "input_count",'id' => "input_count_". $item->id, 'value'=> $item->count])
+            @else
+                @include('administrator.components.label', ['label'=> $item->count])
+            @endif
         </td>
     @endif
     @if(in_array("share",$modelColums))
         <td>
-            @include('administrator.components.require_input_number_add_on', ['no_margin' => true,'name' => "input_share_". $item->id,'id' => "input_share_". $item->id, 'value'=> $item->share])
+            @if(auth()->user()->can('reports-edit'))
+                @include('administrator.components.require_input_number_add_on', ['no_margin' => true,'name' => "input_share_". $item->id,'id' => "input_share_". $item->id, 'value'=> $item->share])
+            @else
+                @include('administrator.components.label', ['label'=> $item->share])
+            @endif
         </td>
     @endif
     @if(in_array("p_impression",$modelColums))

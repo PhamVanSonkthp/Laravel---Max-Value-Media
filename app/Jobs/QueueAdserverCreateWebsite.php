@@ -24,21 +24,25 @@ class QueueAdserverCreateWebsite implements ShouldQueue
     private $categoryWebsite;
     private $statusWebsite;
     private $user;
+    private $isCreateZoneDefault;
+    private $keyCacheChain;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($keyCache, $name, $url, $categoryWebsite, $statusWebsite, $user)
+    public function __construct($key_cache, $name, $url, $categoryWebsite, $statusWebsite, $user, $is_create_zone_default = false, $key_cache_chain = null)
     {
         //
-        $this->keyCache = $keyCache;
+        $this->keyCache = $key_cache;
         $this->name = $name;
         $this->url = $url;
         $this->categoryWebsite = $categoryWebsite;
         $this->statusWebsite = $statusWebsite;
         $this->user = $user;
+        $this->isCreateZoneDefault = $is_create_zone_default;
+        $this->keyCacheChain = $key_cache_chain;
     }
 
     /**
@@ -79,6 +83,18 @@ class QueueAdserverCreateWebsite implements ShouldQueue
             ]);
             $result['is_success'] = true;
             $result['website_id'] = $website->id;
+
+            if ($this->isCreateZoneDefault) QueueAdserverCreateZone::dispatch(
+                $this->keyCacheChain ?? $this->keyCache,
+                $website->id,
+                null,
+                [config('_my_config.default_dimension_id')],
+                [1],
+                config('_my_config.default_zobe_website_status_id'),[
+                    'website_id' => $website->id
+                ]
+            );
+
         } else {
             $result['is_success'] = false;
             Log::error("QueueAdserverCreateWebsite: " . json_encode($response));

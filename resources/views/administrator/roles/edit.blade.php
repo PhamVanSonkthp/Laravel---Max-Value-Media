@@ -53,7 +53,7 @@
                                             <h5 class="card-title">
                                                 <input id="{{$permissionsChildrenItem->id}}" class="checkbox_children" {{$permissionsChecked->contains('id',$permissionsChildrenItem->id) ? 'checked' : ''}} type="checkbox" name="permission_id[]" value="{{$permissionsChildrenItem->id}}">
                                                 <label for="{{$permissionsChildrenItem->id}}">
-                                                    {{ str_replace("delete","Xóa",str_replace("edit","Chỉnh sửa",str_replace("add","Thêm mới",str_replace("list",'Xem',$permissionsChildrenItem->name)))) }}
+                                                    {{ $permissionsChildrenItem->name }}
                                                 </label>
                                             </h5>
                                         </div>

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::group(['middleware' => ['auth']], function () {
 
-    Route::get('/', [
+    Route::get('/dashboard', [
         'as'=>'user.index',
         'uses'=>'App\Http\Controllers\User\UserController@index',
     ]);
@@ -17,6 +17,20 @@ Route::group(['middleware' => ['auth']], function () {
         'as'=>'user.website',
         'uses'=>'App\Http\Controllers\User\UserController@website',
     ]);
+
+    Route::prefix('reports')->group(function () {
+        Route::get('/', [
+            'as'=>'user.report',
+            'uses'=>'App\Http\Controllers\User\UserController@report',
+        ]);
+
+        Route::get('export', [
+            'as'=>'user.report.export',
+            'uses'=>'App\Http\Controllers\User\UserController@exportReport',
+        ]);
+    });
+
+
 
 });
 

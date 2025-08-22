@@ -127,6 +127,8 @@ class PermissionGateAndPolicyAccess
         Gate::define('reports-list-salary', [ReportPolicy::class, 'viewSalary']);
         Gate::define('reports-list-deduction', [ReportPolicy::class, 'viewDeduction']);
         Gate::define('reports-list-net_profit', [ReportPolicy::class, 'viewNetProfit']);
+        Gate::define('reports-edit_import', [ReportPolicy::class, 'editImport']);
+        Gate::define('reports-list_export', [ReportPolicy::class, 'listExport']);
 
     }/*step_2*/
 

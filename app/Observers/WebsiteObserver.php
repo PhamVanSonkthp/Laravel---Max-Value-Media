@@ -13,7 +13,7 @@ class WebsiteObserver
 
     public function creating(Website $website)
     {
-        $website->url = Formatter::addHttps($website->url);
+        $website->url = Formatter::addHttps(Formatter::removeHttps($website->url));
         if (empty($website->name)) $website->name = Formatter::removeHttps($website->url);
     }
 
@@ -46,10 +46,10 @@ class WebsiteObserver
     }
 
     private function turnOfZone($website){
-        if ($website->status_website_id == 3){
-            $zones = $website->zoneWebsiteNotTraffics;
-        }else{
+        if ($website->status_website_id == 4){
             $zones = $website->zoneWebsites;
+        }else{
+            $zones = $website->zoneWebsiteNotTraffics;
         }
 
         foreach ($zones as $zone){

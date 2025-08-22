@@ -5,8 +5,9 @@ namespace App\Exports;
 use App\Models\Helper;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class ModelExport implements FromCollection, ShouldAutoSize
+class ModelExport implements FromCollection, ShouldAutoSize, WithHeadings
 {
 
     private $request;
@@ -48,8 +49,8 @@ class ModelExport implements FromCollection, ShouldAutoSize
         return collect($items);
     }
 
-//    public function headings(): array
-//    {
-//        return $this->heading;
-//    }
+    public function headings(): array
+    {
+        return $this->heading;
+    }
 }

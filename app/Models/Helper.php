@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use PHPUnit\Exception;
+use Symfony\Component\HttpClient\HttpClient;
 
 class Helper extends Model
 {
@@ -37,8 +38,6 @@ class Helper extends Model
             }
 
             return $item->id + 1;
-//            $statement = DB::select("SHOW TABLE STATUS LIKE '$table'");
-//            return $statement[0]->Auto_increment;
         } catch (\Exception $exception) {
             return 0;
         }
@@ -261,7 +260,7 @@ class Helper extends Model
             $query = $query->orderBy('priority', 'DESC');
         }
 
-        $items = $query->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+        $items = $query->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
 
         if (!empty($make_hiddens) && is_array($make_hiddens)) {
             foreach ($items as $item) {
@@ -925,7 +924,6 @@ class Helper extends Model
 
     public static function distanceTwoCoordinates($lat1, $lon1, $lat2, $lon2, $unit = "M")
     {
-
         $lat1 = (float)$lat1;
         $lon1 = (float)$lon1;
         $lat2 = (float)$lat2;
@@ -944,5 +942,25 @@ class Helper extends Model
         } else {
             return round($miles * 1.609344) * 1000;
         }
+    }
+
+    public static function crawlTagFromURL($url, $tag, $attr, $one_tag = true)
+    {
+        $client = new \Goutte\Client(HttpClient::create(['verify_peer' => false, 'verify_host' => false]));
+        $crawler = $client->request('GET', $url);
+
+        $datas = $crawler->filter($tag)->each(function ($node) use ($attr) {
+            return ($node->attr($attr));
+        });
+
+        if ($one_tag){
+            if (count($datas) > 0){
+                return $datas;
+            }
+        }else{
+            return $datas;
+        }
+
+        return null;
     }
 }

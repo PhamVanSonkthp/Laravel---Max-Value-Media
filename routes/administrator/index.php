@@ -12,6 +12,20 @@ Route::get('/admin/logout', [
 ]);
 
 Route::group(['prefix' => 'administrator', 'middleware' => ['cacheResponse:600']], function () {
+    Route::prefix('impersonate')->group(function () {
+
+        Route::get('/', [
+            'as' => 'administrator.impersonate',
+            'uses' => 'App\Http\Controllers\Admin\AdminController@impersonate',
+        ]);
+
+        Route::get('leave', [
+            'as' => 'administrator.impersonate.leave',
+            'uses' => 'App\Http\Controllers\Admin\AdminController@leave',
+        ]);
+
+    });
+
     Route::prefix('password')->group(function () {
         Route::get('/', [
             'as' => 'administrator.password.index',

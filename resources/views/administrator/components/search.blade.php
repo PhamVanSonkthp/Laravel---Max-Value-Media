@@ -1,7 +1,7 @@
 <div>
     <div class="float-start">
         <div>
-            Hiển thị
+            Show
         </div>
         <div>
             <select name="limit" class="form-control select2_init">
@@ -16,7 +16,7 @@
 
     <div class="float-start ms-2">
         <div>
-            Thời gian
+            Time
         </div>
         <div>
             <input id="input_search_datetime" type="date"
@@ -25,10 +25,11 @@
 
     </div>
 
+    @if(isset($hideFind))
 
     <div class="float-start ms-2">
         <div>
-            Tìm kiếm
+            Find
         </div>
 
         <div class="d-flex">
@@ -43,6 +44,8 @@
         </div>
 
     </div>
+
+    @endif
 
 </div>
 
