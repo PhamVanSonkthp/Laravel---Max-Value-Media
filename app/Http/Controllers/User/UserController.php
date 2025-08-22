@@ -18,7 +18,10 @@ use function view;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request){
+        return redirect()->route('user.dashboard');
+    }
+    public function dashboard(Request $request)
     {
         if (auth()->check()) {
             if (optional(auth()->user())->is_admin == 1) {

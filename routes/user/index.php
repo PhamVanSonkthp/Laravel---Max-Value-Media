@@ -14,8 +14,8 @@ Route::group(['middleware' => ['auth']], function () {
     ]);
 
     Route::get('/dashboard', [
-        'as'=>'user.index',
-        'uses'=>'App\Http\Controllers\User\UserController@index',
+        'as'=>'user.dashboard',
+        'uses'=>'App\Http\Controllers\User\UserController@dashboard',
     ]);
 
     Route::get('website', [
