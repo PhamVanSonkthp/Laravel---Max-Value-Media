@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 Route::group(['middleware' => ['auth']], function () {
 
+    Route::get('/', [
+        'as'=>'user.index',
+        'uses'=>'App\Http\Controllers\User\UserController@index',
+    ]);
+
     Route::get('/dashboard', [
         'as'=>'user.index',
         'uses'=>'App\Http\Controllers\User\UserController@index',
