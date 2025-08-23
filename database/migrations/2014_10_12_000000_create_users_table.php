@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name')->index();
             $table->bigInteger('manager_id')->default(0);
+            $table->bigInteger('cs_id')->default(0);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();

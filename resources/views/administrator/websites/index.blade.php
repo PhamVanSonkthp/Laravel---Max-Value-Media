@@ -4,14 +4,6 @@
 
 @section('css')
     <style>
-        /*tr:hover{*/
-        /*    cursor: pointer;*/
-        /*}*/
-    </style>
-
-{{--    Zone stype--}}
-    <style>
-
         .group {
             margin-bottom: 18px;
             border-left: 4px solid transparent;
@@ -146,9 +138,11 @@
                                     <th><input id="check_box_delete_all" type="checkbox" class="checkbox-parent"
                                                onclick="onSelectCheckboxDeleteItem()"></th>
                                     <th onclick='onSortSearch(`manager_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Account
-                                            Manager {!! \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        <div>Manager {!! \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
+                                    <th onclick='onSortSearch(`cs_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? "desc" : "") }}`)'>
+                                        <div>CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
                                     <th onclick='onSortSearch(`url`, `{{ \App\Models\Helper::getValueInFilterReuquest('url') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('url') != "desc" ? "desc" : "") }}`)'>
@@ -203,9 +197,11 @@
                                     <th><input id="check_box_delete_all_footer" type="checkbox" class="checkbox-parent"
                                                onclick="onSelectCheckboxDeleteItemFooter()"></th>
                                     <th onclick='onSortSearch(`manager_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Account
-                                            Manager {!! \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        <div>Manager {!! \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
+                                    <th onclick='onSortSearch(`cs_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? "desc" : "") }}`)'>
+                                        <div>CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
                                     <th onclick='onSortSearch(`url`, `{{ \App\Models\Helper::getValueInFilterReuquest('url') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('url') != "desc" ? "desc" : "") }}`)'>

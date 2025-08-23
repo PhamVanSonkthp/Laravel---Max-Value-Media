@@ -76,7 +76,7 @@
 
                                 @foreach($items as $item)
 
-                                    @include('administrator.users.row', compact('item'))
+                                    @include('administrator.users.row', ['item' => $item, 'managers' => $managers])
 
                                 @endforeach
                                 </tbody>

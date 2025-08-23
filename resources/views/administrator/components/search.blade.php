@@ -33,10 +33,10 @@
         </div>
 
         <div class="d-flex">
-            <input id="input_search_query" type="text" class="form-control" placeholder="Nhập từ khóa..."
+            <input id="input_search_query" type="text" class="form-control" placeholder="Enter..."
                    value="{{request('search_query')}}">
             <button class="btn btn-outline-primary ms-2" type="button" onclick="onSearchQuery()"><i
-                    class="fa-solid fa-magnifying-glass" title="Tìm kiếm"></i></button>
+                    class="fa-solid fa-magnifying-glass" title="Find"></i></button>
             @if(request()->query->count() && (request("trash") != true) || request()->query->count() > 1)
             <button class="btn btn-outline-danger ms-2" type="button" onclick="onClearQuery()"><i
                     class="fa-solid fa-x" title="Xóa"></i></button>

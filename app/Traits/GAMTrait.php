@@ -27,16 +27,16 @@ trait GAMTrait
 
     public function calculateChecksumGam($data) {
         $data = sort($data);
-        return hash_hmac('sha256', $data, config('services.h5MaxValue.secretKey'));
+        return hash_hmac('sha256', $data, $this->secretKey);
     }
 
     public function callPostHTTP($url, $raw = [])
     {
         $this->init();
 
-        $headers = [
-
-        ];
+        $headers = [];
+        $headers['X-Checksum'] = $this->calculateChecksumGam($raw);
+        $headers['Accept'] = "application/json";
 
         $response = Http::withHeaders($headers)->timeout(config('_my_config.timeout_request_api'))
             ->post($this->urlApi . $url, $raw);

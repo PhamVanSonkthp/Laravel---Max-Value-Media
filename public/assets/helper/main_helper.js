@@ -1,27 +1,27 @@
 $(".select2_init_multiple").select2({
-    // placeholder: "Chọn",
+    // placeholder: "Select",
     // tags: true,
     multiple: true
 });
 
 $(".select2_init_multiple_tag").select2({
-    // placeholder: "Chọn",
+    // placeholder: "Select",
     tags: true,
     multiple: true
 });
 
 $(".select2_init").select2({
-    placeholder: "Chọn",
+    placeholder: "Select",
     // allowClear: true
 });
 
 $(".select2_init_allow_clear").select2({
-    placeholder: "Chọn",
+    placeholder: "Select",
     allowClear: true
 });
 
 $(".select2_init_tag").select2({
-    placeholder: "Chọn",
+    placeholder: "Select",
     tags: true,
     // allowClear: true
 });

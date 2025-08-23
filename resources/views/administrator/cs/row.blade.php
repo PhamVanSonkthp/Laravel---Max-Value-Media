@@ -19,6 +19,12 @@
     <td>{{$item->email}}</td>
     <td>{{\App\Models\Formatter::getOnlyDate($item->date_of_birth)}}</td>
     <td>{{ optional($item->gender)->name}}</td>
+    <td>
+        {{\App\Models\Formatter::formatNumber($item->csWebsites->count())}}
+    </td>
+    <td>
+        {{\App\Models\Formatter::formatNumber($item->csManagers->count())}}
+    </td>
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
     <td>
         @include('administrator.components.action_table', ['prefixView' => $prefixView, '$item' => $item])

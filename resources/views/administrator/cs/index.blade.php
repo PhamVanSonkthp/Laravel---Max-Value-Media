@@ -35,6 +35,8 @@
                                     <th>Email</th>
                                     <th>Ngày sinh</th>
                                     <th>Giới tính</th>
+                                    <th>Number site manage</th>
+                                    <th>Number AM manage</th>
                                     <th>Ngày sử dụng</th>
                                     <th>Hành động</th>
                                 </tr>
@@ -56,6 +58,8 @@
                                     <th>Email</th>
                                     <th>Ngày sinh</th>
                                     <th>Giới tính</th>
+                                    <th>Number site manage</th>
+                                    <th>Number AM manage</th>
                                     <th>Ngày sử dụng</th>
                                     <th>Hành động</th>
                                 </tr>

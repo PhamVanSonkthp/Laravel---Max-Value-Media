@@ -3,7 +3,9 @@
         <input type="checkbox" class="checkbox-delete-item" value="{{$item->id}}">
     </td>
     <td>{{$item->id}}</td>
-    <td>{{ optional($item->manager)->name}}</td>
+    <td>
+        @include('administrator.components.modal_change_id', ['label' => optional($item->manager)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $managers, 'field' => 'manager_id', 'item' => $item,])
+    </td>
     <td>{{$item->email}}</td>
     <td>
         <ul>

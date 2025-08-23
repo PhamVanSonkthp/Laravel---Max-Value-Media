@@ -55,8 +55,9 @@ class WebsiteController extends Controller
         $statusWebsites = StatusWebsite::all();
         $zoneStatuses = ZoneStatus::all();
         $managers = User::where(['is_admin' => 1])->get();
+        $cses = User::where(['is_admin' => 1,'user_type_id' => 3])->get();
 
-        return view('administrator.' . $this->prefixView . '.index', compact('items', 'statusWebsites', 'zoneStatuses', 'managers'));
+        return view('administrator.' . $this->prefixView . '.index', compact('items', 'statusWebsites', 'zoneStatuses', 'managers','cses'));
     }
 
     private function websiteJoinZone($query, $zone_website_id, $is_where = true)

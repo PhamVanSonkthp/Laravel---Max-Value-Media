@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Exports\ModelExport;
 use App\Http\Controllers\Controller;
 use App\Models\Formatter;
+use App\Models\Payment;
 use App\Models\Report;
 use App\Models\StatusWebsite;
 use App\Models\User;
@@ -53,12 +54,20 @@ class UserController extends Controller
     public function report(Request $request)
     {
         $model = new Report();
-        $items = $model->searchByQuery($request);
+        $items = $model->searchByQuery($request, ['user_id' => auth()->id()]);
 
         $websites = (new Website())->searchByQuery(null, ['user_id' => auth()->id()]);
         $zoneWebsites = (new ZoneWebsite())->searchByQuery(null, ['user_id' => auth()->id()]);
 
         return view('user.report.index', compact('items','zoneWebsites','websites'));
+    }
+
+    public function wallet(Request $request)
+    {
+        $model = new Payment();
+        $items = $model->searchByQuery($request,['user_id' => auth()->id()]);
+
+        return view('user.wallet.index', compact('items'));
 
     }
 

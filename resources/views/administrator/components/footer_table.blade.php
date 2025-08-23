@@ -2,7 +2,7 @@
     @if(isset($items))
         @if(empty($items->count()))
             <div class="text-center" style="padding: 20px;">
-                Không có dữ liệu
+                No data
             </div>
         @else
             <div style="padding-top: 10px;">

@@ -178,6 +178,59 @@ Route::prefix('ajax/user')->group(function () {
 
         Route::prefix('zone_website')->group(function () {
 
+            Route::get('modal_create', function (Request $request) {
+
+                $website = Website::findOrFail($request->website_id);
+                $groupZoneDimensions = GroupZoneDimension::where('id', '!=', 1)->get();
+
+                $zoneStatuses = Helper::searchAllByQuery(new ZoneStatus(), null);
+                $zoneTypes = [new Balance(1, "Banner")];
+                return response()->json(Helper::successAPI(200, [
+                    'website' => $website,
+                    "html" => View::make('user.website.modal_create_zone', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'groupZoneDimensions' => $groupZoneDimensions, 'zoneTypes' => $zoneTypes])->render()
+                ]));
+
+            })->name('ajax.user.zone_website.modal_create');
+
+            Route::post('store', function (Request $request) {
+
+                $request->validate([
+                    'id' => 'required',
+                    'dimension_ids' => 'required|array|min:1',
+                    'numbers' => 'required|array|min:1',
+                ]);
+
+                $keyCache = AdserverTrait::$KEY_CACHE_CREATE_ZONE
+                    . $request->id;
+                $cacheValue = Cache::get($keyCache);
+
+                if (!empty($cacheValue)) {
+                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
+                        goto skip;
+                    }
+
+                    $zoneStatuses = ZoneStatus::all();
+                    $responseHTML = "";
+                    foreach ($cacheValue['zone_ids'] as $zone_id) {
+                        $zoneWebsite = ZoneWebsite::findOrFail($zone_id);
+                        $responseHTML .= View::make('administrator.websites.panel_zone_item_zone', ['zone' => $zoneWebsite, 'zoneStatuses' => $zoneStatuses])->render();
+                    }
+
+                    Cache::forget($keyCache);
+
+                    return response()->json(Helper::successAPI(200, [
+                        'html' => $responseHTML
+                    ]));
+                }
+
+                QueueAdserverCreateZone::dispatch($keyCache, $request->id, "", $request->dimension_ids, $request->numbers, 1);
+                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
+
+                skip:
+                return response()->json(Helper::successAPI(219, [], 'Processing'));
+
+            })->name('ajax.user.zone_website.store');
+
             Route::get('ad_code', function (Request $request) {
 
                 $zoneWebsite = ZoneWebsite::findOrFail($request->zone_website_id);
@@ -211,6 +264,19 @@ Route::prefix('ajax/user')->group(function () {
                 skip:
                 return response()->json(Helper::successAPI(219, [], 'Processing'));
             })->name('ajax.user.zone_website.verify');
+
+        });
+
+        Route::prefix('wallet')->group(function () {
+
+            Route::get('modal_create_payment_method', function (Request $request) {
+
+                return response()->json(Helper::successAPI(200, [
+
+                    "html" => View::make('user.wallet.modal_create_payment_method')->render()
+                ]));
+
+            })->name('ajax.user.wallet.modal_create_payment_method');
 
         });
     });

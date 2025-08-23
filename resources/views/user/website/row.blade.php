@@ -26,7 +26,7 @@
     @if($item->status_website_id == 2)
         <td class="text-center w-10">
             <button id="add_zone_4914" class="btn btn-primary btn-sm mb-1"
-                    onclick="showModalAddZone({{$item->id}})">
+                    onclick="showModalAddZone(event, '{{$item->id}}')">
                 <i class="ri-add-circle-fill"></i> Add zone
             </button>
         </td>
@@ -40,7 +40,7 @@
     @endif
 
 </tr>
-<tr>
+<tr id="row_zone_website_id_{{$item->id}}">
     <td colspan="6" class="p-0">
         <div id="collapse{{$item->id}}" class="accordion-collapse collapse" aria-labelledby="heading0"
              style="background-color: rgb(243, 245, 250);" data-bs-parent="#accordionExample{{$item->id}}">

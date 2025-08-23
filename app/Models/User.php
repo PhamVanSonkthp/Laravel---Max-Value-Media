@@ -56,6 +56,16 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
 
     // begin
 
+    public function csWebsites()
+    {
+        return $this->hasMany(Website::class, 'cs_id', 'id');
+    }
+
+    public function csManagers()
+    {
+        return $this->hasMany(User::class, 'cs_id', 'id');
+    }
+
     public function websites()
     {
         return $this->hasMany(Website::class, 'user_id', 'id');

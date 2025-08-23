@@ -4,7 +4,7 @@
 
 <div>
     <a style="cursor: pointer;{{isset($style) ? $style : ''}}" onclick="onShowModalChangeID{{$randomID}}(event)" id="label_{{$randomID}}" class="{{isset($class) ? $class : 'text-primary'}}">
-        {{$label}}
+        {!! $label !!}
     </a>
 </div>
 
@@ -18,7 +18,7 @@
             </div>
             <div class="modal-body">
 
-                <label>{{$label}} @include('administrator.components.lable_require') </label>
+                <label>{!! $label !!} @include('administrator.components.lable_require') </label>
                 <div>
                     <select style="with:100%;" id="select_change_{{$randomID}}" name="select_change_{{$randomID}}" class="form-control">
                         @foreach($select2Items as $select2Item)

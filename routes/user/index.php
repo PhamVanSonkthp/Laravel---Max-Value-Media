@@ -23,6 +23,11 @@ Route::group(['middleware' => ['auth']], function () {
         'uses'=>'App\Http\Controllers\User\UserController@website',
     ]);
 
+    Route::get('wallet', [
+        'as'=>'user.wallet',
+        'uses'=>'App\Http\Controllers\User\UserController@wallet',
+    ]);
+
     Route::prefix('reports')->group(function () {
         Route::get('/', [
             'as'=>'user.report',

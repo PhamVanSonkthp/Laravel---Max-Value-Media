@@ -64,6 +64,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateExportReportStatusSeeder::class);
         $this->call(CreateZoneDimensionPositionSeeder::class);
         $this->call(CreateReportStatusSeeder::class);
+        $this->call(CreatePaymentStatusSeeder::class);
 
     }
 }

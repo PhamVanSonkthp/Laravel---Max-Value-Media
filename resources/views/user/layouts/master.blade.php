@@ -86,7 +86,7 @@
 <!-- page-wrapper Start-->
     <div class="page-wrapper">
 
-    @include('administrator.components.header')
+    @include('user.components.header')
 
     <!-- Page Body Start-->
         <div class="page-content">

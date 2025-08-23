@@ -3,9 +3,10 @@
         <input type="checkbox" class="checkbox-delete-item" value="{{$item->id}}">
     </td>
     <td>
-        <div>
-            {{ optional( optional($item->user)->manager)->name}}
-        </div>
+        @include('administrator.components.modal_change_id', ['label' => optional($item->manager)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $managers, 'field' => 'manager_id', 'item' => $item,])
+    </td>
+    <td>
+        @include('administrator.components.modal_change_id', ['label' => optional($item->cs)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $cses, 'field' => 'cs_id', 'item' => $item,])
     </td>
     <td>
         <a target="_blank" href="{{ $item->url}}">{{\App\Models\Formatter::maxLengthString($item->url)}}</a>

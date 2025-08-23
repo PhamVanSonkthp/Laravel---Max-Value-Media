@@ -31,6 +31,11 @@ class Website extends Model implements Auditable
         return $this->hasOne(User::class, 'id', 'manager_id');
     }
 
+    public function cs()
+    {
+        return $this->hasOne(User::class, 'id', 'cs_id');
+    }
+
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
@@ -58,7 +63,7 @@ class Website extends Model implements Auditable
 
     public function zoneWebsites()
     {
-        return $this->hasMany(ZoneWebsite::class, 'website_id', 'id');
+        return $this->hasMany(ZoneWebsite::class, 'website_id', 'id')->latest();
     }
 
     public function getMaxDImpressionOneDay()
