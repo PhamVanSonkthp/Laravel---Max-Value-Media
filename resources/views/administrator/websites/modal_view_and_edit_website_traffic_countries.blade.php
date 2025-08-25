@@ -38,7 +38,7 @@
                     </th>
                     <th style="width: 20%;">
                         <strong>
-                            {{\App\Models\Formatter::formatNumber(array_sum(array_column($trafficByContries, "trafq")) / count($trafficByContries), 2)}}
+                            {{\App\Models\Formatter::formatNumber(array_sum(array_column($trafficByContries, "trafq")) / max(count($trafficByContries), 1), 2)}}
                         </strong>
                     </th>
                 </tr>
