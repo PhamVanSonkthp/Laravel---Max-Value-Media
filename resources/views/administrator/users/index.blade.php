@@ -40,6 +40,12 @@
                                         </div>
                                     </th>
 
+                                    <th onclick='onSortSearch(`cs_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? "desc" : "") }}`)'>
+                                        <div>
+                                            CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
+
                                     <th onclick='onSortSearch(`email`, `{{ \App\Models\Helper::getValueInFilterReuquest('email') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('email') != "desc" ? "desc" : "") }}`)'>
                                         <div>
                                             Email {!! \App\Models\Helper::getValueInFilterReuquest('email') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('email') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
@@ -76,7 +82,7 @@
 
                                 @foreach($items as $item)
 
-                                    @include('administrator.users.row', ['item' => $item, 'managers' => $managers])
+                                    @include('administrator.users.row', ['item' => $item, 'managers' => $managers, 'cses' => $cses])
 
                                 @endforeach
                                 </tbody>
@@ -92,6 +98,12 @@
                                     <th onclick='onSortSearch(`manager_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? "desc" : "") }}`)'>
                                         <div>
                                             Manager {!! \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
+
+                                    <th onclick='onSortSearch(`cs_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? "desc" : "") }}`)'>
+                                        <div>
+                                            CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
 
@@ -208,18 +220,52 @@
                 </div>
                 <div class="modal-body" id="container_modal_create_user">
 
-
-
                 </div>
 
                 <div class="modal-footer justify-content-between">
                     <div>
                     </div>
 
-                    <button type="submit" class="btn btn-info" onclick="onSubmitCreate()">create</button>
+                    <button type="submit" class="btn btn-info" onclick="onSubmitCreate()">Save</button>
 
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal create website -->
+    <div class="modal fade" id="create_website_modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create website</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_modal_create_website">
+
+
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" onclick="onSubmitCreateWebsite()" class="btn btn-success">Save</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal view all website -->
+    <div class="modal fade" id="view_all_website_modal" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_view_all_website_modal">Websites</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_view_all_website_modal">
+
+
+                </div>
             </div>
         </div>
     </div>
@@ -424,16 +470,104 @@
             });
         }
 
-    </script>
-
-
-
-    <script>
         $('#select_user_status_id').select2({
             dropdownParent: $('#editStatus'),
             width: '100%'
         });
 
+
+        function onShowModalAddWebsite(id) {
+            user_id = id;
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.websites.create')}}",
+                {
+                    modal_id: 'create_website_modal',
+                    value: user_id,
+                },
+                (response) => {
+                    $('#container_modal_create_website').html(response.data.html)
+                    showModal("create_website_modal")
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onSubmitCreateWebsite() {
+            hideModal('create_website_modal');
+            showToastLoading("Creating website...");
+            processStoreWebsite();
+        }
+
+        function processStoreWebsite() {
+
+            callAjax(
+                "POST",
+                "{{route('ajax.administrator.websites.store')}}",
+                {
+                    'user_id': user_id,
+                    'url': $('#modal_create_website_input_name').val(),
+                    'category_website_id': $('#modal_create_website_select_category_website_id').val(),
+                    'status_website_id': $('#modal_create_website_select_status_website_id').val(),
+                },
+                (response) => {
+                    if (response.code == 219) {
+                        setTimeout(processStoreWebsite(), 5000);
+                    } else {
+                        hideAllToast()
+                        if (response.is_success) {
+                            showToastSuccess('Created website');
+                            refreshRow(user_id);
+                        } else {
+                            showToastError('Có lỗi khởi tạo');
+                        }
+                    }
+
+                },
+                (error) => {
+
+                }, false
+            )
+        }
+
+        function refreshRow(id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.user.refresh_row')}}",
+                {
+                    id: id
+                },
+                (response) => {
+                    $('#container_row_' + user_id).after(response.data.html).remove()
+                },
+                (error) => {
+
+                },false
+            )
+        }
+
+        function onViewAllWebsite(id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.user.view_all_website')}}",
+                {
+                    id: id,
+                    modal_id: 'view_all_website_modal',
+                },
+                (response) => {
+                    showModal('view_all_website_modal');
+                    $('#title_view_all_website_modal').html(response.data.user.email);
+                    $('#container_view_all_website_modal').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
     </script>
+
 
 @endsection

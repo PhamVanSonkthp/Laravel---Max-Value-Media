@@ -286,7 +286,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tạo 1 website mới</h5>
+                    <h5 class="modal-title">Create website</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="container_modal_create_website">
@@ -294,8 +294,7 @@
 
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="button" onclick="onSubmitCreateWebsite()" class="btn btn-success">Xác nhận</button>
+                    <button type="button" onclick="onSubmitCreateWebsite()" class="btn btn-success">Save</button>
                 </div>
 
             </div>
@@ -362,6 +361,36 @@
         </div>
     </div>
 
+    <!-- Modal view_all_zone -->
+    <div class="modal fade" id="modal_view_all_zone" aria-hidden="true" style="z-index:1051;">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal_view_all_zone_title">Infor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_modal_view_all_zone">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal change status -->
+    <div class="modal fade" id="modal_change_status" aria-hidden="true" style="z-index:1051;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal_change_status_title">Infor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_modal_change_status">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('js')
@@ -402,7 +431,7 @@
 
         function onSubmitCreateWebsite() {
             hideModal('create_website_modal');
-            showToastLoading("Đang khởi tạo website...");
+            showToastLoading("Cretaing website...");
             processStoreWebsite();
         }
 
@@ -423,7 +452,7 @@
                     } else {
                         hideAllToast()
                         if (response.is_success) {
-                            showToastSuccess('Đã tạo website');
+                            showToastSuccess('Created website');
                             addRowAffterStoreWebsite(response.website_id);
                         } else {
                             showToastError('Có lỗi khởi tạo');
@@ -473,8 +502,8 @@
                     'website_id': website_id
                 },
                 (response) => {
-                    $('#panel_zone_label_url_website').html(response.data.website.url)
-                    $('#panelContent').html(response.data.html)
+                    $('#panel_zone_label_url_website').html(response.data.website.url);
+                    $('#panelContent').html(response.data.html);
                 },
                 (error) => {
 
@@ -501,7 +530,7 @@
             )
         }
 
-        function onDeleteZone(zone_website_id) {
+        function onDeleteZone(website_id, zone_website_id) {
             Swal.fire({
                 title: 'Bạn có chắc?',
                 text: "Tác vụ sẽ không thể hoàn tác!",
@@ -520,8 +549,9 @@
                             'zone_website_id': zone_website_id
                         },
                         (response) => {
-                            showToastSuccess("Đã xóa Zone")
+                            showToastSuccess("Deleted Zone");
                             $('#container_zone_website_' + zone_website_id).fadeOut(200);
+                            onRefreshRow(website_id);
                         },
                         (error) => {
 
@@ -582,8 +612,9 @@
                     } else {
                         hideAllToast()
                         if (response.is_success || response.code == 200) {
-                            showToastSuccess('Đã tạo Zone');
+                            showToastSuccess('Created Zone');
                             prependWithAnimation("#panel_zone_container_zones", response.data.html);
+                            onRefreshRow(website_id);
                         } else {
                             showToastError('Có lỗi khởi tạo');
                         }
@@ -707,6 +738,81 @@
             checkboxes.forEach(cb => cb.checked = !allChecked);
             btn.textContent = allChecked ? "Select All" : "Deselect All";
         }
+
+        function onViewAllZone(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.'.$prefixView.'.view_all_zones')}}",
+                {
+                    id: website_id,
+                    modal_id: 'view_all_website_modal',
+                },
+                (response) => {
+                    showModal('modal_view_all_zone');
+                    $('#modal_view_all_zone_title').html(response.data.website.name);
+                    $('#container_modal_view_all_zone').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onChangeStatusWebsite(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.'.$prefixView.'.modal_change_status')}}",
+                {
+                    id: website_id,
+                    modal_id: 'view_all_website_modal',
+                },
+                (response) => {
+                    showModal('modal_change_status');
+                    $('#modal_change_status_title').html(response.data.website.name);
+                    $('#container_modal_change_status').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onSaveStatusWebsite(website_id) {
+            callAjax(
+                "PUT",
+                "{{route('ajax.administrator.'.$prefixView.'.change_status')}}",
+                {
+                    id: website_id,
+                    status_website_id: $('#modal_change_status_status_website_id').val(),
+                    reason_refuse: $('#modal_change_status_textarea').val(),
+                    status_website_reason_id: $('#modal_change_status_select_reason').val(),
+                },
+                (response) => {
+                    hideModal('modal_change_status');
+                    $('tr[data-id="'+website_id+'"]').after(response.data.html).remove();
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onRefreshRow(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.'.$prefixView.'.row')}}",
+                {
+                    website_id: website_id,
+                },
+                (response) => {
+                    $('tr[data-id="'+website_id+'"]').after(response.data.html).remove();
+                },
+                (error) => {
+
+                },false
+            )
+        }
+
 
     </script>
 @endsection

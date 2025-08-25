@@ -6,24 +6,32 @@
     <td>
         @include('administrator.components.modal_change_id', ['label' => optional($item->manager)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $managers, 'field' => 'manager_id', 'item' => $item,])
     </td>
+    <td>
+        @include('administrator.components.modal_change_id', ['label' => optional($item->cs)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $cses, 'field' => 'cs_id', 'item' => $item,])
+    </td>
     <td>{{$item->email}}</td>
     <td>
-        <ul>
-            @foreach($item->websites as $indexWebsite => $website)
-                @if($indexWebsite < 3)
-                    <li>
-                        <a href="{{$website->url}}" target="_blank">
-                            @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($website->name), 'style' => 'color: '.optional($website->statusWebsite)->background_color.';'])
-                        </a>
-                    </li>
-                @else
-                    <li>
-                        +{{count($item->websites) - $indexWebsite}}
-                    </li>
-                    @break
-                @endif
-            @endforeach
-        </ul>
+        <div>
+            <ul>
+                @foreach($item->websites as $indexWebsite => $website)
+                    @if($indexWebsite < 3)
+                        <li>
+                            <a href="{{$website->url}}" target="_blank">
+                                @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($website->name), 'style' => 'color: '.optional($website->statusWebsite)->background_color.';'])
+                            </a>
+                        </li>
+                    @else
+                        <li>
+                            +{{count($item->websites) - $indexWebsite}} <button onclick="onViewAllWebsite({{$item->id}})" class="btn btn-outline-primary">(View All)</button>
+                        </li>
+                        @break
+                    @endif
+                @endforeach
+            </ul>
+        </div>
+        <div class="text-center">
+            <a title="Add Website" onclick="onShowModalAddWebsite({{$item->id}})" class="btn btn-outline-success"><i class="fa-solid fa-plus"></i></a>
+        </div>
     </td>
 
     <td>

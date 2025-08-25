@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReportByCountriesTable extends Migration
+class CreateStatusWebsiteReasonsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,10 @@ class CreateReportByCountriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('report_by_countries', function (Blueprint $table) {
+        Schema::create('status_website_reasons', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('report_id')->index();
-            $table->bigInteger('national_id')->index();
-            $table->date('date')->index();
-            $table->bigInteger('requests');
-            $table->bigInteger('requests_empty')->default(0);
-            $table->bigInteger('impressions');
-            $table->bigInteger('impressions_unique')->default(0);
-            $table->float('trafq', 8 , 2)->default(0);
+            $table->text('descriptions');
+            $table->bigInteger('status_website_id');
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);
@@ -39,6 +33,6 @@ class CreateReportByCountriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('report_by_countries');
+        Schema::dropIfExists('status_website_reasons');
     }
 }

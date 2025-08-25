@@ -59,13 +59,18 @@ class JobCreateReportAdserver extends Command
         set_time_limit(1000);
 
         $date = Carbon::today()->subDay()->toDateString();
+        $reports = $this->getReport($date);
+        $this->getReportByCountry($date, $reports);
 
+        $date = Carbon::today()->toDateString();
         $reports = $this->getReport($date);
         $this->getReportByCountry($date, $reports);
 
     }
 
-    private function getReportByCountry($date, $reports){
+    private function getReportByCountry($date, $reports)
+    {
+
         $params = [
             'dateBegin' => $date,
             'dateEnd' => $date,
@@ -77,78 +82,124 @@ class JobCreateReportAdserver extends Command
 
         $response = $this->callGetHTTP('stats', $params);
 
-        if ($response['is_success']){
-            foreach ($response['data'] as $datum){
+        if ($response['is_success']) {
+            foreach ($response['data'] as $datum) {
 
-                $reportByZoneID = current(array_filter($reports, fn($item) => $item->zoneWebsite->adserver_id == $datum['iddimension_2']));
+                $reportByZoneID = null;
+                foreach ($reports as $report) {
+                    if (optional($report->zoneWebsite)->adserver_id == $datum['iddimension_2']) {
+                        $reportByZoneID = $report;
+                        break;
+                    }
+                }
 
-                $national = National::where('adserver_id',$datum['iddimension'])->first();
+                if ($reportByZoneID) {
+                    $national = National::where('adserver_id', $datum['iddimension'])->first();
 
-                if (empty($national)){
-                    $national = National::create([
-                        'name' => 'Unknown',
-                        'adserver_id' => $datum['iddimension'],
-                        'code' => 'unknown',
+                    if (empty($national)) {
+                        $national = National::create([
+                            'name' => $datum['dimension'],
+                            'adserver_id' => $datum['iddimension'],
+                            'code' => 'Unknown',
+                        ]);
+                    }
+
+                    ReportByCountry::updateOrCreate([
+                        'report_id' => $reportByZoneID->id,
+                        'national_id' => $national->id,
+                        'date' => $date,
+                    ], [
+                        'report_id' => $reportByZoneID->id,
+                        'national_id' => $national->id,
+                        'date' => $date,
+                        'requests' => $datum['requests'],
+                        'requests_empty' => $datum['requests_empty'],
+                        'impressions' => $datum['impressions'],
+                        'impressions_unique' => $datum['impressions_unique'],
+                        'trafq' => $datum['trafq'],
                     ]);
                 }
 
-                ReportByCountry::updateOrCreate([
-                    'report_id' => $reportByZoneID->id,
-                    'national_id' => $national->id,
-                ],[
-                    'report_id' => $reportByZoneID->id,
-                    'national_id' => $national->id,
-                    'requests' => $datum['requests'],
-                    'requests_empty' => $datum['requests_empty'],
-                    'impressions' => $datum['impressions'],
-                    'impressions_unique' => $datum['impressions_unique'],
-                    'trafq' => $datum['trafq'],
-                ]);
+
             }
 
-        }else{
+        } else {
             Log::error("JobCreateReport - getReportByCountry: " . $response['data']);
         }
     }
 
-    private function getReport($date){
+    private function getReport($date)
+    {
 
         $reports = [];
 
         $params = [
             'dateBegin' => $date,
             'dateEnd' => $date,
-            'group' => 'day',
-            'group2' => 'idzone',
-            'with_trafq' => 1
+            'group' => 'site',
+            'group2' => 'zone',
+            'with_trafq' => 1,
+            'no_limit' => 1,
         ];
 
         $response = $this->callGetHTTP('stats', $params);
 
-        if ($response['is_success']){
-            foreach ($response['data'] as $datum){
-                $zoneWebsite = ZoneWebsite::where('adserver_id',$datum['iddimension_2'])->first();
+        if ($response['is_success']) {
+            foreach ($response['data'] as $datum) {
+                $zoneWebsite = ZoneWebsite::where('adserver_id', $datum['iddimension_2'])->first();
                 $website = optional($zoneWebsite)->website;
 
-                if (empty($website) || empty($zoneWebsite)) continue;
+                if (empty($website)) {
 
-                $report = Report::where([
+                    $website = Website::firstOrCreate([
+                        'name' => $datum['dimension'],
+                        'adserver_id' => $datum['iddimension'],
+                    ],[
+                        'url' => $datum['dimension'],
+                        'adserver_id' => $datum['iddimension'],
+                        'user_id' => 0,
+                        'category_website_id' => 1,
+                        'status_website_id' => 2,
+                    ]);
+                }
+
+                if (empty($zoneWebsite)){
+                    $zoneWebsite = ZoneWebsite::create([
+                        'website_id' => $website->id,
+                        'adserver_id' => $datum['iddimension_2'],
+                        'name' => $datum['dimension_2'],
+                        'zone_dimension_id' => 1,
+                        'zone_status_id' => 2,
+                    ]);
+                }
+
+                $report = Report::updateOrCreate([
                     'website_id' => $website->id,
-                    'user_id' => $website->user_id,
                     'zone_website_id' => $zoneWebsite->id,
-                    'date' => $datum['dimension'],
-                ])->update([
+                    'date' => $date,
+                    'report_type_id' => 2,
+                ],[
+                    'website_id' => $website->id,
+                    'zone_website_id' => $zoneWebsite->id,
+                    'date' => $date,
+                    'report_type_id' => 2,
+                    'd_request' => $datum['requests'],
+                    'd_requests_empty' => $datum['requests_empty'],
+                    'd_impression' => $datum['impressions'],
+                    'd_impressions_unique' => $datum['impressions_unique'],
+                    'd_ecpm' => 0,
+                    'd_revenue' => 0,
                     'trafq' => $datum['trafq'],
                 ]);
 
-                $report->refresh();
-
+                $report->touch();
                 $reports[] = $report;
             }
 
-        }else{
+        } else {
             Log::error("JobCreateReport - getReport: " . $response['data']);
         }
+
         return $reports;
     }
 }

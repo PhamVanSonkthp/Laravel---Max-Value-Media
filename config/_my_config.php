@@ -66,6 +66,8 @@ return [
     'default_avatar' => null,
     'default_size_avatar' => "100x100",
     'verify_zone_dimension_id' => 1,
+    'role_manager_id' => 2,
+    'role_cs_id' => 3,
 
     'max_row_export' => 20000,
     'items_show_in_table' => [

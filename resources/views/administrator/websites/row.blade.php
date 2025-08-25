@@ -30,7 +30,7 @@
                     </li>
                 @else
                     <li>
-                        +{{count($item->zoneWebsites) - $index}}
+                        +{{count($item->zoneWebsites) - $index}} <button onclick="onViewAllZone({{$item->id}})" class="btn btn-outline-primary">(View All)</button>
                     </li>
                     @break
                 @endif
@@ -43,13 +43,18 @@
         </div>
     </td>
     <td>
-        @include('administrator.components.modal_change_id', ['label' => optional($item->statusWebsite)->name, 'select2Items' => $statusWebsites, 'field' => 'status_website_id', 'style' => 'display: inline-block;
+        <span onclick="onChangeStatusWebsite({{$item->id}})" style="display: inline-block;
                 margin-top: 6px;
+            cursor:pointer;
                 padding: 2px 8px;
                 border-radius: 999px;
                 font-size: 11px;
                 font-weight: 600;
-                color: white !important;background: '.optional($item->statusWebsite)->background_color.';'])
+                color: white !important;background: {{optional($item->statusWebsite)->background_color}};">
+            {{optional($item->statusWebsite)->name}}
+        </span>
+
+{{--        @include('administrator.components.modal_change_id', ['label' => optional($item->statusWebsite)->name, 'select2Items' => $statusWebsites, 'field' => 'status_website_id', 'style' => ''])--}}
     </td>
 
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>

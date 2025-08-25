@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\Report;
 use App\Models\StatusWebsite;
 use App\Models\User;
+use App\Models\UserPaymentMethod;
 use App\Models\Website;
 use App\Models\ZoneStatus;
 use App\Models\ZoneWebsite;
@@ -67,7 +68,21 @@ class UserController extends Controller
         $model = new Payment();
         $items = $model->searchByQuery($request,['user_id' => auth()->id()]);
 
-        return view('user.wallet.index', compact('items'));
+        $revenue = Report::where(['user_id'=> auth()->id(), 'report_status_id'=> 2])->whereDate('date', '>=', Carbon::today()->startOfMonth())->whereDate('date', '>=', Carbon::today()->endOfMonth())->sum('p_revenue');
+        $deduction = Report::where(['user_id'=> auth()->id(), 'report_status_id'=> 2])->whereDate('date', '>=', Carbon::today()->startOfMonth())->whereDate('date', '>=', Carbon::today()->endOfMonth())->sum('deduction');
+
+        $userPaymentMethod = UserPaymentMethod::where(['user_id' => auth()->id(), 'is_default' => true])->first();
+        $pendingPayment = [
+            'id' => 0,
+            'date' => Carbon::today()->year . "-" . Carbon::today()->month,
+            'user_id' => auth()->id(),
+            'user_payment_method_id' => optional($userPaymentMethod)->payment_method_id,
+            'earning' => $revenue,
+            'deduction' => $deduction,
+            'total' => $revenue - $deduction,
+            'payment_status_id' => 1,
+        ];
+        return view('user.wallet.index', compact('items','pendingPayment'));
 
     }
 

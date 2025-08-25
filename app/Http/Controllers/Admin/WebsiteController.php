@@ -10,6 +10,7 @@ use App\Models\Website;
 use App\Http\Controllers\Controller;
 use App\Models\ZoneStatus;
 use App\Models\ZoneWebsite;
+use App\Traits\UserTrait;
 use Illuminate\Http\Request;
 use App\Models\Audit;
 use App\Models\Helper;
@@ -24,7 +25,7 @@ use function view;
 
 class WebsiteController extends Controller
 {
-    use BaseControllerTrait;
+    use BaseControllerTrait, UserTrait;
 
     public function __construct(Website $model)
     {
@@ -50,12 +51,14 @@ class WebsiteController extends Controller
             $items = $items->where('zone_websites.zone_status_id', $request->zone_status_id);
         }
 
+        $items = $items->with(['zoneWebsites','zoneWebsites.zoneStatus','statusWebsite','user','adsStatusWebsite', 'user.manager','cs']);
         $items = $items->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
         $statusWebsites = StatusWebsite::all();
         $zoneStatuses = ZoneStatus::all();
-        $managers = User::where(['is_admin' => 1])->get();
-        $cses = User::where(['is_admin' => 1,'user_type_id' => 3])->get();
+
+        $managers = $this->managers();
+        $cses = $this->cses();
 
         return view('administrator.' . $this->prefixView . '.index', compact('items', 'statusWebsites', 'zoneStatuses', 'managers','cses'));
     }

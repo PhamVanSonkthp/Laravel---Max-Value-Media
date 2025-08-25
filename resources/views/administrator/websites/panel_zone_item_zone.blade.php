@@ -33,7 +33,7 @@
                 </svg>
             </button>
             <!-- Delete button -->
-            <button onclick="onDeleteZone('{{$zone->id}}')" class="btn btn-delete" title="Delete">
+            <button onclick="onDeleteZone('{{$zone->website->id}}', '{{$zone->id}}')" class="btn btn-delete" title="Delete">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <polyline points="3 6 5 6 21 6"/>
                     <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>

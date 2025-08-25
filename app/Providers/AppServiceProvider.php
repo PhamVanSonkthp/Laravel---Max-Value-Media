@@ -10,6 +10,7 @@ use App\Models\ParticipantChat;
 use App\Models\PostComment;
 use App\Models\Report;
 use App\Models\SingleImage;
+use App\Models\User;
 use App\Models\Website;
 use App\Models\ZoneWebsite;
 use App\Observers\AdsCampaignObserver;
@@ -20,6 +21,7 @@ use App\Observers\ParticipantChatObserver;
 use App\Observers\PostCommentObserver;
 use App\Observers\ReportObserver;
 use App\Observers\SingleImageObserver;
+use App\Observers\UserObserver;
 use App\Observers\WebsiteObserver;
 use App\Observers\ZoneWebsiteObserver;
 use Illuminate\Support\Facades\Schema;
@@ -68,5 +70,6 @@ class AppServiceProvider extends ServiceProvider
         Website::observe(WebsiteObserver::class);
         ZoneWebsite::observe(ZoneWebsiteObserver::class);
         AdScoreZone::observe(AdScoreZoneObserver::class);
+        User::observe(UserObserver::class);
     }
 }

@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Traits;
+
+use App\Models\Report;
+use App\Models\StatusWebsite;
+use App\Models\StatusWebsiteReason;
+
+trait WebsiteTrait
+{
+
+    public static function statusWebsites()
+    {
+        return (new StatusWebsite())->get();
+    }
+
+    public static function statusWebsiteReasons($status_website_id)
+    {
+        return (new StatusWebsiteReason())->where('status_website_id', $status_website_id)->get();
+    }
+
+
+    public static function reports($id, $report_type_id, $from, $to)
+    {
+        return Report::where(['website_id' => $id, 'report_type_id' => $report_type_id])
+            ->whereDate('date', '>=', $from)
+            ->whereDate('date', '<=', $to)
+            ->get();
+    }
+
+
+}

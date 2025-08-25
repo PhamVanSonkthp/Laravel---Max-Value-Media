@@ -26,11 +26,6 @@ class Website extends Model implements Auditable
 
     // begin
 
-    public function manager()
-    {
-        return $this->hasOne(User::class, 'id', 'manager_id');
-    }
-
     public function cs()
     {
         return $this->hasOne(User::class, 'id', 'cs_id');

@@ -11,7 +11,7 @@
     }
 @endphp
 
-<div class="mt-3">
+<div class="mt-3" id="container_{{$id}}" name="{{$name}}">
     @if(isset($label))
     <label>{{$label}} @include('administrator.components.lable_require') </label>
     @endif

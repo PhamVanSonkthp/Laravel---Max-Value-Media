@@ -11,13 +11,19 @@
 
     <div class="row">
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div>
                 @include('administrator.components.search_select2_allow_clear' , ['name' => 'manager_id' , 'label' => 'Manager', 'select2Items' => $managers])
             </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
+            <div>
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'cs_id' , 'label' => 'CS', 'select2Items' => $cses])
+            </div>
+        </div>
+
+        <div class="col-md-2">
             <div>
                 @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'id' , 'label' => 'Publisher', 'url' => route('ajax.administrator.model.search', ['is_admin' => 0]), 'model' => 'users'])
             </div>

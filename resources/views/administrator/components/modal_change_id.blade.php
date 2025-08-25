@@ -1,5 +1,6 @@
 @php
     $randomID = \App\Models\Helper::randomString();
+    if (!isset($route)) $route = route('ajax.administrator.model.update_field');
 @endphp
 
 <div>
@@ -40,7 +41,7 @@
     function onChangeID{{$randomID}}() {
         callAjax(
             "PUT",
-            "{{route('ajax.administrator.model.update_field')}}",
+            "{{$route}}",
             {
                 'id': '{{$item->id}}',
                 '{{$field}}': $('#select_change_{{$randomID}}').val(),
@@ -56,10 +57,6 @@
             },
             true,
         )
-    }
-
-    function processUpdateStatusZone{{$randomID}}(id) {
-
     }
 
     function onShowModalChangeID{{$randomID}}(e){

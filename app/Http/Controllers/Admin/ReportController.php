@@ -39,7 +39,7 @@ class ReportController extends Controller
 
     public function index(Request $request)
     {
-        $sumary = $this->model->searchByQuery($request, [], null, null, true);
+        $sumary = $this->model->searchByQuery($request, ['report_type_id' => 1], null, null, true);
         $sumary->selectRaw('SUM(d_request) as d_request, SUM(d_impression) as d_impression, AVG(d_ecpm) as d_ecpm, SUM(d_revenue) as d_revenue, AVG(count) as count, AVG(share) as share, SUM(p_impression) as p_impression, AVG(p_ecpm) as p_ecpm, SUM(p_revenue) as p_revenue, SUM(profit) as profit, SUM(sale_percent) as sale_percent, SUM(system_percent) as system_percent, SUM(salary) as salary, SUM(deduction) as deduction, SUM(net_profit) as net_profit');
         $sumary = $sumary->first();
 

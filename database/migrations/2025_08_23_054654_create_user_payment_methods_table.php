@@ -15,6 +15,7 @@ class CreateUserPaymentMethodsTable extends Migration
     {
         Schema::create('user_payment_methods', function (Blueprint $table) {
             $table->id();
+            $table->boolean('is_default')->default(false);
             $table->bigInteger('payment_method_id');
             $table->bigInteger('user_id')->index();
             $table->string('paypal_email')->nullable();

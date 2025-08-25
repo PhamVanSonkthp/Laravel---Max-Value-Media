@@ -54,7 +54,7 @@ class WebsiteObserver
 
         foreach ($zones as $zone){
             if ($zone->zone_status_id == 2){
-                $zone->zone_status_id = 4;
+                $zone->zone_status_id = 1;
                 $zone->save();
             }
         }

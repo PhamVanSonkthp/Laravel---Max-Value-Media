@@ -2,53 +2,32 @@
 
 namespace App\Traits;
 
-use App\Models\Invoice;
-use App\Models\Level;
-use App\Models\Notification;
-use App\Models\ProductOfUser;
-use App\Models\Trading;
-use App\Models\TradingOfUser;
 use App\Models\User;
-use App\Models\UserGift;
+use App\Models\UserStatus;
 
 trait UserTrait
 {
 
-    public function getUserLevelTrait($id)
+    public static  function managers()
     {
-        $user = User::find($id);
-        if (empty($user)) {
-            return 0;
-        }
-
-        $levels = Level::orderBy('point_require', 'desc')->get();
-
-        foreach ($levels as $level) {
-            if ($user->point >= $level->point_require) {
-                return $level->level;
-            }
-        }
-
-        return 0;
+        return User::select('users.*')
+            ->join('role_user', 'role_user.user_id', '=', 'users.id')
+            ->where('role_user.role_id', config('_my_config.role_manager_id'))
+            ->get();
     }
 
-    public function getUserNumberProductTrait($id)
+    public static  function cses()
     {
-        return ProductOfUser::where('user_id', $id)->get()->count();
+        return User::select('users.*')
+            ->join('role_user', 'role_user.user_id', '=', 'users.id')
+            ->where('role_user.role_id', config('_my_config.role_cs_id'))
+            ->get();
     }
 
-    public function getUserNumberTradingTrait($id)
+    public static  function userStatus()
     {
-        return TradingOfUser::where('user_id', $id)->get()->count();
+        return (new UserStatus())->get();
     }
 
-    public function getUserHasGiftTrait($user_id, $level_id)
-    {
-        return UserGift::where('user_id', $user_id)->where('level_id', $level_id)->first();
-    }
 
-    public function getUserNotificationTrait($id)
-    {
-        return Notification::where('notifiable_id', $id)->whereNull('read_at')->get();
-    }
 }

@@ -518,7 +518,7 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
 
         $user = Helper::updateByQuery($this, $request, $id, $dataUpdate);
 
-        if ($user->is_admin != 0 && isset($request->role_ids)) {
+        if ($user->is_admin != 0) {
             $user->roles()->sync($request->role_ids);
         }
 

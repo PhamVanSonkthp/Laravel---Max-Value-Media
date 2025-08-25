@@ -298,7 +298,7 @@
                 <div class="title">PayPal</div>
 
                 <div class="balance-box">
-                    <div class="balance-amount">$1,250.75</div>
+                    <div class="balance-amount">${{\App\Models\Formatter::formatNumber(auth()->user()->amount, 2)}}</div>
                 </div>
 
                 <div class="email-box">
@@ -384,6 +384,8 @@
                         </tr>
                         </thead>
                         <tbody class="" id="body_container_item">
+                        @include('user.wallet.row', ['item' => $pendingPayment, 'index' => -1])
+
                         @foreach($items as $index => $item)
                             @include('user.wallet.row', ['item' => $item, 'index' => $index])
                         @endforeach

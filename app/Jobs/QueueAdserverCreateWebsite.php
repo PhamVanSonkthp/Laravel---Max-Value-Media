@@ -75,7 +75,6 @@ class QueueAdserverCreateWebsite implements ShouldQueue
         if ($response['is_success']) {
             $website = Website::create([
                 'user_id' => $this->user->id,
-                'manager_id' => $this->user->manager_id,
                 'url' => $this->url,
                 'category_website_id' => $this->categoryWebsite->id,
                 'status_website_id' => $this->statusWebsite->id,

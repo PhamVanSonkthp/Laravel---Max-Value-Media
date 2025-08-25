@@ -18,7 +18,6 @@ class CreateWebsitesTable extends Migration
             $table->string('name');
             $table->bigInteger('user_id')->index();
             $table->bigInteger('cs_id')->index();
-            $table->bigInteger('manager_id')->default(0);
             $table->string('gam_id')->index()->nullable();
             $table->string('game_parent_zone_id')->nullable();
             $table->string('url');
@@ -31,6 +30,7 @@ class CreateWebsitesTable extends Migration
             $table->text('note')->nullable();
             $table->text('ads')->nullable();
             $table->text('ads_compared')->nullable();
+            $table->text('reason_refuse')->nullable();
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);

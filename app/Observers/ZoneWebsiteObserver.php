@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Jobs\QueueAdserverDeleteZone;
 use App\Jobs\QueueAdserverUpdateStatusZone;
 use App\Jobs\QueueAdserverUpdateZone;
+use App\Jobs\QueueGAMUpdateAdUnit;
 use App\Models\Helper;
 use App\Models\ZoneWebsite;
 
@@ -35,18 +36,21 @@ class ZoneWebsiteObserver
      */
     public function updated(ZoneWebsite $zoneZoneWebsite)
     {
-        if ($zoneZoneWebsite->isDirty('zone_status_id')) {
-            QueueAdserverUpdateStatusZone::dispatch(Helper::randomString(), $zoneZoneWebsite, $zoneZoneWebsite->zone_status_id);
 
-            $adScore = $zoneZoneWebsite->adScore;
-            if ($adScore){
-                $adScore->ad_score_zone_status_id = $zoneZoneWebsite->zone_status_id == 2 ? 1 : 2;
-                $adScore->save();
+        if ($zoneZoneWebsite->isDirty('width') || $zoneZoneWebsite->isDirty('height')  || $zoneZoneWebsite->isDirty('zone_status_id') ) {
+
+            if ($zoneZoneWebsite->gam_id){
+                QueueGAMUpdateAdUnit::dispatch($zoneZoneWebsite);
             }
-        }
 
+            if ($zoneZoneWebsite->isDirty('zone_status_id')){
+                $adScore = $zoneZoneWebsite->adScore;
+                if ($adScore){
+                    $adScore->ad_score_zone_status_id = $zoneZoneWebsite->zone_status_id == 2 ? 1 : 2;
+                    $adScore->save();
+                }
+            }
 
-        if ($zoneZoneWebsite->isDirty('width') || $zoneZoneWebsite->isDirty('height')) {
             QueueAdserverUpdateZone::dispatch($zoneZoneWebsite);
         }
     }
@@ -64,6 +68,12 @@ class ZoneWebsiteObserver
             $adScore->ad_score_zone_status_id = 2;
             $adScore->save();
         }
+
+        if ($zoneZoneWebsite->gam_id){
+            $zoneZoneWebsite->zone_status_id = 3;
+            QueueGAMUpdateAdUnit::dispatch($zoneZoneWebsite);
+        }
+
         QueueAdserverDeleteZone::dispatch($zoneZoneWebsite);
     }
 

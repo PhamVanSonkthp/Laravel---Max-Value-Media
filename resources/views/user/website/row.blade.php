@@ -69,11 +69,12 @@
                             <td class="w-20">&nbsp;</td>
                             <td class="w-20">&nbsp;</td>
                             <td class="fw-bold w-10 text-center">
-
+                                @if($zoneWebsite->zone_status_id == 2)
                                 <button class="btn btn-outline-primary btn-sm mb-1"
                                         onclick="onShowModalAdCode({{$zoneWebsite->id}})">
                                     <i class="ri-code-s-slash-line"></i> Get Code
                                 </button>
+                                @endif
                             </td>
 
                         </tr>

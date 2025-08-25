@@ -59,15 +59,13 @@ trait GAMTrait
     public function callPutHTTP($url, $raw = [])
     {
         $this->init();
-        $headers = [
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . $this->token,
-        ];
+
+        $headers = [];
+        $headers['X-Checksum'] = $this->calculateChecksumGam($raw);
+        $headers['Accept'] = "application/json";
 
         $response = Http::withHeaders($headers)->timeout(config('_my_config.timeout_request_api'))
-            ->send('PUT', $this->urlApi . $url, [
-                'body' => json_encode($raw)
-            ]);
+            ->put($this->urlApi . $url, $raw);
 
         if ($response->successful()) {
             return [

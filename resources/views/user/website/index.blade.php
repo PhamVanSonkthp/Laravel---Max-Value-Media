@@ -433,14 +433,18 @@
                                 $('#modal_ad_zone_website_label_verified').show();
                                 $('#modal_ad_zone_website_label_not_verified').hide();
 
+                                const website_id = response.website_id;
                                 callAjax(
                                     "GET",
                                     "{{route('ajax.user.website.row')}}",
                                     {
-                                        'website_id': response.website_id
+                                        'website_id': website_id
                                     },
                                     (response) => {
-                                        $('#row_website_id_' + response.website_id).html(response.data.html)
+                                        console.log(response);
+
+                                        $('#row_zone_website_id_' + website_id).remove();
+                                        $('#row_website_id_' + website_id).after(response.data.html).remove();
                                     },
                                     (error) => {
 

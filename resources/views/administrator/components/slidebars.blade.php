@@ -433,22 +433,6 @@
 
             @can('employees-list')
                 <li class="nav-item">
-                    <a href="{{route('administrator.cs.index')}}" class="nav-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             class="feather feather-box link-icon">
-                            <path
-                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                        <span class="link-title">CS</span>
-                    </a>
-                </li>
-            @endcan
-
-            @can('employees-list')
-                <li class="nav-item">
                     <a href="{{route('administrator.employees.index')}}" class="nav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -495,7 +479,7 @@
 {{--                </li>--}}
 {{--            @endcan--}}
 
-            <li class="nav-item nav-category">Nội dung</li>
+{{--            <li class="nav-item nav-category">Nội dung</li>--}}
 
 {{--            @can('sliders-list')--}}
 {{--                <li class="nav-item">--}}
@@ -529,21 +513,21 @@
 {{--                </li>--}}
 {{--            @endcan--}}
 
-            @can('logos-list')
-                <li class="nav-item">
-                    <a href="{{route('administrator.logos.add')}}" class="nav-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             class="feather feather-box link-icon">
-                            <path
-                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                        <span class="link-title">Logo</span>
-                    </a>
-                </li>
-            @endcan
+{{--            @can('logos-list')--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a href="{{route('administrator.logos.add')}}" class="nav-link">--}}
+{{--                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"--}}
+{{--                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"--}}
+{{--                             class="feather feather-box link-icon">--}}
+{{--                            <path--}}
+{{--                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>--}}
+{{--                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>--}}
+{{--                            <line x1="12" y1="22.08" x2="12" y2="12"></line>--}}
+{{--                        </svg>--}}
+{{--                        <span class="link-title">Logo</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
+{{--            @endcan--}}
 
 {{--            @can('category_news-list')--}}
 {{--                <li class="nav-item">--}}
@@ -578,21 +562,21 @@
 {{--            @endcan--}}
 
 
-            @can('f_a_q_s-list')
-                <li class="nav-item">
-                    <a href="{{route("administrator.f_a_q_s.index")}}" class="nav-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             class="feather feather-box link-icon">
-                            <path
-                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                        <span class="link-title">FAQs</span>
-                    </a>
-                </li>
-            @endcan
+{{--            @can('f_a_q_s-list')--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a href="{{route("administrator.f_a_q_s.index")}}" class="nav-link">--}}
+{{--                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"--}}
+{{--                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"--}}
+{{--                             class="feather feather-box link-icon">--}}
+{{--                            <path--}}
+{{--                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>--}}
+{{--                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>--}}
+{{--                            <line x1="12" y1="22.08" x2="12" y2="12"></line>--}}
+{{--                        </svg>--}}
+{{--                        <span class="link-title">FAQs</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
+{{--            @endcan--}}
 
 {{--            <li class="nav-item nav-category">File</li>--}}
 
@@ -612,23 +596,23 @@
 {{--                </li>--}}
 {{--            @endcan--}}
 
-            <li class="nav-item nav-category">Cài đặt</li>
+{{--            <li class="nav-item nav-category">Cài đặt</li>--}}
 
-            @can('settings-list')
-                <li class="nav-item">
-                    <a href="{{route('administrator.settings.edit', ['id' => 1])}}" class="nav-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             class="feather feather-box link-icon">
-                            <path
-                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                        <span class="link-title">General</span>
-                    </a>
-                </li>
-            @endcan
+{{--            @can('settings-list')--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a href="{{route('administrator.settings.edit', ['id' => 1])}}" class="nav-link">--}}
+{{--                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"--}}
+{{--                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"--}}
+{{--                             class="feather feather-box link-icon">--}}
+{{--                            <path--}}
+{{--                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>--}}
+{{--                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>--}}
+{{--                            <line x1="12" y1="22.08" x2="12" y2="12"></line>--}}
+{{--                        </svg>--}}
+{{--                        <span class="link-title">General</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
+{{--            @endcan--}}
 
 {{--            @can("reason_cancels-list")--}}
 {{--                <li class="nav-item">--}}

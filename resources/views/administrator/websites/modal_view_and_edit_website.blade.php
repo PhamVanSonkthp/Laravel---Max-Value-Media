@@ -19,48 +19,10 @@
         </div>
     </div>
 
-    <div class="card mt-3">
-        <div class="card-header">
-            Traffic(Req)
-        </div>
-        <div class="card-body">
-            <div class="table-responsive product-table">
-                <table class="table table-hover table-bordered">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Country</th>
-                        <th>Requests</th>
-                        <th>Impressions</th>
-                        <th>Percent (%)</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($trafficByContries as $indexTrafficByContry => $trafficByContry)
-                        <tr>
-                            <td>
-                                {{$indexTrafficByContry + 1}}
-                            </td>
-                            <td>
-                                {{optional($trafficByContry->national)->name}}
-                            </td>
-                            <td>
-                                {{\App\Models\Formatter::formatNumber($trafficByContry['requests'])}}
-                            </td>
-                            <td>
-                                {{\App\Models\Formatter::formatNumber($trafficByContry['impressions'])}}
-                            </td>
-                            <td>
-                                {{\App\Models\Formatter::formatNumber($trafficByContry['trafq'])}}
-                            </td>
-                        </tr>
-                    @endforeach
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div id="container_modal_view_and_edit_website_traffic_countries">
+        @include('administrator.websites.modal_view_and_edit_website_traffic_countries', ['dateTrafficFrom' => $dateTrafficFrom, 'dateTrafficTo'=> $dateTrafficTo, 'item' => $item, 'trafficByContries'=> $trafficByContries])
     </div>
+
 
     @include('administrator.websites.modal_view_and_edit_website_traffics', [
         'item' => $item, 'timeBeginCheckTraffic' => $timeBeginCheckTraffic,

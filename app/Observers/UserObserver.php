@@ -7,6 +7,7 @@ use App\Jobs\QueueAdserverUpdateStatusZone;
 use App\Jobs\QueueAdserverUpdateZone;
 use App\Models\Helper;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class UserObserver
 {
@@ -14,7 +15,7 @@ class UserObserver
     public function creating(User $user)
     {
         $user->adserver_id = config('_my_config.default_idpublisher');
-
+        if (empty($user->name)) $user->name = $user->email;
     }
 
     /**

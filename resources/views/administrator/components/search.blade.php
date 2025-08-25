@@ -25,7 +25,7 @@
 
     </div>
 
-    @if(isset($hideFind))
+    @if(!isset($hideFind))
 
     <div class="float-start ms-2">
         <div>

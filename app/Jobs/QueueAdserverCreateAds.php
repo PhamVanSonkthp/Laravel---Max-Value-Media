@@ -24,7 +24,7 @@ class QueueAdserverCreateAds implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($campaign, $zone_website, $ad_score_zone)
+    public function __construct($campaign, $zone_website, $ad_score_zone = null)
     {
         //
         $this->campaign = $campaign;
@@ -70,7 +70,7 @@ class QueueAdserverCreateAds implements ShouldQueue
         $params['details']['idinjectiontype'] = $idInjectionType;
         $params['details']['content_html'] = $contentHTML;
 
-        $params['pixel_html'] = str_replace(array("\r", "\n", "\r\n"), '', $this->adScoreZone->generate_code);
+        $params['pixel_html'] = str_replace(array("\r", "\n", "\r\n"), '', optional($this->adScoreZone)->generate_code);
 
         $response = $this->callPostHTTP('ad?idformat=' . $idFormat, $params);
         if ($response['is_success']) {

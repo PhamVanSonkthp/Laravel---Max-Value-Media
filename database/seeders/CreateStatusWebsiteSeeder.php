@@ -17,7 +17,7 @@ class CreateStatusWebsiteSeeder extends Seeder
     public function run()
     {
         StatusWebsite::firstOrCreate([
-            "name" => "Pending",
+            "name" => "Reviewing",
             "adserver_id" => "3520",
             "background_color" => "#f59e0b",
         ]);
@@ -41,6 +41,12 @@ class CreateStatusWebsiteSeeder extends Seeder
 
         StatusWebsite::firstOrCreate([
             "name" => "Not verfied",
+            "adserver_id" => "3520",
+            "background_color" => "#f59e0b",
+        ]);
+
+        StatusWebsite::firstOrCreate([
+            "name" => "Pending",
             "adserver_id" => "3520",
             "background_color" => "#f59e0b",
         ]);

@@ -1,4 +1,10 @@
 @php
+    if(isset($value)){
+
+    }else{
+        $value = request($name);
+    }
+
     if(!isset($id)) {
         $id = \App\Models\Helper::randomString();
     }
@@ -6,8 +12,8 @@
 @endphp
 
 <div class="mt-3">
-    <label>{{$label}} @include('administrator.components.lable_require')</label>
-    <select id="{{$id}}" name="{{$name}}" class="form-control">
+    <label>{{$label}}</label>
+    <select style="width: 100%;" id="{{$id}}" name="{{$name}}" class="form-control select2_init_allow_clear">
 
     </select>
 </div>
@@ -19,7 +25,8 @@
         $("#{{$id}}").select2({
             placeholder: "Search...",
             minimumInputLength: 0, // start searching after 2 characters
-            width: '100%',
+            allowClear: true,
+            width: "100%",
             @if(isset($modal_id))
             dropdownParent: $('#{{$modal_id}}'),
             @endif
@@ -56,16 +63,16 @@
 
 
 
-        @if(isset($value) && !empty($value))
+        @if(request($name))
 
             callAjax(
                 "GET",
-                "{{route('ajax.administrator.model.get', ['id' => $value])}}",
+                "{{route('ajax.administrator.model.get', ['id' => request($name)])}}",
                 {
                     model: "{{$model}}"
                 },
                 (response) => {
-                    let defaultId = '{{$value}}';
+                    let defaultId = '{{request($name)}}';
                     let defaultText;
 
                     @if(isset($fieldDisplay))
@@ -74,18 +81,28 @@
                         defaultText = response.data.data.name;
                     @endif
 
+
                     // Manually append the default option
                     let option = new Option(defaultText, defaultId, true, true);
                     $("#{{$id}}").append(option).trigger('change');
 
+                    initChangeValue();
+
                 },
                 (error) => {
-
-                },false,false
+                    initChangeValue();
+                },false
             )
 
+        @else
+            initChangeValue();
         @endif
 
+        function initChangeValue() {
+            $("#{{$id}}").on('change', function () {
+                addUrlParameter('{{$name}}', this.value)
+            });
+        }
 
     });
 

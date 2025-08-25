@@ -53,7 +53,12 @@ class QueueAdserverCreateCampaign implements ShouldQueue
             ]);
 
             $campaign->refresh();
-            QueueAdScroreCreateZone::dispatch($this->zoneWebsite, $this->website, $campaign);
+
+            if ($this->zoneWebsite->zoneDimension->zone_dimension_type_id == 3){
+                QueueAdserverCreateAds::dispatch($campaign, $this->zoneWebsite);
+            }else if($this->zoneWebsite->zoneDimension->zone_dimension_type_id == 2){
+                QueueAdScroreCreateZone::dispatch($this->zoneWebsite, $this->website, $campaign);
+            }
         } else {
             throw new \Exception('Queue QueueAdserverCreateCampaign error: ' . json_encode($response));
         }
