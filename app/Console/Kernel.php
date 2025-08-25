@@ -29,10 +29,10 @@ class Kernel extends ConsoleKernel
             ->everyMinute()->withoutOverlapping();
 
         $schedule->command('job:create_report_adserver')
-            ->hourly()->withoutOverlapping();
+            ->everyFiveMinutes()->withoutOverlapping();
 
         $schedule->command('job:create_ad_score_check_traffic')
-            ->everyThreeHours()->withoutOverlapping();
+            ->everyFiveMinutes()->withoutOverlapping();
 
         $schedule->command('email:job_notification')
             ->everyMinute()->withoutOverlapping();
