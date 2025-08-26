@@ -966,20 +966,25 @@ class Helper extends Model
 
     public static function crawlTagFromURL($url, $tag, $attr, $one_tag = true)
     {
-        $client = new \Goutte\Client(HttpClient::create(['verify_peer' => false, 'verify_host' => false]));
-        $crawler = $client->request('GET', $url);
+        try {
+            $client = new \Goutte\Client(HttpClient::create(['verify_peer' => false, 'verify_host' => false]));
+            $crawler = $client->request('GET', $url);
 
-        $datas = $crawler->filter($tag)->each(function ($node) use ($attr) {
-            return ($node->attr($attr));
-        });
+            $datas = $crawler->filter($tag)->each(function ($node) use ($attr) {
+                return ($node->attr($attr));
+            });
 
-        if ($one_tag){
-            if (count($datas) > 0){
+            if ($one_tag){
+                if (count($datas) > 0){
+                    return $datas;
+                }
+            }else{
                 return $datas;
             }
-        }else{
-            return $datas;
+        }catch (\Exception $exception){
+
         }
+
 
         return null;
     }

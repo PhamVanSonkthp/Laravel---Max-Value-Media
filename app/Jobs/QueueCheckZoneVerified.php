@@ -54,7 +54,7 @@ class QueueCheckZoneVerified implements ShouldQueue
         $website = $this->zone->website;
         $url = $website->url;
 
-        $results = Helper::crawlTagFromURL($url, 'ins', 'data-zone', false);
+        $results = Helper::crawlTagFromURL($url, 'ins', 'data-zone', false) ?? [];
 
         $result['is_success'] = true;
 
