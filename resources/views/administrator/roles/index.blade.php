@@ -56,9 +56,9 @@
                                 <tr>
                                     <th><input id="check_box_delete_all" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItem()"></th>
                                     <th>#</th>
-                                    <th>Tên</th>
-                                    <th>Mô tả</th>
-                                    <th>Hành động</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody class="" id="body_container_item">
@@ -99,9 +99,9 @@
                                 <tr>
                                     <th><input id="check_box_delete_all_footer" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItemFooter()"></th>
                                     <th>#</th>
-                                    <th>Tên</th>
-                                    <th>Mô tả</th>
-                                    <th>Hành động</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Action</th>
                                 </tr>
                                 </tfoot>
                             </table>

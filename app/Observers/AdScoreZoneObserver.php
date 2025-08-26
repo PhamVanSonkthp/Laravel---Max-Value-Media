@@ -2,8 +2,10 @@
 
 namespace App\Observers;
 
+use App\Jobs\QueueAdserverRemoveCheckTraffic;
 use App\Jobs\QueueAdserverUpdateAdsCampaign;
 use App\Models\AdScoreZone;
+use App\Models\AdScoreZoneHistory;
 use Carbon\Carbon;
 use function PHPUnit\Framework\isNull;
 
@@ -34,13 +36,35 @@ class AdScoreZoneObserver
      */
     public function updated(AdScoreZone $adScoreZone)
     {
-        if ($adScoreZone->isDirty('generate_code')) {
+        if ($adScoreZone->wasChanged('generate_code')) {
             $adsCampaign = optional($adScoreZone->zoneWebsite)->adsCampaign;
             if ($adsCampaign){
                 QueueAdserverUpdateAdsCampaign::dispatch($adsCampaign);
             }
 
         }
+
+        if ($adScoreZone->wasChanged('total_hits')) {
+            if ($adScoreZone->total_hits >= config('_my_config.max_count_number_total_report')) {
+                $this->removeCheckTrafficAdScore(optional($adScoreZone->zoneWebsite)->adsCampaign);
+                $adScoreZone->ad_score_zone_status_id = 2;
+
+                $zoneWebsite = $adScoreZone->zoneWebsite;
+                if ($zoneWebsite){
+                    $website = $zoneWebsite->website;
+                    if ($website){
+                        $website->status_website_id = 7;
+                        $website->save();
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    private function removeCheckTrafficAdScore($adsCampaign){
+        QueueAdserverRemoveCheckTraffic::dispatch($adsCampaign);
     }
 
     /**

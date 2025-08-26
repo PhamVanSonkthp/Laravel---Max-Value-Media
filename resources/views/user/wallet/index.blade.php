@@ -294,17 +294,28 @@
                 <button onclick="onShowModalPaymentMethod()" class="btn" aria-label="Edit">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
                 </button>
-                <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" class="paypal-logo" />
-                <div class="title">PayPal</div>
 
-                <div class="balance-box">
-                    <div class="balance-amount">${{\App\Models\Formatter::formatNumber(auth()->user()->amount, 2)}}</div>
+                <div class="row">
+                    <div class="col-4">
+                        <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" class="paypal-logo" />
+                        <div class="title">PayPal</div>
+                    </div>
+                    <div class="col-8">
+
+                        <div class="email-box">
+                            <span class="email-label">Email</span>
+                            <div class="email-value">{{auth()->user()->email}}</div>
+                        </div>
+                        <div class="balance-box">
+                            <div class="balance-amount">${{\App\Models\Formatter::formatNumber(auth()->user()->amount, 2)}}</div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="email-box">
-                    <span class="email-label">Email</span>
-                    <div class="email-value">user@example.com</div>
-                </div>
+                <small>
+                    Net 15 payment terms (payment is due on the 15th of every month) and a minimum payout of $25
+                </small>
+
             </div>
         </div>
         <div class="col-lg-4">
@@ -384,7 +395,6 @@
                         </tr>
                         </thead>
                         <tbody class="" id="body_container_item">
-                        @include('user.wallet.row', ['item' => $pendingPayment, 'index' => -1])
 
                         @foreach($items as $index => $item)
                             @include('user.wallet.row', ['item' => $item, 'index' => $index])

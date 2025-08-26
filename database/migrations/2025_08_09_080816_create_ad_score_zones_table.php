@@ -24,6 +24,7 @@ class CreateAdScoreZonesTable extends Migration
             $table->bigInteger('junk_hits')->default(0);
             $table->bigInteger('bot_hits')->default(0);
             $table->text('generate_code')->nullable();
+            $table->dateTime('date_create_new_section')->nullable();
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);

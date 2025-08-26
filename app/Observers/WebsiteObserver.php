@@ -36,7 +36,7 @@ class WebsiteObserver
      */
     public function updated(Website $website)
     {
-        if ($website->isDirty('status_website_id')) {
+        if ($website->wasChanged('status_website_id')) {
             QueueAdserverUpdateStatusWebsite::dispatch($website);
 
             if ($website->status_website_id != 2){

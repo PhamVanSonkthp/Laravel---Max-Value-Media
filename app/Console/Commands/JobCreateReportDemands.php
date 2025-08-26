@@ -59,7 +59,6 @@ class JobCreateReportDemands extends Command
         $params = [
             'from' => $date,
             'to' => $date,
-            'demand_id' => 2,
             'limit' => 1000000,
             'is_show_all' => true,
         ];
@@ -75,7 +74,6 @@ class JobCreateReportDemands extends Command
                 ],[
                     'name' => $datum['site'],
                     'user_id' => 0,
-                    'url' => "https://". $datum['site'],
                     'category_website_id' => 1,
                     'status_website_id' => 1,
                     'adserver_id' => 0,
@@ -85,7 +83,7 @@ class JobCreateReportDemands extends Command
                     'website_id' => $website->id,
                     'gam_id' => $datum['zone_id'],
                 ],[
-                    'name' => $datum['zone_name'],
+                    'name' => $website->name ." " . $datum['zone_name'],
                     'website_id' => $website->id,
                     'adserver_id' => 0,
                     'zone_dimension_id' => 1,
@@ -98,13 +96,13 @@ class JobCreateReportDemands extends Command
                     'website_id' => $website->id,
                     'user_id' => $website->user_id,
                     'zone_website_id' => $zoneWebsite->id,
-                    'demand_id' => 2,
+                    'demand_id' => $datum['demand_id'],
                     'date' => $datum['date'],
                 ],[
                     'website_id' => $website->id,
                     'user_id' => $website->user_id,
                     'zone_website_id' => $zoneWebsite->id,
-                    'demand_id' => 2,
+                    'demand_id' => $datum['demand_id'],
                     'date' => $datum['date'],
                     'd_request' => $datum['d_request'],
                     'd_requests_empty' => 0,

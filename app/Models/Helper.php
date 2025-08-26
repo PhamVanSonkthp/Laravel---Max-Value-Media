@@ -240,6 +240,26 @@ class Helper extends Model
             }
         }
 
+        if (isset($queries['filter']) && !empty($queries['filter'])) {
+            $filter = $queries['filter'];
+
+            $filter = str_replace("[", "", $filter);
+            $filter = str_replace("]", "", $filter);
+
+            $values = explode(",", $filter);
+
+            foreach ($values as $value) {
+                if (count(explode("=", $value)) > 1) {
+                    $key = explode("=", $value)[0];
+                    $val = explode("=", $value)[1];
+
+                    if (in_array($key, $columns) && !empty($val)) {
+                        $query->orderBy($key, $val);
+                    }
+                }
+            }
+        }
+
         if ($random_record) {
             $query = $query->inRandomOrder();
         }

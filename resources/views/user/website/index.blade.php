@@ -391,6 +391,8 @@
 
         function onShowModalAdCode(zone_id) {
 
+            if(!zone_id) return;
+
             _LoaderOrverlay.show();
 
             callAjax(

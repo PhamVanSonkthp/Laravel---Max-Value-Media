@@ -35,46 +35,46 @@
                             <table class="table table-hover table-bordered">
                                 <thead>
                                 <tr>
-                                    <th>
-                                        <div class="dropdown">
-                                            <button
-                                                class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
-                                                type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                aria-expanded="false">
-                                                <i class="fa fa-filter"></i>
-                                            </button>
-                                            <ul class="dropdown-menu p-3">
-                                                <li class="mb-2">
-                                                    <button class="btn btn-sm btn-primary w-100"
-                                                            id="filter_btn_select_all">Select All
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <hr class="dropdown-divider">
-                                                </li>
+                                    {{--                                    <th>--}}
+                                    {{--                                        <div class="dropdown">--}}
+                                    {{--                                            <button--}}
+                                    {{--                                                class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"--}}
+                                    {{--                                                type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"--}}
+                                    {{--                                                aria-expanded="false">--}}
+                                    {{--                                                <i class="fa fa-filter"></i>--}}
+                                    {{--                                            </button>--}}
+                                    {{--                                            <ul class="dropdown-menu p-3">--}}
+                                    {{--                                                <li class="mb-2">--}}
+                                    {{--                                                    <button class="btn btn-sm btn-primary w-100"--}}
+                                    {{--                                                            id="filter_btn_select_all">Select All--}}
+                                    {{--                                                    </button>--}}
+                                    {{--                                                </li>--}}
+                                    {{--                                                <li>--}}
+                                    {{--                                                    <hr class="dropdown-divider">--}}
+                                    {{--                                                </li>--}}
 
-                                                @foreach($modelColums as $modelColum)
-                                                    <li>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input items-research"
-                                                                   type="checkbox" value="{{$modelColum}}"
-                                                                   id="item{{$modelColum}}" {{in_array($modelColum, $showColums) ? 'checked' : ''}} >
-                                                            <label class="form-check-label"
-                                                                   for="item{{$modelColum}}">{{$modelColum}}</label>
-                                                        </div>
-                                                    </li>
-                                                @endforeach
-                                                <li>
-                                                    <button class="btn btn-outline-primary mt-2" onclick="onResearch()"
-                                                            type="button"><i class="fa-solid fa-magnifying-glass"></i>Research
-                                                    </button>
-                                                </li>
-                                            </ul>
+                                    {{--                                                @foreach($modelColums as $modelColum)--}}
+                                    {{--                                                    <li>--}}
+                                    {{--                                                        <div class="form-check">--}}
+                                    {{--                                                            <input class="form-check-input items-research"--}}
+                                    {{--                                                                   type="checkbox" value="{{$modelColum}}"--}}
+                                    {{--                                                                   id="item{{$modelColum}}" {{in_array($modelColum, $showColums) ? 'checked' : ''}} >--}}
+                                    {{--                                                            <label class="form-check-label"--}}
+                                    {{--                                                                   for="item{{$modelColum}}">{{$modelColum}}</label>--}}
+                                    {{--                                                        </div>--}}
+                                    {{--                                                    </li>--}}
+                                    {{--                                                @endforeach--}}
+                                    {{--                                                <li>--}}
+                                    {{--                                                    <button class="btn btn-outline-primary mt-2" onclick="onResearch()"--}}
+                                    {{--                                                            type="button"><i class="fa-solid fa-magnifying-glass"></i>Research--}}
+                                    {{--                                                    </button>--}}
+                                    {{--                                                </li>--}}
+                                    {{--                                            </ul>--}}
 
-                                        </div>
-                                    </th>
+                                    {{--                                        </div>--}}
+                                    {{--                                    </th>--}}
 
-                                    <th colspan="{{count($showColums) + 4}}">
+                                    <th colspan="{{count($showColums) + 5}}">
                                         Sumary
                                     </th>
                                     @if(in_array("d_request",$modelColums))
@@ -87,6 +87,18 @@
                                             {{\App\Models\Formatter::formatNumber($sumary->d_impression)}}
                                         </th>
                                     @endif
+
+                                    <th>
+                                        <div>
+                                            {{\App\Models\Formatter::formatNumber($sumary->d_impression_us_uk)}}
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div>
+
+                                        </div>
+                                    </th>
+
                                     @if(in_array("d_ecpm",$modelColums))
                                         <th>
                                             {{\App\Models\Formatter::formatNumber(round($sumary->d_ecpm, 2),2)}}
@@ -175,9 +187,9 @@
                                     @endif
 
                                     @if(in_array("d_request",$modelColums))
-                                        <th onclick='onSortSearch(`d_request`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_request') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_request') != "desc" ? "desc" : "") }}`)'>
+                                        <th>
                                             <div>
-                                                D.Request {!! \App\Models\Helper::getValueInFilterReuquest('d_request') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('d_request') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                                D.Request
                                             </div>
                                         </th>
                                     @endif
@@ -188,6 +200,18 @@
                                             </div>
                                         </th>
                                     @endif
+
+                                        <th>
+                                            <div>
+                                                D.Impression US, UK
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div>
+                                                D.Fill Rate
+                                            </div>
+                                        </th>
+
                                     @if(in_array("d_ecpm",$modelColums))
                                         <th onclick='onSortSearch(`d_ecpm`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_ecpm') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_ecpm') != "desc" ? "desc" : "") }}`)'>
                                             <div>
@@ -250,6 +274,11 @@
                                             </div>
                                         </th>
                                     @endif
+                                        <th onclick='onSortSearch(`report_status_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('report_status_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('report_status_id') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Status {!! \App\Models\Helper::getValueInFilterReuquest('report_status_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('report_status_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
                                 </tr>
                                 </thead>
                                 <tbody class="" id="body_container_item">
@@ -320,6 +349,16 @@
                                             </div>
                                         </th>
                                     @endif
+                                        <th>
+                                            <div>
+                                                D.Impression US, UK
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div>
+                                                D.Fill Rate
+                                            </div>
+                                        </th>
                                     @if(in_array("d_ecpm",$modelColums))
                                         <th onclick='onSortSearch(`d_ecpm`, `{{ \App\Models\Helper::getValueInFilterReuquest('d_ecpm') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('d_ecpm') != "desc" ? "desc" : "") }}`)'>
                                             <div>
@@ -382,6 +421,12 @@
                                             </div>
                                         </th>
                                     @endif
+
+                                        <th onclick='onSortSearch(`report_status_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('report_status_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('report_status_id') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Status {!! \App\Models\Helper::getValueInFilterReuquest('report_status_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('report_status_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -401,27 +446,27 @@
 
 @section('js')
 
-    <script>
-        const checkboxes = document.querySelectorAll('.form-check-input');
+    {{--    <script>--}}
+    {{--        const checkboxes = document.querySelectorAll('.form-check-input');--}}
 
-        const selectAllBtn = document.getElementById('filter_btn_select_all');
+    {{--        const selectAllBtn = document.getElementById('filter_btn_select_all');--}}
 
 
-        // Toggle Select All / Clear All
-        selectAllBtn.addEventListener('click', () => {
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach(cb => cb.checked = !allChecked);
-            selectAllBtn.textContent = allChecked ? 'Select All' : 'Clear All';
-        });
+    {{--        // Toggle Select All / Clear All--}}
+    {{--        selectAllBtn.addEventListener('click', () => {--}}
+    {{--            const allChecked = Array.from(checkboxes).every(cb => cb.checked);--}}
+    {{--            checkboxes.forEach(cb => cb.checked = !allChecked);--}}
+    {{--            selectAllBtn.textContent = allChecked ? 'Select All' : 'Clear All';--}}
+    {{--        });--}}
 
-        function onResearch() {
-            const checked = document.querySelectorAll('.items-research:checked');
+    {{--        function onResearch() {--}}
+    {{--            const checked = document.querySelectorAll('.items-research:checked');--}}
 
-            // Convert NodeList to array of values
-            const values = Array.from(checked).map(cb => cb.value);
+    {{--            // Convert NodeList to array of values--}}
+    {{--            const values = Array.from(checked).map(cb => cb.value);--}}
 
-            addUrlParameter("show_colums", values)
-        }
-    </script>
+    {{--            addUrlParameter("show_colums", values)--}}
+    {{--        }--}}
+    {{--    </script>--}}
 @endsection
 

@@ -31,7 +31,13 @@
     </td>
     <td>
         <div>
-            @include('administrator.components.label', ['label' => optional($item->reportStatus)->name])
+            @include('administrator.components.label', ['label' => optional($item->reportStatus)->name,'style' => 'display: inline-block;
+                margin-top: 6px;
+                padding: 2px 8px;
+                border-radius: 999px;
+                font-size: 11px;
+                font-weight: 600;
+                color: white !important;background: '.optional($item->reportStatus)->background_color.';'])
         </div>
     </td>
 

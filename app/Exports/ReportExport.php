@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Formatter;
 use App\Models\Helper;
 use App\Models\Report;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -43,6 +44,8 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
             "zone name",
             "D.request",
             "D.impression",
+            "D.impression US, UK",
+            "D.Fill Rate",
             "D.ecpm",
             "D.revenue",
             "Count",
@@ -58,7 +61,7 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
     }
 
     /**
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function collection()
     {
@@ -74,11 +77,13 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
                 'id' => $item->id,
                 'date' => $item->date,
                 'demand_name' => optional($item->demand)->name,
-                'site' => $item->site,
-                'zone_id' => $item->zone_id,
-                'zone_name' => $item->zone_name,
-                'd_request' => $item->d_request,
+                'site' => optional($item->website)->name,
+                'zone_id' => $item->zone_website_id,
+                'zone_name' => optional($item->zoneWebsite)->name,
+                'd_request' => $item->d_request ?? optional($item->reportWithAdserver())->d_request,
                 'd_impression' => $item->d_impression,
+                'd_impression_us_uk' => $item->d_impression_us_uk,
+                'd_fill_rate' => Formatter::formatNumber(min($item->d_impression / max(1 , $item->d_request ?? optional($item->reportWithAdserver())->d_request) * 100 , 100), 2) . "%",
                 'd_ecpm' => $item->d_ecpm,
                 'd_revenue' => $item->d_revenue,
                 'count' => $item->count,
@@ -106,13 +111,18 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
             $row['zone_name'],
             $row['d_request'],
             $row['d_impression'],
+            $row['d_impression_us_uk'],
+            $row['d_fill_rate'],
             $row['d_ecpm'],
             $row['d_revenue'],
             $row['count'],
             $row['share'],
-            "=ROUND(I{$this->currentRow}*L{$this->currentRow}/100,0)",
-            "=ROUND(J{$this->currentRow}*M{$this->currentRow}/100,2)",
-            "=ROUND(N{$this->currentRow}*O{$this->currentRow}/1000,2)",
+            $row['p_impression'],
+            $row['p_ecpm'],
+            $row['p_revenue'],
+//            "=ROUND(I{$this->currentRow}*L{$this->currentRow}/100,0)",
+//            "=ROUND(J{$this->currentRow}*M{$this->currentRow}/100,2)",
+//            "=ROUND(N{$this->currentRow}*O{$this->currentRow}/1000,2)",
             $row['profit'],
         ];
     }

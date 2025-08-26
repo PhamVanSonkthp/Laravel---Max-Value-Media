@@ -22,16 +22,18 @@ class QueueAdserverUpdateAdsCampaign implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, AdserverTrait;
 
     private $adsCampaign;
+    private $generateCode;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($ads_campaign)
+    public function __construct($ads_campaign, $generate_code = null)
     {
         //
         $this->adsCampaign = $ads_campaign;
+        $this->generateCode = $generate_code;
     }
 
     /**
@@ -48,10 +50,10 @@ class QueueAdserverUpdateAdsCampaign implements ShouldQueue
             'details' => [
                 'content_html' => $this->adsCampaign->content_html,
             ],
-            'pixel_html' => $zoneWebsite->adScore->generate_code
+            'pixel_html' => $generateCode ?? $zoneWebsite->adScore->generate_code
         ];
 
-        $response = $this->callPutHTTP('ad/'. $this->adsCampaign->adserver_id, $params);
+        $response = $this->callPutHTTP('ad/' . $this->adsCampaign->adserver_id, $params);
 
         if (!$response['is_success']) {
             throw new \Exception('Queue QueueAdserverUpdateAdsCampaign error: ' . json_encode($response));

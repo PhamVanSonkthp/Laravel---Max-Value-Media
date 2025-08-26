@@ -275,4 +275,10 @@ class Formatter extends Model
         return preg_match('/^(?!:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/i', $domain);
 
     }
+
+    public static function estimateTimePayment($date)
+    {
+        return Carbon::parse($date)->addMonth()->addDays(14)->toDateString();
+
+    }
 }

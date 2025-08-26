@@ -44,7 +44,7 @@ class CreateZoneDimensionSeeder extends Seeder
         ]);
 
         ZoneDimension::firstOrCreate([
-            "name" => "Stick Bot",
+            "name" => "Sticky bottom",
             "code" => "AD_UNIT_ANCHOR",
             "width" => "100%",
             "height" => "100%",
@@ -121,22 +121,22 @@ class CreateZoneDimensionSeeder extends Seeder
         ]);
 
         ZoneDimension::firstOrCreate([
-            "name" => "In Article",
-            "code" => "In-Article",
+            "name" => "In Artircle Native",
+            "code" => "In-Article-Native",
             "width" => "auto",
             "height" => "auto",
             "group_zone_dimension_id" => 4,
-            "zone_dimension_type_id" => 1,
+            "zone_dimension_type_id" => 3,
             "zone_dimension_position_id" => 2,
         ]);
 
         ZoneDimension::firstOrCreate([
-            "name" => "Below Article",
-            "code" => "AD_UNIT_SIDE_RAIL",
+            "name" => "Below Article Native",
+            "code" => "Below-Article-Native",
             "width" => "100%",
             "height" => "100%",
             "group_zone_dimension_id" => 4,
-            "zone_dimension_type_id" => 1,
+            "zone_dimension_type_id" => 3,
             "zone_dimension_position_id" => 2,
         ]);
 
@@ -148,6 +148,16 @@ class CreateZoneDimensionSeeder extends Seeder
             "group_zone_dimension_id" => 5,
             "zone_dimension_type_id" => 3,
             "zone_dimension_position_id" => 2,
+        ]);
+
+        ZoneDimension::firstOrCreate([
+            "name" => "SIDE RAIL",
+            "code" => "AD_UNIT_SIDE_RAIL",
+            "width" => "1",
+            "height" => "1",
+            "group_zone_dimension_id" => 2,
+            "zone_dimension_type_id" => 1,
+            "zone_dimension_position_id" => 1,
         ]);
 
 

@@ -37,7 +37,7 @@ class AdsCampaignObserver
      */
     public function updated(AdsCampaign $adsCampaign)
     {
-        if ($adsCampaign->isDirty('content_html')) {
+        if ($adsCampaign->wasChanged('content_html')) {
             QueueAdserverUpdateAdsCampaign::dispatch($adsCampaign);
         }
     }

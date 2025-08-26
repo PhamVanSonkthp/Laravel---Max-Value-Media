@@ -37,13 +37,13 @@ class ZoneWebsiteObserver
     public function updated(ZoneWebsite $zoneZoneWebsite)
     {
 
-        if ($zoneZoneWebsite->isDirty('width') || $zoneZoneWebsite->isDirty('height')  || $zoneZoneWebsite->isDirty('zone_status_id') ) {
+        if ($zoneZoneWebsite->wasChanged('width') || $zoneZoneWebsite->wasChanged('height')  || $zoneZoneWebsite->wasChanged('zone_status_id') ) {
 
             if ($zoneZoneWebsite->gam_id){
                 QueueGAMUpdateAdUnit::dispatch($zoneZoneWebsite);
             }
 
-            if ($zoneZoneWebsite->isDirty('zone_status_id')){
+            if ($zoneZoneWebsite->wasChanged('zone_status_id')){
                 $adScore = $zoneZoneWebsite->adScore;
                 if ($adScore){
                     $adScore->ad_score_zone_status_id = $zoneZoneWebsite->zone_status_id == 2 ? 1 : 2;

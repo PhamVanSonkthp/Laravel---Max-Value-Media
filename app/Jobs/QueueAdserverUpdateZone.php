@@ -43,7 +43,7 @@ class QueueAdserverUpdateZone implements ShouldQueue
     {
         $params = [
             'idstatus' => $this->zone->zoneStatus->adserver_id,
-            'is_active' => ($this->zone->zoneStatusID == 2 || optional($this->zone->zoneDimension)->zone_dimension_type_id == 2),
+            'is_active' => $this->zone->zone_status_id == 2,
             'name' => $this->zone->name,
             'width' => $this->zone->width,
             'height' => $this->zone->height,

@@ -39,11 +39,19 @@ class ReportController extends Controller
 
     public function index(Request $request)
     {
-        $sumary = $this->model->searchByQuery($request, ['report_type_id' => 1], null, null, true);
-        $sumary->selectRaw('SUM(d_request) as d_request, SUM(d_impression) as d_impression, AVG(d_ecpm) as d_ecpm, SUM(d_revenue) as d_revenue, AVG(count) as count, AVG(share) as share, SUM(p_impression) as p_impression, AVG(p_ecpm) as p_ecpm, SUM(p_revenue) as p_revenue, SUM(profit) as profit, SUM(sale_percent) as sale_percent, SUM(system_percent) as system_percent, SUM(salary) as salary, SUM(deduction) as deduction, SUM(net_profit) as net_profit');
+        $modelSummary = new Report();
+        $sumary = $modelSummary->searchByQuery($request, ['report_type_id' => 1], null, null, true);
+        $sumary->selectRaw('SUM(d_request) as d_request, SUM(d_impression) as d_impression, SUM(d_impression_us_uk) as d_impression_us_uk, AVG(d_ecpm) as d_ecpm, SUM(d_revenue) as d_revenue, AVG(count) as count, AVG(share) as share, SUM(p_impression) as p_impression, AVG(p_ecpm) as p_ecpm, SUM(p_revenue) as p_revenue, SUM(profit) as profit, SUM(sale_percent) as sale_percent, SUM(system_percent) as system_percent, SUM(salary) as salary, SUM(deduction) as deduction, SUM(net_profit) as net_profit');
         $sumary = $sumary->first();
 
-        $items = $this->model->searchByQuery($request, [], null, null, true);
+        $modelAdserverSummary = new Report();
+        $adServerSumary = $modelAdserverSummary->searchByQuery($request, ['report_type_id' => 2], null, null, true);
+        $adServerSumary->selectRaw('SUM(d_request) as d_request');
+        $adServerSumary = $adServerSumary->first();
+
+        $sumary->d_request += $adServerSumary->d_request;
+
+        $items = $this->model->searchByQuery($request, ['report_type_id' => 1], null, null, true);
 
         $items = $items->orderBy('date', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
@@ -71,14 +79,14 @@ class ReportController extends Controller
 
         $tempModelColums = Helper::getAllColumsOfTable($this->model);
 
-        foreach ($tempModelColums as $modelColum){
+        foreach ($tempModelColums as $modelColum) {
 
             $CheckKeyCodes = [];
 
             // get permission report from database
             $permissionReports = Permission::where('parent_id', 61)->get();
-            foreach ($permissionReports as $permissionReport){
-                $keyCode = str_replace("reports_list_","", $permissionReport->key_code);
+            foreach ($permissionReports as $permissionReport) {
+                $keyCode = str_replace("reports_list_", "", $permissionReport->key_code);
 
                 $CheckKeyCodes[] = [
                     'key_code' => $permissionReport->key_code,
@@ -89,7 +97,7 @@ class ReportController extends Controller
             $keyExist = collect($CheckKeyCodes)->firstWhere('column', $modelColum);
 
 
-            if ($keyExist && auth()->user()->can("reports-list-" . $keyExist['column'])){
+            if ($keyExist && auth()->user()->can("reports-list-" . $keyExist['column'])) {
                 $modelColums[] = $keyExist['column'];
             }
 
@@ -98,12 +106,12 @@ class ReportController extends Controller
         $showColums = [];
 
 
-        if ($request->show_colums){
-            $showColums = explode( ',', $request->show_colums);
+        if ($request->show_colums) {
+            $showColums = explode(',', $request->show_colums);
         }
 
 
-        return view('administrator.' . $this->prefixView . '.index', compact('items', 'sumary', 'zones', 'demands','modelColums','showColums'));
+        return view('administrator.' . $this->prefixView . '.index', compact('items', 'sumary', 'zones', 'demands', 'modelColums', 'showColums'));
     }
 
     public function get(Request $request, $id)
@@ -154,9 +162,13 @@ class ReportController extends Controller
         $filePath = $this->prefixView . "_" . Carbon::now()->toDateString() . "_" . Carbon::now()->timestamp . ".xlsx";
 
         $exportReport = ExportReport::create([
-            'name' => "Report ". Carbon::now()->toDateTimeString(). ".xlsx",
-            'path' => '/app/'. $filePath,
+            'name' => "Report " . Carbon::now()->toDateTimeString() . ".xlsx",
+            'path' => '/app/' . $filePath,
         ]);
+
+        $request->merge([
+            'report_type_id' => 1
+        ]);;
 
         QueueCreateReport::dispatch($filePath, $request->all(), $exportReport);
 

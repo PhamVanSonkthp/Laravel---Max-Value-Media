@@ -42,7 +42,7 @@ class CreateZoneStatusSeeder extends Seeder
         ZoneStatus::firstOrCreate([
             "name" => "REVIEWING",
             "adserver_id" => "7010",
-            "background_color" => "#3b82f6",
+            "background_color" => "#f59e0b",
         ]);
 
 

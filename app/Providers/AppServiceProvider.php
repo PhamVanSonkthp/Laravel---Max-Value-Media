@@ -7,6 +7,7 @@ use App\Models\AdScoreZone;
 use App\Models\Image;
 use App\Models\Order;
 use App\Models\ParticipantChat;
+use App\Models\Payment;
 use App\Models\PostComment;
 use App\Models\Report;
 use App\Models\SingleImage;
@@ -18,6 +19,7 @@ use App\Observers\AdScoreZoneObserver;
 use App\Observers\ImageObserver;
 use App\Observers\OrderObserver;
 use App\Observers\ParticipantChatObserver;
+use App\Observers\PaymentObserver;
 use App\Observers\PostCommentObserver;
 use App\Observers\ReportObserver;
 use App\Observers\SingleImageObserver;
@@ -60,16 +62,14 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        ParticipantChat::observe(ParticipantChatObserver::class);
-        Order::observe(OrderObserver::class);
         Image::observe(ImageObserver::class);
         SingleImage::observe(SingleImageObserver::class);
-        PostComment::observe(PostCommentObserver::class);
         Report::observe(ReportObserver::class);
         AdsCampaign::observe(AdsCampaignObserver::class);
         Website::observe(WebsiteObserver::class);
         ZoneWebsite::observe(ZoneWebsiteObserver::class);
         AdScoreZone::observe(AdScoreZoneObserver::class);
         User::observe(UserObserver::class);
+        Payment::observe(PaymentObserver::class);
     }
 }

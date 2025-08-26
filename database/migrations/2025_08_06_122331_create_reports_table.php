@@ -26,6 +26,7 @@ class CreateReportsTable extends Migration
             $table->bigInteger('d_requests_empty')->default(0);
             $table->bigInteger('d_impression');
             $table->bigInteger('d_impressions_unique')->default(0);
+            $table->bigInteger('d_impression_us_uk')->default(0);
             $table->float('d_ecpm',8,2);
             $table->float('d_revenue',8,2);
             $table->bigInteger('count')->default(80);

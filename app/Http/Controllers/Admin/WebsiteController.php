@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Jobs\QueueGAMCreateAdUnit;
+use App\Models\AdScoreZone;
 use App\Models\Formatter;
 use App\Models\StatusWebsite;
 use App\Models\User;
@@ -49,6 +50,10 @@ class WebsiteController extends Controller
                 $items = $this->websiteJoinZone($items, $request->zone_website_id, false);
             }
             $items = $items->where('zone_websites.zone_status_id', $request->zone_status_id);
+        }
+
+        if ($request->manager_id) {
+            $items = $items->select('websites.*')->join('users', 'users.id', '=', 'websites.user_id')->where('users.manager_id', $request->manager_id);
         }
 
         $items = $items->with(['zoneWebsites','zoneWebsites.zoneStatus','statusWebsite','user','adsStatusWebsite', 'user.manager','cs']);

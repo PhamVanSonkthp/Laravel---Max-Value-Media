@@ -31,15 +31,15 @@ class UserController extends Controller
             }
         }
 
-        $revenueNow = Report::where(['user_id' => auth()->id(), 'date' => Carbon::today()->toDateString()])->sum('p_revenue');
-        $revenueYesterday = Report::where(['user_id' => auth()->id(), 'date' => Carbon::yesterday()->toDateString()])->sum('p_revenue');
+        $revenueNow = Report::where(['report_type_id' => 1,'user_id' => auth()->id(), 'date' => Carbon::today()->toDateString()])->sum('p_revenue');
+        $revenueYesterday = Report::where(['report_type_id' => 1,'user_id' => auth()->id(), 'date' => Carbon::yesterday()->toDateString()])->sum('p_revenue');
 
-        $revenueThisMonth = Report::where(['user_id' => auth()->id()])
+        $revenueThisMonth = Report::where(['report_type_id' => 1,'user_id' => auth()->id()])
             ->whereDate('date', '>=', Carbon::today()->startOfMonth()->toDateString())
             ->whereDate('date', '<=', Carbon::today()->endOfMonth()->toDateString())
             ->sum('p_revenue');
 
-        $revenueTotal = Report::where(['user_id' => auth()->id()])->sum('p_revenue');
+        $revenueTotal = Report::where(['report_type_id' => 1,'user_id' => auth()->id()])->sum('p_revenue');
         return view('user.home.index', compact('revenueNow','revenueYesterday','revenueThisMonth','revenueTotal'));
     }
 
@@ -55,12 +55,16 @@ class UserController extends Controller
     public function report(Request $request)
     {
         $model = new Report();
-        $items = $model->searchByQuery($request, ['user_id' => auth()->id()]);
+        $items = $model->searchByQuery($request, ['report_type_id' => 1,'user_id' => auth()->id()]);
+
+        $modelSumary = new Report();
+        $summary = $modelSumary->searchByQuery($request, ['report_type_id' => 1,'user_id' => auth()->id()], null,null,true);
+        $summary = $summary->selectRaw('SUM(p_impression) as p_impression, AVG(p_ecpm) as p_ecpm, SUM(p_revenue) as p_revenue')->first();;
 
         $websites = (new Website())->searchByQuery(null, ['user_id' => auth()->id()]);
         $zoneWebsites = (new ZoneWebsite())->searchByQuery(null, ['user_id' => auth()->id()]);
 
-        return view('user.report.index', compact('items','zoneWebsites','websites'));
+        return view('user.report.index', compact('items','zoneWebsites','websites','summary'));
     }
 
     public function wallet(Request $request)
@@ -68,21 +72,23 @@ class UserController extends Controller
         $model = new Payment();
         $items = $model->searchByQuery($request,['user_id' => auth()->id()]);
 
-        $revenue = Report::where(['user_id'=> auth()->id(), 'report_status_id'=> 2])->whereDate('date', '>=', Carbon::today()->startOfMonth())->whereDate('date', '>=', Carbon::today()->endOfMonth())->sum('p_revenue');
-        $deduction = Report::where(['user_id'=> auth()->id(), 'report_status_id'=> 2])->whereDate('date', '>=', Carbon::today()->startOfMonth())->whereDate('date', '>=', Carbon::today()->endOfMonth())->sum('deduction');
+//        $summary = Payment::where('user_id', auth()->id())->
 
-        $userPaymentMethod = UserPaymentMethod::where(['user_id' => auth()->id(), 'is_default' => true])->first();
-        $pendingPayment = [
-            'id' => 0,
-            'date' => Carbon::today()->year . "-" . Carbon::today()->month,
-            'user_id' => auth()->id(),
-            'user_payment_method_id' => optional($userPaymentMethod)->payment_method_id,
-            'earning' => $revenue,
-            'deduction' => $deduction,
-            'total' => $revenue - $deduction,
-            'payment_status_id' => 1,
-        ];
-        return view('user.wallet.index', compact('items','pendingPayment'));
+//        $revenue = Report::where(['user_id'=> auth()->id(), 'report_status_id'=> 2])->whereDate('date', '>=', Carbon::today()->startOfMonth())->whereDate('date', '>=', Carbon::today()->endOfMonth())->sum('p_revenue');
+//        $deduction = Report::where(['user_id'=> auth()->id(), 'report_status_id'=> 2])->whereDate('date', '>=', Carbon::today()->startOfMonth())->whereDate('date', '>=', Carbon::today()->endOfMonth())->sum('deduction');
+//
+//        $userPaymentMethod = UserPaymentMethod::where(['user_id' => auth()->id(), 'is_default' => true])->first();
+//        $pendingPayment = [
+//            'id' => 0,
+//            'date' => Carbon::today()->year . "-" . Carbon::today()->month,
+//            'user_id' => auth()->id(),
+//            'user_payment_method_id' => optional($userPaymentMethod)->payment_method_id,
+//            'earning' => $revenue,
+//            'deduction' => $deduction,
+//            'total' => $revenue - $deduction,
+//            'payment_status_id' => 1,
+//        ];
+        return view('user.wallet.index', compact('items'));
 
     }
 

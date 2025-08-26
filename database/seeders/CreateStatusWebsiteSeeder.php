@@ -51,5 +51,10 @@ class CreateStatusWebsiteSeeder extends Seeder
             "background_color" => "#f59e0b",
         ]);
 
+        StatusWebsite::firstOrCreate([
+            "name" => "MUST CHECK",
+            "adserver_id" => "3520",
+            "background_color" => "#f59e0b",
+        ]);
     }
 }

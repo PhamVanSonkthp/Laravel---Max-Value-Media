@@ -395,20 +395,21 @@ function isNumber(val) {
     return !isNaN(val)
 }
 
-function showLoading() {
-    // $("#DialogLoading").show()
-    Swal.fire({
-        title: 'Vui lòng đợi !',
-        html: 'Loading...',// add html attribute if you want or remove
-        allowOutsideClick: false,
-    });
-    Swal.showLoading()
+function showLoading(message = "loading...") {
+    // Swal.fire({
+    //     title: 'Vui lòng đợi !',
+    //     html: 'Loading...',// add html attribute if you want or remove
+    //     allowOutsideClick: false,
+    // });
+    // Swal.showLoading();
+
+    _LoaderOrverlay.show(message);
 }
 
 function hideLoading() {
-    Swal.hideLoading()
-    swal.close()
-    // $("#DialogLoading").hide()
+    // Swal.hideLoading()
+    // swal.close()
+    _LoaderOrverlay.hide();
 }
 
 function showPaging() {

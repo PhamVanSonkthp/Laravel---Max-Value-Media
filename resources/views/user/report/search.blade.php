@@ -1,5 +1,5 @@
 <div>
-    @include('administrator.components.search', ['hideFind' => true])
+    @include('administrator.components.search')
 
     <a href="{{route('user.report.export') . "?" . request()->getQueryString()}}" class="btn btn-outline-primary float-end me-2" data-bs-original-title="" title="Excel"><i class="fa-sharp fa-solid fa-file-excel"></i></a>
 

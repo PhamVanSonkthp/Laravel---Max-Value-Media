@@ -58,8 +58,8 @@ class QueueImportReport implements ShouldQueue
 
                     $id = trim($cells[0]->getValue());
 
-                    $count = trim($cells[10]->getValue());
-                    $share = trim($cells[11]->getValue());
+                    $count = trim($cells[12]->getValue());
+                    $share = trim($cells[13]->getValue());
 
                     $report = Report::find($id);
                     if ($report) {
@@ -67,7 +67,6 @@ class QueueImportReport implements ShouldQueue
                         $report->share = $share;
                         $report->report_status_id = 2;
                         $report->save();
-                        $report->touch();
                     }
                 }
             }

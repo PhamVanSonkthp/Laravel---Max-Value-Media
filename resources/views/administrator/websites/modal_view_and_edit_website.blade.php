@@ -23,19 +23,22 @@
         @include('administrator.websites.modal_view_and_edit_website_traffic_countries', ['dateTrafficFrom' => $dateTrafficFrom, 'dateTrafficTo'=> $dateTrafficTo, 'item' => $item, 'trafficByContries'=> $trafficByContries])
     </div>
 
+    <div id="container_modal_view_and_edit_website_traffics">
+            @include('administrator.websites.modal_view_and_edit_website_traffics', [
+            'item' => $item, 'timeBeginCheckTraffic' => $timeBeginCheckTraffic,
+            'timeEndCheckTraffic' => $timeEndCheckTraffic,
+            'validHit' => $validHit,
+            'validPertotalHit' => $validPertotalHit,
+            'proxyHit' => $proxyHit,
+            'proxyPertotalHit' => $proxyPertotalHit,
+            'junkHit' => $junkHit,
+            'junkHitPertotalHit' => $junkHitPertotalHit,
+            'botHit' => $botHit,
+            'botHitPertotalHit' => $botHitPertotalHit,
+            'adScoreZoneHistories' => $adScoreZoneHistories,
+        ])
+    </div>
 
-    @include('administrator.websites.modal_view_and_edit_website_traffics', [
-        'item' => $item, 'timeBeginCheckTraffic' => $timeBeginCheckTraffic,
-        'timeEndCheckTraffic' => $timeEndCheckTraffic,
-        'validHit' => $validHit,
-        'validPertotalHit' => $validPertotalHit,
-        'proxyHit' => $proxyHit,
-        'proxyPertotalHit' => $proxyPertotalHit,
-        'junkHit' => $junkHit,
-        'junkHitPertotalHit' => $junkHitPertotalHit,
-        'botHit' => $botHit,
-        'botHitPertotalHit' => $botHitPertotalHit
-    ])
 
     <div>
         @include('administrator.components.textarea',['label' => 'Note', 'name' => 'note', 'id' => 'modal_view_and_edit_website_input_note'])

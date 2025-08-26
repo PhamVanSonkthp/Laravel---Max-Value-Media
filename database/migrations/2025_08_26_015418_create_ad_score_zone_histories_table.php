@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentsTable extends Migration
+class CreateAdScoreZoneHistoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class CreatePaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('ad_score_zone_histories', function (Blueprint $table) {
             $table->id();
-            $table->date('from');
-            $table->date('to');
-            $table->bigInteger('user_id')->index();
-            $table->bigInteger('user_payment_method_id');
-            $table->double('earning',8,2);
-            $table->double('invalid',8,2);
-            $table->double('deduction',8,2)->default(0);
-            $table->double('total',8,2)->default(0);
-            $table->bigInteger('payment_status_id')->default(1);
+            $table->bigInteger('ad_score_zone_id');
+            $table->bigInteger('total_hits');
+            $table->bigInteger('valid_hits');
+            $table->bigInteger('proxy_hits');
+            $table->bigInteger('junk_hits');
+            $table->bigInteger('bot_hits');
+            $table->dateTime('from');
+            $table->dateTime('to');
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);
@@ -40,6 +39,6 @@ class CreatePaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('ad_score_zone_histories');
     }
 }

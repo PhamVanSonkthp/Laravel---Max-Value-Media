@@ -65,24 +65,6 @@
                         {{\App\Models\Formatter::getDateTime($item->website->created_at)}}
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-4">
-                        Reason:
-                    </div>
-
-                    <div class="col-8">
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-4">
-                        Advertiser:
-                    </div>
-
-                    <div class="col-8">
-
-                    </div>
-                </div>
             </div>
 
         </div>
@@ -131,15 +113,6 @@
 
                     <div class="col-8">
                         {{optional($item->zoneStatus)->name}}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-4">
-                        Detail:
-                    </div>
-
-                    <div class="col-8">
-
                     </div>
                 </div>
 

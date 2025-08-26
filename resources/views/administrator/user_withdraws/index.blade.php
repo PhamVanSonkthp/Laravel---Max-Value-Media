@@ -22,33 +22,24 @@
 
                     <div class="card-body">
 
-                        @include('administrator.components.checkbox_delete_table')
-
                         <div class="table-responsive product-table">
                             <table class="table table-hover table-bordered">
                                 <thead>
                                 <tr>
-                                    <th><input id="check_box_delete_all" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItem()"></th>
                                     <th onclick='onSortSearch(`id`, `{{ \App\Models\Helper::getValueInFilterReuquest('id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? "desc" : "") }}`)'>
                                         <div>
                                             # {!! \App\Models\Helper::getValueInFilterReuquest('id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
-                                    <th onclick='onSortSearch(`name`, `{{ \App\Models\Helper::getValueInFilterReuquest('name') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('name') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Khách hàng {!! \App\Models\Helper::getValueInFilterReuquest('name') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('name') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th>Số tiền</th>
-                                    <th>Ngân hàng</th>
-                                    <th>Số tài khoản</th>
-                                    <th>Trạng thái</th>
-                                    <th onclick='onSortSearch(`created_at`, `{{ \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? "desc" : "") }}`)'>
-                                        <div>
-                                            Thời gian tạo {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                        </div>
-                                    </th>
-                                    <th>Hành động</th>
+                                    <th>Order time</th>
+                                    <th>Est. payment</th>
+                                    <th>Publisher</th>
+                                    <th>Account manager</th>
+                                    <th>Amount</th>
+                                    <th>Deduction</th>
+                                    <th>Invalid amount</th>
+                                    <th>Status</th>
+                                    <th>Method</th>
                                 </tr>
                                 </thead>
                                 <tbody class="" id="body_container_item">
@@ -60,27 +51,20 @@
 
                                 <tfoot>
                                     <tr>
-                                        <th><input id="check_box_delete_all_footer" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItemFooter()"></th>
                                         <th onclick='onSortSearch(`id`, `{{ \App\Models\Helper::getValueInFilterReuquest('id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? "desc" : "") }}`)'>
                                             <div>
                                                 # {!! \App\Models\Helper::getValueInFilterReuquest('id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                             </div>
                                         </th>
-                                        <th onclick='onSortSearch(`name`, `{{ \App\Models\Helper::getValueInFilterReuquest('name') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('name') != "desc" ? "desc" : "") }}`)'>
-                                            <div>
-                                                Khách hàng {!! \App\Models\Helper::getValueInFilterReuquest('name') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('name') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                            </div>
-                                        </th>
-                                        <th>Số tiền</th>
-                                        <th>Ngân hàng</th>
-                                        <th>Số tài khoản</th>
-                                        <th>Trạng thái</th>
-                                        <th onclick='onSortSearch(`created_at`, `{{ \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? "desc" : "") }}`)'>
-                                            <div>
-                                                Thời gian tạo {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
-                                            </div>
-                                        </th>
-                                        <th>Hành động</th>
+                                        <th>Order time</th>
+                                        <th>Est. payment</th>
+                                        <th>Publisher</th>
+                                        <th>Account manager</th>
+                                        <th>Amount</th>
+                                        <th>Deduction</th>
+                                        <th>Invalid amount</th>
+                                        <th>Status</th>
+                                        <th>Method</th>
                                     </tr>
                                 </tfoot>
                             </table>

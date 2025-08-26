@@ -1,5 +1,4 @@
-<tr class="" id="tr_container_index_{{$index}}" data-id="{{$item->id}}"
-    style="background-color: {{optional($item->reportStatus)->background_color}}">
+<tr class="" id="tr_container_index_{{$index}}" data-id="{{$item->id}}">
     @foreach($showColums as $showColum)
         <td>
             {{$item->$showColum}}
@@ -22,7 +21,6 @@
                 <a target="_blank" href="{{ optional($item->website)->url}}">
                     {{\App\Models\Formatter::maxLengthString(optional($item->website)->name)}}
                 </a>
-
             </div>
         </td>
     @endif
@@ -37,7 +35,7 @@
     @endif
     @if(in_array("d_request",$modelColums))
         <td>
-            {{$item->d_request >0 ? \App\Models\Formatter::formatNumber($item->d_request) : '-'}}
+            {{\App\Models\Formatter::formatNumber($item->d_request ?? optional($item->reportWithAdserver())->d_request)}}
         </td>
     @endif
     @if(in_array("d_impression",$modelColums))
@@ -45,6 +43,12 @@
             {{\App\Models\Formatter::formatNumber($item->d_impression)}}
         </td>
     @endif
+        <td>
+            {{\App\Models\Formatter::formatNumber($item->d_impression_us_uk)}}
+        </td>
+        <td>
+            {{\App\Models\Formatter::formatNumber(min($item->d_impression / max(1 , $item->d_request ?? optional($item->reportWithAdserver())->d_request) * 100 , 100), 2)}}%
+        </td>
     @if(in_array("d_ecpm",$modelColums))
         <td>
             ${{\App\Models\Formatter::formatNumber(round($item->d_ecpm, 2),2)}}
@@ -56,7 +60,7 @@
         </td>
     @endif
     @if(in_array("count",$modelColums))
-        <td>
+        <td style="white-space: normal; word-wrap: break-word;">
             @if(auth()->user()->can('reports-edit'))
                 @include('administrator.components.require_input_number_add_on', ['no_margin' => true,'name' => "input_count",'id' => "input_count_". $item->id, 'value'=> $item->count])
             @else
@@ -65,7 +69,7 @@
         </td>
     @endif
     @if(in_array("share",$modelColums))
-        <td>
+        <td style="white-space: normal; word-wrap: break-word;">
             @if(auth()->user()->can('reports-edit'))
                 @include('administrator.components.require_input_number_add_on', ['no_margin' => true,'name' => "input_share_". $item->id,'id' => "input_share_". $item->id, 'value'=> $item->share])
             @else
@@ -93,6 +97,16 @@
             ${{\App\Models\Formatter::formatNumber(round($item->profit,2),2)}}
         </td>
     @endif
+
+        <td>
+            @include('administrator.components.label', ['label' => optional($item->reportStatus)->name,'style' => 'display: inline-block;
+                margin-top: 6px;
+                padding: 2px 8px;
+                border-radius: 999px;
+                font-size: 11px;
+                font-weight: 600;
+                color: white !important;background: '.optional($item->reportStatus)->background_color.';'])
+        </td>
 
     <script>
 

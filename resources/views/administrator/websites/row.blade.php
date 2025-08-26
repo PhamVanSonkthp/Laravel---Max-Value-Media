@@ -3,7 +3,7 @@
         <input type="checkbox" class="checkbox-delete-item" value="{{$item->id}}">
     </td>
     <td>
-        @include('administrator.components.modal_change_id', ['label' => optional($item->manager)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $managers, 'field' => 'manager_id', 'item' => $item,])
+        @include('administrator.components.modal_change_id', ['label' => optional(optional($item->user)->manager)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $managers, 'field' => 'manager_id', 'item' => $item, 'route' => route('ajax.administrator.websites.manager')])
     </td>
     <td>
         @include('administrator.components.modal_change_id', ['label' => optional($item->cs)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $cses, 'field' => 'cs_id', 'item' => $item,])

@@ -25,6 +25,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('job:create_check_ads_website')
             ->everyMinute()->withoutOverlapping();
 
+        $schedule->command('job:create_check_verify_website')
+            ->everyMinute()->withoutOverlapping();
+
         $schedule->command('job:create_report_demands')
             ->everyMinute()->withoutOverlapping();
 

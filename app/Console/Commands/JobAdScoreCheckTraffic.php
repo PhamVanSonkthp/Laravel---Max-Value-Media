@@ -44,9 +44,6 @@ class JobAdScoreCheckTraffic extends Command
      */
     public function handle()
     {
-
-        set_time_limit(1000);
-
         $adScoreZones = AdScoreZone::where('ad_score_zone_status_id', 1)->get();
 
         foreach ($adScoreZones as $adScoreZone){
@@ -113,20 +110,11 @@ class JobAdScoreCheckTraffic extends Command
                 $adScoreZone->junk_hits = $counter['junk_hits'];
                 $adScoreZone->bot_hits = $counter['bot_hits'];
 
-                if ($adScoreZone->total_hits >= config('_my_config.max_count_number_total_report')) {
-                    $this->removeCheckTrafficAdScore(optional($adScoreZone->zoneWebsite)->adsCampaign);
-                    $adScoreZone->ad_score_zone_status_id = 2;
-                }
-
                 $adScoreZone->save();
             } else {
                 Log::error("JobAdScoreCheckTraffic: "  . json_encode($response));
             }
 
         }
-    }
-
-    private function removeCheckTrafficAdScore($adsCampaign){
-        QueueAdserverRemoveCheckTraffic::dispatch($adsCampaign);
     }
 }

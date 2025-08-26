@@ -28,7 +28,7 @@ class SingleImageObserver
     public function updated(SingleImage $singleImage)
     {
 
-        if ($singleImage->isDirty('image_path')) {
+        if ($singleImage->wasChanged('image_path')) {
             $oldImagePath = $singleImage->getOriginal('image_path');
 
             if ($oldImagePath != "waiting_update") {

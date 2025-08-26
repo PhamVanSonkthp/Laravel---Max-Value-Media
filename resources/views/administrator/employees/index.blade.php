@@ -29,14 +29,14 @@
                                     <th><input id="check_box_delete_all" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItem()"></th>
                                     <th>#</th>
                                     <th>Avatar</th>
-                                    <th>Vai trò</th>
-                                    <th>Tên NV</th>
-                                    <th>Số điện thoại</th>
+                                    <th>Roles</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
                                     <th>Email</th>
-                                    <th>Ngày sinh</th>
-                                    <th>Giới tính</th>
-                                    <th>Ngày sử dụng</th>
-                                    <th>Hành động</th>
+                                    <th>Date of birth</th>
+                                    <th>Gender</th>
+                                    <th>Created at</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody class="" id="body_container_item">
@@ -50,14 +50,14 @@
                                     <th><input id="check_box_delete_all_footer" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItemFooter()"></th>
                                     <th>#</th>
                                     <th>Avatar</th>
-                                    <th>Vai trò</th>
-                                    <th>Tên NV</th>
-                                    <th>Số điện thoại</th>
+                                    <th>Roles</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
                                     <th>Email</th>
-                                    <th>Ngày sinh</th>
-                                    <th>Giới tính</th>
-                                    <th>Ngày sử dụng</th>
-                                    <th>Hành động</th>
+                                    <th>Date of birth</th>
+                                    <th>Gender</th>
+                                    <th>Created at</th>
+                                    <th>Action</th>
                                 </tr>
                                 </tfoot>
                             </table>

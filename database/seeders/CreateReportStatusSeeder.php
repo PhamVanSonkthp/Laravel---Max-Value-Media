@@ -19,12 +19,12 @@ class CreateReportStatusSeeder extends Seeder
     {
         ReportStatus::firstOrCreate([
             "name" => "PENDING",
-            "background_color" => "#fff8eb",
+            "background_color" => "#f59e0b",
         ]);
 
         ReportStatus::firstOrCreate([
             "name" => "APPROVED",
-            "background_color" => "#e0ffec",
+            "background_color" => "#22c55e",
         ]);
 
 

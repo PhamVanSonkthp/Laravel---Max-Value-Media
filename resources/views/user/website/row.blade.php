@@ -25,15 +25,15 @@
     </td>
     @if($item->status_website_id == 2)
         <td class="text-center w-10">
-            <button id="add_zone_4914" class="btn btn-primary btn-sm mb-1"
+            <button class="btn btn-primary btn-sm mb-1"
                     onclick="showModalAddZone(event, '{{$item->id}}')">
                 <i class="ri-add-circle-fill"></i> Add zone
             </button>
         </td>
     @else
         <td class="text-center w-10">
-            <button id="add_zone_4914" class="btn btn-primary btn-sm mb-1"
-                    onclick="onShowModalAdCode({{$item->zoneWebsiteTraffic->id}})">
+            <button class="btn btn-primary btn-sm mb-1"
+                    onclick="onShowModalAdCode({{optional($item->zoneWebsiteTraffic)->id}})">
                 <i class="ri-add-circle-fill"></i> Verify
             </button>
         </td>

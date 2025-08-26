@@ -15,15 +15,11 @@ class CreateDemandSeeder extends Seeder
     public function run()
     {
         Demand::firstOrCreate([
-            "name" => "Adserver",
+            "name" => "Truvid",
         ]);
 
         Demand::firstOrCreate([
             "name" => "Google",
-        ]);
-
-        Demand::firstOrCreate([
-            "name" => "Truvid",
         ]);
 
         Demand::firstOrCreate([
@@ -32,6 +28,14 @@ class CreateDemandSeeder extends Seeder
 
         Demand::firstOrCreate([
             "name" => "RevContent",
+        ]);
+
+        Demand::firstOrCreate([
+            "name" => "R2B2",
+        ]);
+
+        Demand::firstOrCreate([
+            "name" => "AdSense",
         ]);
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Observers;
 
+use App\Models\Payment;
 use App\Models\Report;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ReportObserver
 {
@@ -33,6 +35,10 @@ class ReportObserver
             $report->share = $reportOld->share;
         }
 
+        $this->updateImpreesionUSUK($report);
+
+        $report->d_impression_us_uk = round($report->d_impression * $report->count / 100);
+
         $report->p_impression = round($report->d_impression * $report->count / 100);
         $report->p_ecpm = round($report->d_ecpm * $report->share / 100, 2);
 
@@ -47,6 +53,25 @@ class ReportObserver
         $report->save();
     }
 
+    private function updateImpreesionUSUK($report){
+
+        $impressionUSUK = 0;
+        foreach ($report->reportByCountries as $reportByCountry){
+            if (in_array($reportByCountry->national_id, config('_my_config.national_us_uk_ids'))){
+                $impressionUSUK += $reportByCountry->impressions;
+            }
+        }
+        $report->d_impression_us_uk = $impressionUSUK;
+        $report->saveQuietly();
+
+        $primaryReport = $report->primaryReport();
+
+        if ($primaryReport){
+            $primaryReport->d_impression_us_uk = $report->d_impression_us_uk;
+            $primaryReport->saveQuietly();
+        }
+    }
+
     /**
      * Handle the Report "updated" event.
      *
@@ -55,6 +80,9 @@ class ReportObserver
      */
     public function updated(Report $report)
     {
+
+        $this->updateImpreesionUSUK($report);
+
         $report->p_impression = round($report->d_impression * $report->count / 100);
         $report->p_ecpm = round($report->d_ecpm * $report->share / 100, 2);
 
@@ -66,7 +94,7 @@ class ReportObserver
         $report->fix_cost = round($report->d_revenue * 10 / 100, 2);
         $report->net_profit = round($report->profit - $report->sale_percent - $report->system_percent - $report->tax - $report->fix_cost - $report->salary - $report->deduction, 2);
 
-        if ($report->isDirty('zone_website_id')) {
+        if ($report->wasChanged('zone_website_id')) {
             $new_zone_website_id = $report->zone_website_id;
             $old_zone_website_id = $report->getOriginal('zone_website_id');
 
@@ -83,9 +111,24 @@ class ReportObserver
 
         }
 
-        if ($report->isDirty('report_status_id') && $report->report_status_id == 2 && $report->p_revenue > 0 && Carbon::yesterday()->toDateString() == $report->date) {
+        if ($report->wasChanged('report_status_id') && $report->report_status_id == 2 && $report->p_revenue > 0 && Carbon::yesterday()->toDateString() == $report->date) {
             $user = $report->user;
-            if ($user) $user->addAmount($report->p_revenue, "Revenue: ". optional($report->zoneWebsite)->name);
+            if ($user) {
+                $user->addAmount($report->p_revenue, "Revenue: ". optional($report->zoneWebsite)->name);
+                $payment = Payment::where('user_id', $user->id)
+                    ->whereDate('from', '>=', Carbon::parse($report->date)->startOfMonth()->toDateTime())
+                    ->whereDate('to','<=' ,Carbon::parse($report->date)->endOfMonth()->toDateTime())->first();
+
+                if (empty($payment)){
+                    $payment = Payment::create([
+                        'user_id' => $user->id,
+                        'from' => Carbon::parse($report->date)->startOfMonth()->toDateTime(),
+                        'to' => Carbon::parse($report->date)->endOfMonth()->toDateTime(),
+                    ]);
+                }
+                $payment->earning += $report->p_revenue;
+                $payment->save();
+            }
         }
 
         $report->saveQuietly();

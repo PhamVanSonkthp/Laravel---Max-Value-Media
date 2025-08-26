@@ -26,6 +26,16 @@ class Report extends Model implements Auditable
 
     // begin
 
+    public function primaryReport()
+    {
+        return Report::where('id', '!=', $this->id)->where(['report_type_id' => 2 ,'website_id' => $this->website_id, 'zone_website_id' => $this->zone_website_id, 'date' => $this->date])->first();
+    }
+
+    public function reportWithAdserver()
+    {
+        return Report::where(['report_type_id' => 2, 'website_id' => $this->website_id, 'zone_website_id' => $this->zone_website_id, 'date' => $this->date])->first();
+    }
+
     public function reportByCountries()
     {
         return $this->hasMany(ReportByCountry::class, 'report_id', 'id');

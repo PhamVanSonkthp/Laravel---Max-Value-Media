@@ -22,10 +22,13 @@ trait WebsiteTrait
 
     public static function reports($id, $report_type_id, $from, $to)
     {
-        return Report::where(['website_id' => $id, 'report_type_id' => $report_type_id])
-            ->whereDate('date', '>=', $from)
-            ->whereDate('date', '<=', $to)
-            ->get();
+        $reports = Report::where(['website_id' => $id, 'report_type_id' => $report_type_id]);
+
+        if ($from && $to){
+            $reports = $reports->whereDate('date', '>=', $from)->whereDate('date', '<=', $to);
+        }
+
+        return $reports->get();
     }
 
 

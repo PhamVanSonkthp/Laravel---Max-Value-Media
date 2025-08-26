@@ -178,11 +178,10 @@
 
                                     <th onclick='onSortSearch(`created_at`, `{{ \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? "desc" : "") }}`)'>
                                         <div>
-                                            Thời gian
-                                            tạo {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            Created at {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
-                                    <th>Hành động</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody class="" id="body_container_item">
@@ -237,11 +236,10 @@
 
                                     <th onclick='onSortSearch(`created_at`, `{{ \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? "desc" : "") }}`)'>
                                         <div>
-                                            Thời gian
-                                            tạo {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            Created at {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
-                                    <th>Hành động</th>
+                                    <th>Action</th>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -581,7 +579,7 @@
 
         function onStoreZones(website_id) {
             $('#panel_zone_collapse').collapse('hide');
-            showToastLoading("Đang khởi tạo Zone...");
+            showToastLoading("Creating Zone...");
             processStoreZone(website_id);
         }
 
@@ -615,6 +613,11 @@
                             showToastSuccess('Created Zone');
                             prependWithAnimation("#panel_zone_container_zones", response.data.html);
                             onRefreshRow(website_id);
+
+                            $(".panel_zone_checkbox_dimension").prop("checked", false).trigger("change");
+                            $(".panel_zone_input_number_dimension").val(1);
+
+
                         } else {
                             showToastError('Có lỗi khởi tạo');
                         }
@@ -627,7 +630,7 @@
             )
         }
 
-        function processRefreshTraffic(website_id) {
+        function onRefreshTraffic(website_id) {
             callAjax(
                 "GET",
                 "{{route('ajax.administrator.'.$prefixView.'.refresh_traffic')}}",
@@ -635,29 +638,13 @@
                     id: website_id,
                 },
                 (response) => {
-                    if (response.code == 219) {
-                        setTimeout(processRefreshTraffic(website_id), 5000);
-                    } else {
-                        hideAllToast()
-                        if (response.is_success) {
-                            prependWithAnimation("#container_view_and_edit_website_modal", response.data.data.html, "vibrate", true);
-                            showToastSuccess('Đã lấy dữ liệu mới');
-                        } else {
-                            showToastError(response.message);
-                        }
-                    }
-
+                    prependWithAnimation("#container_modal_view_and_edit_website_traffics", response.data.html, "vibrate", true);
                 },
                 (error) => {
 
-                }, false
+                }
             )
-        }
 
-        function onRefreshTraffic(website_id, url) {
-            $('#modal_view_and_edit_website_btn_refresh_traffic').hide().fadeOut(1000);
-            showToastLoading("Đang lấy dữ liệu mới: "+url+"...");
-            processRefreshTraffic(website_id);
         }
 
         function onUpdateWebsite(website_id) {

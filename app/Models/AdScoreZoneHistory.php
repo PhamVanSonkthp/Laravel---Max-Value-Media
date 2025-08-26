@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 
-class AdScoreZone extends Model implements Auditable
+class AdScoreZoneHistory extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use HasFactory;
@@ -26,15 +26,13 @@ class AdScoreZone extends Model implements Auditable
 
     // begin
 
-    public function zoneWebsite()
-    {
-        return $this->hasOne(ZoneWebsite::class, 'id', 'zone_website_id');
-    }
-
-    public function adScoreZoneHistories()
-    {
-        return $this->hasMany(AdScoreZoneHistory::class, 'ad_score_zone_id', 'id');
-    }
+    //    public function one(){
+    //        return $this->hasOne(Model::class, 'id', 'local_id');
+    //    }
+    //
+    //    public function multiples(){
+    //        return $this->hasMany(Model::class, 'id', 'local_id');
+    //    }
 
     // end
 
@@ -53,7 +51,7 @@ class AdScoreZone extends Model implements Auditable
 
     public function avatar($size = "100x100")
     {
-        return Helper::getDefaultIcon($this, $size);
+       return Helper::getDefaultIcon($this, $size);
     }
 
     public function image()
@@ -66,9 +64,8 @@ class AdScoreZone extends Model implements Auditable
         return Helper::images($this);
     }
 
-    public function createdBy()
-    {
-        return $this->hasOne(User::class, 'id', 'created_by_id');
+    public function createdBy(){
+        return $this->hasOne(User::class,'id','created_by_id');
     }
 
     public function searchByQuery($request, $queries = [], $randomRecord = null, $makeHiddens = null, $isCustom = false)
@@ -110,8 +107,7 @@ class AdScoreZone extends Model implements Auditable
         return Helper::deleteManyByIds($this, $request, $forceDelete);
     }
 
-    public function findById($id)
-    {
+    public function findById($id){
         $item = $this->find($id);
         return $item;
     }

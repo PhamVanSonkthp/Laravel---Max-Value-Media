@@ -8,7 +8,9 @@ use App\Http\Requests\PusherChatRequest;
 use App\Jobs\QueueAdScroreCheckTrafficZone;
 use App\Jobs\QueueAdserverCreateWebsite;
 use App\Jobs\QueueAdserverCreateZone;
+use App\Jobs\QueueAdserverUpdateAdsCampaign;
 use App\Jobs\QueueAdserverUpdateStatusZone;
+use App\Models\AdScoreZoneHistory;
 use App\Models\CategoryWebsite;
 use App\Models\Chat;
 use App\Models\ChatImage;
@@ -91,7 +93,8 @@ Route::prefix('ajax/administrator')->group(function () {
                 $item->save();
 
                 return response()->json([
-                    'message' => 'saved!'
+                    'message' => 'saved!',
+                    'item' => $item,
                 ]);
             })->name('ajax.administrator.model.update_field');
         });
@@ -177,6 +180,26 @@ Route::prefix('ajax/administrator')->group(function () {
                     . $request->id;
                 $cacheValue = Cache::get($keyCache);
 
+                if (empty($cacheValue)) {
+                    $website = Website::findOrFail($request->id);
+
+                    foreach ($request->dimension_ids as $indexD => $dimension_id) {
+                        if ($dimension_id == config('_my_config.verify_zone_dimension_id')) {
+                            if ($website->zoneWebsiteTraffic) {
+                                return response()->json(Helper::errorAPI(200, [
+
+                                ], 'Verify Tag only be created once'), 400);
+                            }
+                            if ($request->numbers[$indexD] > 1) {
+                                return response()->json(Helper::errorAPI(200, [
+
+                                ], 'Verify Tag only be created max 1'), 400);
+                            }
+                        }
+                    }
+
+                }
+
                 if (!empty($cacheValue)) {
                     if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
                         goto skip;
@@ -208,24 +231,16 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $zoneWebsite = ZoneWebsite::findOrFail($request->id);
 
-                $keyCache = AdserverTrait::$KEY_CACHE_UPDATE_STATUS_ZONE
-                    . $request->id;
-                $cacheValue = Cache::get($keyCache);
+                $request->validate([
+                    'zone_status_id' => 'required',
+                ]);
 
-                if (!empty($cacheValue)) {
-                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
-                        goto skip;
-                    }
+                $zoneWebsite->zone_status_id = $request->zone_status_id;
+                $zoneWebsite->save();
 
-                    Cache::forget($keyCache);
-                    return response()->json($cacheValue);
-                }
-
-                QueueAdserverUpdateStatusZone::dispatch($keyCache, $zoneWebsite, $request->zone_status_id);
-                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
-
-                skip:
-                return response()->json(Helper::successAPI(219, [], 'Processing'));
+                return response()->json(Helper::successAPI(200, [
+                    'item' => $zoneWebsite->zoneStatus
+                ]));
 
             })->name('ajax.administrator.zone_websites.update_status');
 
@@ -285,28 +300,29 @@ Route::prefix('ajax/administrator')->group(function () {
                 $modalID = $request->modal_id;
 
                 $timeBeginCheckTraffic = null;
-                $timeEndCheckTraffic = $request->end_time_traffic;
+                $timeEndCheckTraffic = null;
 
                 $adScoreZones = $item->getAdScoreZones();
+                $adScoreZoneHistories = [];
 
                 if (count($adScoreZones)) {
                     $firstAdScoreZones = $adScoreZones[0];
                     $timeBeginCheckTraffic = $firstAdScoreZones->created_at;
-                    if (empty($timeEndCheckTraffic)) {
-                        $timeEndCheckTraffic = $firstAdScoreZones->updated_at;
-                    }
+                    $timeEndCheckTraffic = $firstAdScoreZones->updated_at;
+
+                    $adScoreZoneHistories = $firstAdScoreZones->adScoreZoneHistories;
                 }
 
                 $traffic = $item->traffic();
                 $validHit = $traffic['valid_hits'];
                 $totalHit = $traffic['total_hits'];
-                $validPertotalHit = $traffic['valid_hits'] / max($traffic['total_hits'], 1);
+                $validPertotalHit = $traffic['valid_hits'] / max($traffic['total_hits'], 1) * 100;
                 $proxyHit = $traffic['proxy_hits'];
-                $proxyPertotalHit = $traffic['proxy_hits'] / max($traffic['total_hits'], 1);
+                $proxyPertotalHit = $traffic['proxy_hits'] / max($traffic['total_hits'], 1) * 100;
                 $junkHit = $traffic['junk_hits'];
-                $junkHitPertotalHit = $traffic['junk_hits'] / max($traffic['total_hits'], 1);
+                $junkHitPertotalHit = $traffic['junk_hits'] / max($traffic['total_hits'], 1) * 100;
                 $botHit = $traffic['bot_hits'];
-                $botHitPertotalHit = $traffic['bot_hits'] / max($traffic['total_hits'], 1);
+                $botHitPertotalHit = $traffic['bot_hits'] / max($traffic['total_hits'], 1) * 100;
 
                 $trafficByContries = [];
 
@@ -335,7 +351,7 @@ Route::prefix('ajax/administrator')->group(function () {
                     "html" => View::make('administrator.websites.modal_view_and_edit_website',
                         compact('item', 'modalID', 'validHit', 'totalHit', 'validPertotalHit', 'proxyHit'
                             , 'proxyPertotalHit', 'junkHit', 'junkHitPertotalHit', 'botHit', 'botHitPertotalHit'
-                            , 'timeBeginCheckTraffic', 'timeEndCheckTraffic', 'trafficByContries','dateTrafficFrom','dateTrafficTo'))->render()]));
+                            , 'timeBeginCheckTraffic', 'timeEndCheckTraffic', 'trafficByContries', 'dateTrafficFrom', 'dateTrafficTo', 'adScoreZoneHistories'))->render()]));
             })->name('ajax.administrator.websites.get');
 
             Route::get('create', function (Request $request) {
@@ -372,7 +388,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $zoneStatuses = ZoneStatus::all();
                 return response()->json(Helper::successAPI(200, [
-                    "html" => View::make('administrator.websites.row', ['item' => $website, 'index' => -1, 'prefixView' => 'websites', 'statusWebsites' => $statusWebsites, 'zoneStatuses' => $zoneStatuses,'managers'=> $managers, 'cses' => $cses])->render()
+                    "html" => View::make('administrator.websites.row', ['item' => $website, 'index' => -1, 'prefixView' => 'websites', 'statusWebsites' => $statusWebsites, 'zoneStatuses' => $zoneStatuses, 'managers' => $managers, 'cses' => $cses])->render()
                 ]));
             })->name('ajax.administrator.websites.row');
 
@@ -405,9 +421,29 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 return response()->json(Helper::successAPI(200, [
                     "website" => $item,
-                    "html" => View::make('administrator.websites.modal_change_status', ['item' => $item,'select2Items' => $statusWebsites,'statusWebsiteReasonPendings' => $statusWebsiteReasonPendings,'statusWebsiteReasonRejects' => $statusWebsiteReasonRejects])->render()
+                    "html" => View::make('administrator.websites.modal_change_status', ['item' => $item, 'select2Items' => $statusWebsites, 'statusWebsiteReasonPendings' => $statusWebsiteReasonPendings, 'statusWebsiteReasonRejects' => $statusWebsiteReasonRejects])->render()
                 ]));
             })->name('ajax.administrator.websites.modal_change_status');
+
+            Route::put('manager', function (Request $request) {
+
+                $item = Website::findOrFail($request->id);
+                if ($request->manager_id) {
+                    $user = $item->user;
+                    if ($user) {
+                        $user->manager_id = $request->manager_id;
+                        $user->save();
+                    } else {
+                        return response()->json(Helper::errorAPI(400, [
+
+                        ], "Website must have publisher"), 400);
+                    }
+                }
+
+                return response()->json(Helper::successAPI(200, [
+
+                ]));
+            })->name('ajax.administrator.websites.manager');
 
             Route::put('change_status', function (Request $request) {
 
@@ -416,18 +452,18 @@ Route::prefix('ajax/administrator')->group(function () {
                 ]);
 
                 $reasonRefuse = null;
-                if (in_array($request->status_website_id, [4,6])){
+                if (in_array($request->status_website_id, [4, 6])) {
                     $request->validate([
                         'status_website_reason_id' => 'required'
                     ]);
 
-                    if ($request->status_website_reason_id == "custom"){
+                    if ($request->status_website_reason_id == "custom") {
                         $request->validate([
                             'reason_refuse' => 'required'
                         ]);
 
                         $reasonRefuse = $request->reason_refuse;
-                    }else{
+                    } else {
                         $statusWebsiteReason = StatusWebsiteReason::findOrFail($request->status_website_reason_id);
                         $reasonRefuse = $statusWebsiteReason->descriptions;
                     }
@@ -446,7 +482,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $zoneStatuses = ZoneStatus::all();
                 return response()->json(Helper::successAPI(200, [
-                    "html" => View::make('administrator.websites.row', ['item' => $item, 'index' => -1, 'prefixView' => 'websites', 'statusWebsites' => $statusWebsites, 'zoneStatuses' => $zoneStatuses,'managers'=> $managers, 'cses' => $cses])->render()
+                    "html" => View::make('administrator.websites.row', ['item' => $item, 'index' => -1, 'prefixView' => 'websites', 'statusWebsites' => $statusWebsites, 'zoneStatuses' => $zoneStatuses, 'managers' => $managers, 'cses' => $cses])->render()
                 ]));
             })->name('ajax.administrator.websites.change_status');
 
@@ -495,33 +531,96 @@ Route::prefix('ajax/administrator')->group(function () {
 
             Route::get('refresh_traffic', function (Request $request) {
 
-                $website = Website::findOrFail($request->id);
+                $item = Website::findOrFail($request->id);
 
-                $keyCache = AdScoreTrait::$KEY_CACHE_REFRESH_TRAFFIC
-                    . $request->id;
-                $cacheValue = Cache::get($keyCache);
+                $timeBeginCheckTraffic = null;
+                $timeEndCheckTraffic = null;
 
-                if (!empty($cacheValue)) {
-                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
-                        goto skip;
+                $adScoreZones = $item->getAdScoreZones();
+                $adScoreZoneHistories = [];
+
+                if (count($adScoreZones)) {
+                    $firstAdScoreZones = $adScoreZones[0];
+
+                    if ($firstAdScoreZones->total_hits == 0){
+                        return response()->json(Helper::errorAPI(400, [] , 'Data is latest!'), 400);
                     }
-                    $request->merge([
-                        'end_time_traffic' => Carbon::now()->toDateTimeString()
-                    ]);
-                    $request = Request::create(route('ajax.administrator.websites.get'), 'GET');
-                    $response = Route::dispatch($request);
-                    $data = json_decode($response->getContent(), true);
 
-                    $cacheValue['data'] = $data;
-                    Cache::forget($keyCache);
-                    return response()->json($cacheValue);
+                    AdScoreZoneHistory::create([
+                        'ad_score_zone_id' => $firstAdScoreZones->id,
+                        'total_hits' => $firstAdScoreZones->total_hits,
+                        'valid_hits' => $firstAdScoreZones->valid_hits,
+                        'proxy_hits' => $firstAdScoreZones->proxy_hits,
+                        'junk_hits' => $firstAdScoreZones->junk_hits,
+                        'bot_hits' => $firstAdScoreZones->bot_hits,
+                        'from' => $firstAdScoreZones->date_create_new_section ?? $firstAdScoreZones->created_at,
+                        'to' => Carbon::now()->toDateTimeString(),
+                    ]);
+
+                    $firstAdScoreZones->date_create_new_section = Carbon::now()->toDateTimeString();
+                    $firstAdScoreZones->total_hits = 0;
+                    $firstAdScoreZones->valid_hits = 0;
+                    $firstAdScoreZones->proxy_hits = 0;
+                    $firstAdScoreZones->junk_hits = 0;
+                    $firstAdScoreZones->bot_hits = 0;
+                    $firstAdScoreZones->save();
+
+                    $timeBeginCheckTraffic = $firstAdScoreZones->date_create_new_section ?? $firstAdScoreZones->created_at;
+                    $timeEndCheckTraffic = $firstAdScoreZones->updated_at;
+
+                    $adScoreZoneHistories = $firstAdScoreZones->adScoreZoneHistories;
+
+                    $adsCampaign = optional($firstAdScoreZones->zoneWebsite)->adsCampaign;
+                    if ($adsCampaign) QueueAdserverUpdateAdsCampaign::dispatch($adsCampaign);
                 }
 
-                QueueAdScroreCheckTrafficZone::dispatch($keyCache, $website);
-                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
+                $traffic = $item->traffic();
+                $validHit = $traffic['valid_hits'];
+                $validPertotalHit = $traffic['valid_hits'] / max($traffic['total_hits'], 1) * 100;
+                $proxyHit = $traffic['proxy_hits'];
+                $proxyPertotalHit = $traffic['proxy_hits'] / max($traffic['total_hits'], 1) * 100;
+                $junkHit = $traffic['junk_hits'];
+                $junkHitPertotalHit = $traffic['junk_hits'] / max($traffic['total_hits'], 1) * 100;
+                $botHit = $traffic['bot_hits'];
+                $botHitPertotalHit = $traffic['bot_hits'] / max($traffic['total_hits'], 1) * 100;
 
-                skip:
-                return response()->json(Helper::successAPI(219, [], 'Processing'));
+                $trafficByContries = [];
+
+                $dateTrafficFrom = Carbon::today()->toDateString();
+                $dateTrafficTo = Carbon::today()->toDateString();
+
+                foreach (WebsiteTrait::reports($item->id, 2, $dateTrafficFrom, $dateTrafficTo) as $report) {
+                    $reportByCountries = $report->reportByCountries;
+
+                    foreach ($reportByCountries as $reportByCountry) {
+
+                        $reportByCountryGeoID = current(array_filter($trafficByContries, fn($tmp) => $tmp->national_id == $reportByCountry->national_id));
+
+                        if (!$reportByCountryGeoID) {
+                            $trafficByContries[] = $reportByCountry;
+                        } else {
+                            $reportByCountryGeoID['requests'] += $reportByCountry['requests'];
+                            $reportByCountryGeoID['requests_empty'] += $reportByCountry['requests_empty'];
+                            $reportByCountryGeoID['impressions'] += $reportByCountry['impressions'];
+                            $reportByCountryGeoID['impressions_unique'] += $reportByCountry['impressions_unique'];
+                        }
+                    }
+                }
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.websites.modal_view_and_edit_website_traffics', [
+                        'item' => $item, 'timeBeginCheckTraffic' => $timeBeginCheckTraffic,
+                        'timeEndCheckTraffic' => $timeEndCheckTraffic,
+                        'validHit' => $validHit,
+                        'validPertotalHit' => $validPertotalHit,
+                        'proxyHit' => $proxyHit,
+                        'proxyPertotalHit' => $proxyPertotalHit,
+                        'junkHit' => $junkHit,
+                        'junkHitPertotalHit' => $junkHitPertotalHit,
+                        'botHit' => $botHit,
+                        'botHitPertotalHit' => $botHitPertotalHit,
+                        'adScoreZoneHistories' => $adScoreZoneHistories,
+                    ])->render()]));
             })->name('ajax.administrator.websites.refresh_traffic');
 
             Route::get('refresh_traffic_country', function (Request $request) {
@@ -530,8 +629,14 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $trafficByContries = [];
 
-                $dateTrafficFrom = Carbon::parse($request->from)->toDateString();
-                $dateTrafficTo = Carbon::parse($request->to)->toDateString();
+                $dateTrafficFrom = null;
+                if ($request->from) {
+                    $dateTrafficFrom = Carbon::parse($request->from)->toDateString();
+                }
+                $dateTrafficTo = null;
+                if ($request->to) {
+                    $dateTrafficTo = Carbon::parse($request->to)->toDateString();
+                }
 
                 foreach (WebsiteTrait::reports($item->id, 2, $dateTrafficFrom, $dateTrafficTo) as $report) {
                     $reportByCountries = $report->reportByCountries;
@@ -553,7 +658,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 return response()->json(Helper::successAPI(200, [
                     "html" => View::make('administrator.websites.modal_view_and_edit_website_traffic_countries',
-                        ['dateTrafficFrom' => $dateTrafficFrom, 'dateTrafficTo'=> $dateTrafficTo, 'item' => $item, 'trafficByContries'=> $trafficByContries])->render()
+                        ['dateTrafficFrom' => $dateTrafficFrom, 'dateTrafficTo' => $dateTrafficTo, 'item' => $item, 'trafficByContries' => $trafficByContries])->render()
                 ]));
 
             })->name('ajax.administrator.websites.refresh_traffic_country');
@@ -564,7 +669,7 @@ Route::prefix('ajax/administrator')->group(function () {
                 $user = $item->user;
                 $managerID = $request->manager_id;
 
-                if ($user){
+                if ($user) {
                     $user->manager_id = $managerID;
                     $user->save();
                 }
@@ -615,7 +720,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $statusWebsites = WebsiteTrait::statusWebsites();
 
-                $htmlRow = View::make('administrator.users.modal_view_all_website', ['item' => $item, 'websites' => $websites,'statusWebsites' => $statusWebsites])->render();
+                $htmlRow = View::make('administrator.users.modal_view_all_website', ['item' => $item, 'websites' => $websites, 'statusWebsites' => $statusWebsites])->render();
 
                 return response()->json(Helper::successAPI(200, [
                     'user' => $item,

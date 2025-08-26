@@ -16,6 +16,13 @@ class UserObserver
     {
         $user->adserver_id = config('_my_config.default_idpublisher');
         if (empty($user->name)) $user->name = $user->email;
+
+        if (empty($user->manager)){
+            $user->manager_id = config('_my_config.default_manager_id');
+        }
+        if (empty($user->cs_id)){
+            $user->cs_id = config('_my_config.default_cs_id');
+        }
     }
 
     /**
