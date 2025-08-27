@@ -277,7 +277,7 @@ return [
 //        'Quản lý mã giảm giá',
 //        'Quản lý file',
 //        'Quản lý phương thức thanh toán',
-//        'Quản lý giao dịch',
+        'Manager wallet',
 //        'Quản lý điểm',
 //        'Quản lý ngân hàng',
 //        'Quản lý ngân hàng nạp tiền',
