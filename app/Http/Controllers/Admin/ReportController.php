@@ -111,6 +111,8 @@ class ReportController extends Controller
         }
 
 
+        $modelColums = Helper::getAllColumsOfTable($this->model);
+
         return view('administrator.' . $this->prefixView . '.index', compact('items', 'sumary', 'zones', 'demands', 'modelColums', 'showColums'));
     }
 

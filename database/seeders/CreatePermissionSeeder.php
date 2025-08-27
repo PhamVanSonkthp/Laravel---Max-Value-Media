@@ -53,7 +53,7 @@ class CreatePermissionSeeder extends Seeder
                 'key_code' => $module_item . '_' . 'delete',
             ]);
 
-            if ($index == 12){
+            if ($index == 5){
 
                 Permission::firstOrCreate([
                     'name' => 'import',
