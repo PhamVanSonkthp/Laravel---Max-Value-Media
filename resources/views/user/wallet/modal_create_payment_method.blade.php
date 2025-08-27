@@ -4,10 +4,10 @@
 
         <div class="modal_create_payment_method_tabs" role="tablist" aria-label="Payment modal_create_payment_method_tabs">
             <!-- Radios (visually hidden) -->
-            <input type="radio" name="modal_create_payment_method_tabs" id="tab-paypal" checked>
-            <input type="radio" name="modal_create_payment_method_tabs" id="tab-crypto">
-            <input type="radio" name="modal_create_payment_method_tabs" id="tab-wire">
-            <input type="radio" name="modal_create_payment_method_tabs" id="tab-pingpong">
+            <input type="radio" name="modal_create_payment_method_tabs" id="tab-paypal" {{$userPaymentMethodPaypal->is_default ? 'checked' : ''}}>
+            <input type="radio" name="modal_create_payment_method_tabs" id="tab-crypto" {{$userPaymentMethodCrypto->is_default ? 'checked' : ''}}>
+            <input type="radio" name="modal_create_payment_method_tabs" id="tab-wire" {{$userPaymentMethodWireTransfer->is_default ? 'checked' : ''}}>
+            <input type="radio" name="modal_create_payment_method_tabs" id="tab-pingpong" {{$userPaymentMethodPingpong->is_default ? 'checked' : ''}}>
 
             <!-- Tab Labels -->
             <div class="modal_create_payment_method_tab-list">
@@ -51,8 +51,8 @@
             </div>
 
             <!-- Panels -->
-            <div class="panels">
-                <section class="panel" id="panel-paypal" role="tabpanel" aria-labelledby="tab-paypal">
+            <div class="modal_create_payment_method_panels">
+                <section class="modal_create_payment_method_panel" id="panel-paypal" role="tabpanel" aria-labelledby="tab-paypal">
                     <div class="method">
                         <div>
                             <h3>Pay with PayPal</h3>
@@ -63,15 +63,15 @@
                         <div class="field">
                             <label for="pp-email">PayPal
                                 Email @include('administrator.components.lable_require')</label>
-                            <input type="email" id="pp-email" placeholder="you@example.com"/>
+                            <input type="email" id="pp-email" placeholder="you@example.com" value="{{$userPaymentMethodPaypal->paypal_email}}"/>
                         </div>
                     </div>
                     <div class="actions">
-                        <button class="modal_create_payment_method_btn primary text-white" type="button">Continue to PayPal</button>
+                        <button onclick="onSavePaypal()" class="modal_create_payment_method_btn primary text-white" type="button">Save and make default</button>
                     </div>
                 </section>
 
-                <section class="panel" id="panel-crypto" role="tabpanel" aria-labelledby="tab-crypto">
+                <section class="modal_create_payment_method_panel" id="panel-crypto" role="tabpanel" aria-labelledby="tab-crypto">
                     <div class="method">
                         <div>
                             <h3>Pay with Crypto</h3>
@@ -81,33 +81,33 @@
                     </div>
                     <div class="grid">
                         <div class="field">
-                            <label for="coin">Select coin @include('administrator.components.lable_require')</label>
-                            <select id="coin">
-                                <option>USDT</option>
+                            <label for="crypto_coin">Select coin @include('administrator.components.lable_require')</label>
+                            <select id="crypto_coin">
+                                <option value="USDT" {{$userPaymentMethodCrypto->crypto_coin == "USDT" ? 'selected' : ''}}>USDT</option>
                             </select>
                         </div>
                         <div class="field">
-                            <label for="network">Network @include('administrator.components.lable_require')</label>
-                            <select id="network">
-                                <option>BSN Smart Chain (BEP20)</option>
-                                <option>Tron (TRC20)</option>
+                            <label for="crypto_network">Network @include('administrator.components.lable_require')</label>
+                            <select id="crypto_network">
+                                <option value="BSN Smart Chain (BEP20)" {{$userPaymentMethodCrypto->crypto_network == "BSN Smart Chain (BEP20)" ? 'selected' : ''}}>BSN Smart Chain (BEP20)</option>
+                                <option value="Tron (TRC20)" {{$userPaymentMethodCrypto->crypto_network == "Tron (TRC20)" ? 'selected' : ''}}>Tron (TRC20)</option>
                             </select>
                         </div>
                     </div>
                     <div>
                         <div class="field mt-3">
-                            <label for="pp-email">USDT
+                            <label for="crypto_address">USDT
                                 Address @include('administrator.components.lable_require')</label>
-                            <input type="text" placeholder="USDT Address"/>
+                            <input id="crypto_address" type="text" placeholder="USDT Address" value="{{$userPaymentMethodCrypto->crypto_address}}"/>
                         </div>
                     </div>
 
                     <div class="actions">
-                        <button class="modal_create_payment_method_btn primary text-white" type="button">Generate Address</button>
+                        <button onclick="onSaveCrypto()" class="modal_create_payment_method_btn primary text-white" type="button">Save and make default</button>
                     </div>
                 </section>
 
-                <section class="panel" id="panel-wire" role="tabpanel" aria-labelledby="tab-wire">
+                <section class="modal_create_payment_method_panel" id="panel-wire" role="tabpanel" aria-labelledby="tab-wire">
                     <div class="method">
                         <div>
                             <h3>Wire Transfer</h3>
@@ -118,49 +118,49 @@
 
                     <div class="row mt-2">
                         <div class="field col-6">
-                            <label for="acc-name">Beneficiary
+                            <label for="wire_transfer_beneficiary_name">Beneficiary
                                 Name @include('administrator.components.lable_require')</label>
-                            <input type="text" placeholder="Beneficiary Name"/>
+                            <input id="wire_transfer_beneficiary_name" type="text" placeholder="Beneficiary Name" value="{{$userPaymentMethodWireTransfer->wire_transfer_beneficiary_name}}"/>
                         </div>
 
                         <div class="field col-6">
-                            <label for="acc-name">Account
+                            <label for="wire_transfer_account_number">Account
                                 Number @include('administrator.components.lable_require')</label>
-                            <input type="text" placeholder="Account Number"/>
+                            <input id="wire_transfer_account_number" type="text" placeholder="Account Number" value="{{$userPaymentMethodWireTransfer->wire_transfer_account_number}}"/>
                         </div>
                     </div>
 
                     <div class="row mt-2">
                         <div class="field col-6">
-                            <label for="acc-name">Bank Name @include('administrator.components.lable_require')</label>
-                            <input type="text" placeholder="Bank Name"/>
+                            <label for="wire_transfer_bank_name">Bank Name @include('administrator.components.lable_require')</label>
+                            <input id="wire_transfer_bank_name" type="text" placeholder="Bank Name" value="{{$userPaymentMethodWireTransfer->wire_transfer_bank_name}}"/>
                         </div>
 
                         <div class="field col-6">
-                            <label for="acc-name">SWIFT/BIC
+                            <label for="wire_transfer_swift_code">SWIFT/BIC
                                 Code @include('administrator.components.lable_require')</label>
-                            <input type="text" placeholder="SWIFT/BIC Code"/>
+                            <input id="wire_transfer_swift_code" type="text" placeholder="SWIFT/BIC Code" value="{{$userPaymentMethodWireTransfer->wire_transfer_swift_code}}"/>
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="field col-6">
-                            <label for="acc-name">Bank
+                            <label for="wire_transfer_bank_address">Bank
                                 Address @include('administrator.components.lable_require')</label>
-                            <input type="text" placeholder="Bank Address "/>
+                            <input id="wire_transfer_bank_address" type="text" placeholder="Bank Address" value="{{$userPaymentMethodWireTransfer->wire_transfer_bank_address}}"/>
                         </div>
 
                         <div class="field col-6">
-                            <label for="acc-name">Routing Number</label>
-                            <input type="text" placeholder="Routing Number"/>
+                            <label for="wire_transfer_routing_number">Routing Number</label>
+                            <input id="wire_transfer_routing_number" type="text" placeholder="Routing Number" value="{{$userPaymentMethodWireTransfer->wire_transfer_routing_number}}"/>
                         </div>
                     </div>
 
                     <div class="actions">
-                        <button class="modal_create_payment_method_btn primary text-white" type="button">Get Instructions</button>
+                        <button onclick="onSaveWireTransfer()" class="modal_create_payment_method_btn primary text-white" type="button">Save and make default</button>
                     </div>
                 </section>
 
-                <section class="panel" id="panel-pingpong" role="tabpanel" aria-labelledby="tab-pingpong">
+                <section class="modal_create_payment_method_panel" id="panel-pingpong" role="tabpanel" aria-labelledby="tab-pingpong">
                     <div class="method">
                         <div>
                             <h3>PingPong Payments</h3>
@@ -169,14 +169,14 @@
                     </div>
                     <div>
                         <div class="field">
-                            <label for="ppg-email">PingPong
+                            <label for="ping_pong_email">PingPong
                                 Email @include('administrator.components.lable_require')</label>
-                            <input type="email" placeholder="Pingpong Email"/>
+                            <input id="ping_pong_email" type="email" placeholder="Pingpong Email" value="{{$userPaymentMethodPingpong->ping_pong_email}}"/>
                         </div>
 
                     </div>
                     <div class="actions">
-                        <button class="modal_create_payment_method_btn primary text-white" type="button">Continue with PingPong</button>
+                        <button onclick="onSavePingPong()" class="modal_create_payment_method_btn primary text-white" type="button">Save and make default</button>
                     </div>
                 </section>
             </div>

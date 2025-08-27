@@ -58,6 +58,10 @@ return [
         'HTML_JS' => 3,
         'IMAGE' => 2,
     ],
+    'zone_dimension_show_time_ids' => [
+        2,
+        16
+    ],
     'url_ads' => "https://maxvalue.media/",
     'national_us_uk_ids' => [
         3,70,193,

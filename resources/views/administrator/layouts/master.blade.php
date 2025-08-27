@@ -36,14 +36,14 @@
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" type="text/css" media="all" href="{{asset('vendor/datetimepicker/daterangepicker.css')}}"/>
     <link rel="stylesheet" type="text/css" media="all" href="{{asset('vendor/select2/select2.min.css')}}"/>
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
     <script src="{{asset('/assets/administrator/NobleUI/assets/vendors/core/core.js')}}"></script>
 
     <script src="{{asset('/assets/administrator/js/jquery-3.5.1.min.js')}}"></script>
     <script src="{{asset('/assets/administrator/js/jquery.ui.min.js')}}"></script>
-    {{--    <script src="{{asset('/vendor/jquery-ui-1.13.2/jquery-ui.js')}}"></script>--}}
+
+
     <script type='text/javascript'
             src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.60/inputmask/jquery.inputmask.js"></script>
 
@@ -148,6 +148,7 @@
 <!-- Plugin js for this page -->
 <script src="{{asset('/assets/administrator/NobleUI/assets/vendors/flatpickr/flatpickr.min.js')}}"></script>
 <script src="{{asset('/assets/administrator/NobleUI/assets/vendors/apexcharts/apexcharts.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
 {{--<!-- End plugin js for this page -->--}}
 
 {{--<!-- inject:js -->--}}

@@ -97,9 +97,9 @@
     }
 
     /* Demo page content styling (optional) */
-    .demo-wrap { min-height: 100vh; display:flex; align-items:center; justify-content:center; gap:12px; font-family: var(--font); }
-    button { padding:10px 14px; border-radius:10px; border:0; background:#111; color:#fff; cursor:pointer; }
-    button.secondary { background:#444; }
+    /*.demo-wrap { min-height: 100vh; display:flex; align-items:center; justify-content:center; gap:12px; font-family: var(--font); }*/
+    /*button { padding:10px 14px; border-radius:10px; border:0; background:#111; color:#fff; cursor:pointer; }*/
+    /*button.secondary { background:#444; }*/
 </style>
 
 <!-- Loader markup -->

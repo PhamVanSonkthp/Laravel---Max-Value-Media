@@ -79,17 +79,15 @@
                                                href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id])}}"
                                                data-id="{{$item->id}}"><i class="fa-solid fa-pen"></i></a>
 
-                                            <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}" title="Xóa"
-                                               data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
-                                               class="btn btn-outline-danger btn-sm delete action_delete">
-                                                <i class="fa-solid fa-x"></i>
-                                            </a>
+                                            @if($item->id != 2 && $item->id != 3)
+                                                <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}" title="Xóa"
+                                                   data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
+                                                   class="btn btn-outline-danger btn-sm delete action_delete">
+                                                    <i class="fa-solid fa-x"></i>
+                                                </a>
+                                            @endif
 
-                                            <a href="{{route('administrator.'.$prefixView.'.audit' , ['id'=> $item->id])}}" title="Lịch sử tác động"
-                                               data-url="{{route('administrator.'.$prefixView.'.audit' , ['id'=> $item->id])}}"
-                                               class="btn btn-outline-info btn-sm action_audit">
-                                                <i class="fa-solid fa-circle-info"></i>
-                                            </a>
+
                                         </td>
                                     </tr>
                                 @endforeach

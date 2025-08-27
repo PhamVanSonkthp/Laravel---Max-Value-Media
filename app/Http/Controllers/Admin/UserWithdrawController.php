@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\ModelExport;
 use App\Http\Controllers\Controller;
 use App\Models\Audit;
+use App\Models\Formatter;
 use App\Models\Helper;
 use App\Models\Payment;
+use App\Models\PaymentMethod;
 use App\Models\PaymentStatus;
 use App\Models\UserPaymentMethod;
 use App\Models\UserWithdraw;
 use App\Traits\BaseControllerTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -32,9 +35,23 @@ class UserWithdrawController extends Controller
 
     public function index(Request $request)
     {
-        $items = $this->model->searchByQuery($request);
+        $items = $this->model->searchByQuery($request, [],null,null,true);
+
+        if ($request->payment_method_id){
+            $items = $items->select('payments.*')->join('user_payment_methods', 'user_payment_methods.id', '=', 'payments.user_payment_method_id')
+                    ->where('user_payment_methods.payment_method_id', $request->payment_method_id);
+        }
+        if ($request->date){
+            $date = Carbon::parse( "20". $request->date . "-01")->toDateString();
+
+            $items = $items->whereDate('from', '<=',$date)->whereDate('to', '>=',$date);
+
+        }
+        $items = $items->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
+
         $paymentStatuses = PaymentStatus::all();
-        return view('administrator.' . $this->prefixView . '.index', compact('items','paymentStatuses'));
+        $paymentMethos = PaymentMethod::all();
+        return view('administrator.' . $this->prefixView . '.index', compact('items','paymentStatuses','paymentMethos'));
     }
 
     public function get(Request $request, $id)

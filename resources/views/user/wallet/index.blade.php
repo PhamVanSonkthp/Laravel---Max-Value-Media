@@ -54,14 +54,14 @@
         .email-label{ font-size:.8rem; color:var(--muted); margin-bottom:4px; display:block; }
         .email-value{ font-size:.9rem; font-weight:600; }
 
-        .btn{
+        .btn_edit_method{
             appearance:none; border:0; cursor:pointer; background: transparent; color: var(--accent);
             position: absolute;
             top: 12px;
             right: 12px;
             padding: 4px;
         }
-        .btn svg{
+        .btn_edit_method svg{
             width: 18px; height: 18px;
             fill: currentColor;
         }
@@ -156,17 +156,17 @@
             box-shadow: inset 0 0 0 1px var(--ring);
         }
 
-        .panels {
+        .modal_create_payment_method_panels {
             position: relative;
             padding: 18px 22px 22px 22px;
         }
 
-        .panel {
+        .modal_create_payment_method_panel {
             display: none;
-            animation: fade .35s ease;
+            animation: modal_create_payment_method_fade .35s ease;
         }
 
-        @keyframes fade {
+        @keyframes modal_create_payment_method_fade {
             from {
                 opacity: 0;
                 transform: translateY(6px)
@@ -177,19 +177,19 @@
             }
         }
 
-        #tab-paypal:checked ~ .panels #panel-paypal {
+        #tab-paypal:checked ~ .modal_create_payment_method_panels #panel-paypal {
             display: block
         }
 
-        #tab-crypto:checked ~ .panels #panel-crypto {
+        #tab-crypto:checked ~ .modal_create_payment_method_panels #panel-crypto {
             display: block
         }
 
-        #tab-wire:checked ~ .panels #panel-wire {
+        #tab-wire:checked ~ .modal_create_payment_method_panels #panel-wire {
             display: block
         }
 
-        #tab-pingpong:checked ~ .panels #panel-pingpong {
+        #tab-pingpong:checked ~ .modal_create_payment_method_panels #panel-pingpong {
             display: block
         }
 
@@ -288,35 +288,13 @@
 
 @section('content')
 
+
     <div class="row">
         <div class="col-lg-4">
-            <div class="card">
-                <button onclick="onShowModalPaymentMethod()" class="btn" aria-label="Edit">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
-                </button>
-
-                <div class="row">
-                    <div class="col-4">
-                        <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" class="paypal-logo" />
-                        <div class="title">PayPal</div>
-                    </div>
-                    <div class="col-8">
-
-                        <div class="email-box">
-                            <span class="email-label">Email</span>
-                            <div class="email-value">{{auth()->user()->email}}</div>
-                        </div>
-                        <div class="balance-box">
-                            <div class="balance-amount">${{\App\Models\Formatter::formatNumber(auth()->user()->amount, 2)}}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <small>
-                    Net 15 payment terms (payment is due on the 15th of every month) and a minimum payout of $25
-                </small>
-
+            <div id="container_payment_method">
+                @include('user.wallet.container_paymen_method', ['userPaymentMethod' => $userPaymentMethod])
             </div>
+
         </div>
         <div class="col-lg-4">
             <div class="card">
@@ -324,7 +302,7 @@
                     Total earning
                 </div>
                 <div class="text-center">
-                    $222.24
+                    ${{\App\Models\Formatter::formatNumber($summary->earning, 2)}}
                 </div>
             </div>
             <div class="card mt-3">
@@ -332,7 +310,7 @@
                     Total withdrawn
                 </div>
                 <div class="text-center">
-                    $222.24
+                    ${{\App\Models\Formatter::formatNumber($withdraw, 2)}}
                 </div>
             </div>
         </div>
@@ -342,7 +320,7 @@
                     Total revenue referral
                 </div>
                 <div class="text-center">
-                    $222.24
+                    $0
                 </div>
             </div>
             <div class="card mt-3">
@@ -350,7 +328,7 @@
                     Invalid amount
                 </div>
                 <div class="text-center">
-                    $222.24
+                    ${{\App\Models\Formatter::formatNumber($summary->invalid, 2)}}
                 </div>
             </div>
         </div>
@@ -452,5 +430,159 @@
             )
 
         }
+
+        function onSavePaypal() {
+            const paypal_email_value = $('#pp-email').val();
+
+            if(!paypal_email_value){
+                showToastError('Email is require');
+                $('#pp-email').focus();
+                return;
+            }
+
+            callAjax(
+                "PUT",
+                "{{route('ajax.user.wallet.save_payment')}}",
+                {
+                    payment_method_id: 1,
+                    paypal_email: paypal_email_value,
+                },
+                (response) => {
+                    hideModal('modal_create_payment_method_modal');
+                    showToastSuccess('Saved!');
+                    $('#container_payment_method').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onSaveCrypto() {
+            const crypto_coin_value = $('#crypto_coin').val();
+            const crypto_network_value = $('#crypto_network').val();
+            const crypto_address_value = $('#crypto_address').val();
+
+            if(!crypto_coin_value){
+                showToastError('Coin is require');
+                $('#crypto_coin').focus();
+                return;
+            }
+            if(!crypto_network_value){
+                showToastError('Network is require');
+                $('#crypto_network').focus();
+                return;
+            }
+            if(!crypto_address_value){
+                showToastError('Address is require');
+                $('#crypto_address').focus();
+                return;
+            }
+
+            callAjax(
+                "PUT",
+                "{{route('ajax.user.wallet.save_payment')}}",
+                {
+                    payment_method_id: 3,
+                    crypto_coin: crypto_coin_value,
+                    crypto_network: crypto_network_value,
+                    crypto_address: crypto_address_value,
+                },
+                (response) => {
+                    hideModal('modal_create_payment_method_modal');
+                    showToastSuccess('Saved!');
+                    $('#container_payment_method').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onSaveWireTransfer() {
+            const wire_transfer_beneficiary_name_value = $('#wire_transfer_beneficiary_name').val();
+            const wire_transfer_account_number_value = $('#wire_transfer_account_number').val();
+            const wire_transfer_bank_name_value = $('#wire_transfer_bank_name').val();
+            const wire_transfer_swift_code_value = $('#wire_transfer_swift_code').val();
+            const wire_transfer_bank_address_value = $('#wire_transfer_bank_address').val();
+            const wire_transfer_routing_number_value = $('#wire_transfer_routing_number').val();
+
+            if(!wire_transfer_beneficiary_name_value){
+                showToastError('Beneficiary name is require');
+                $('#wire_transfer_beneficiary_name').focus();
+                return;
+            }
+            if(!wire_transfer_account_number_value){
+                showToastError('Account number is require');
+                $('#wire_transfer_account_number').focus();
+                return;
+            }
+            if(!wire_transfer_bank_name_value){
+                showToastError('Bank_name is require');
+                $('#wire_transfer_bank_name').focus();
+                return;
+            }
+            if(!wire_transfer_swift_code_value){
+                showToastError('Swift code is require');
+                $('#wire_transfer_swift_code').focus();
+                return;
+            }
+            if(!wire_transfer_bank_address_value){
+                showToastError('Bank address is require');
+                $('#wire_transfer_bank_address').focus();
+                return;
+            }
+
+            callAjax(
+                "PUT",
+                "{{route('ajax.user.wallet.save_payment')}}",
+                {
+                    payment_method_id: 7,
+                    wire_transfer_beneficiary_name: wire_transfer_beneficiary_name_value,
+                    wire_transfer_account_number: wire_transfer_account_number_value,
+                    wire_transfer_bank_name: wire_transfer_bank_name_value,
+                    wire_transfer_swift_code: wire_transfer_swift_code_value,
+                    wire_transfer_bank_address: wire_transfer_bank_address_value,
+                    wire_transfer_routing_number: wire_transfer_routing_number_value,
+                },
+                (response) => {
+                    hideModal('modal_create_payment_method_modal');
+                    showToastSuccess('Saved!');
+                    $('#container_payment_method').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+
+        function onSavePingPong() {
+            const ping_pong_email_value = $('#ping_pong_email').val();
+
+            if(!ping_pong_email_value){
+                showToastError('Email is require');
+                $('#ping_pong_email').focus();
+                return;
+            }
+
+            callAjax(
+                "PUT",
+                "{{route('ajax.user.wallet.save_payment')}}",
+                {
+                    payment_method_id: 8,
+                    ping_pong_email: ping_pong_email_value,
+                },
+                (response) => {
+                    hideModal('modal_create_payment_method_modal');
+                    showToastSuccess('Saved!');
+                    $('#container_payment_method').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
     </script>
 @endsection

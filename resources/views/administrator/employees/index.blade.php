@@ -30,6 +30,7 @@
                                     <th>#</th>
                                     <th>Avatar</th>
                                     <th>Roles</th>
+                                    <th>Sites</th>
                                     <th>Name</th>
                                     <th>Phone</th>
                                     <th>Email</th>
@@ -51,6 +52,7 @@
                                     <th>#</th>
                                     <th>Avatar</th>
                                     <th>Roles</th>
+                                    <th>Sites</th>
                                     <th>Name</th>
                                     <th>Phone</th>
                                     <th>Email</th>
@@ -71,8 +73,43 @@
         </div>
     </div>
 
+    <!-- Modal view all website -->
+    <div class="modal fade" id="view_all_website_modal" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_view_all_website_modal">Websites</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_view_all_website_modal">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('js')
+    <script>
+        function onViewAllWebsite(id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.employees.view_all_website')}}",
+                {
+                    id: id,
+                    modal_id: 'view_all_website_modal',
+                },
+                (response) => {
+                    showModal('view_all_website_modal');
+                    $('#title_view_all_website_modal').html(response.data.user.email);
+                    $('#container_view_all_website_modal').html(response.data.html);
+                },
+                (error) => {
 
+                }
+            )
+        }
+    </script>
 @endsection

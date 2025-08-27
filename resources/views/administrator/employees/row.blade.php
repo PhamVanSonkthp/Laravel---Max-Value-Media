@@ -14,6 +14,24 @@
             <span class="badge bg-primary">{{$role->name}}</span>
         @endforeach
     </td>
+    <td>
+        <ul>
+            @foreach($item->managerWebsites() as $indexWebsite => $website)
+                @if($indexWebsite < 3)
+                    <li>
+                        <a href="{{$website->url}}" target="_blank">
+                            @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($website->name), 'style' => 'color: '.optional($website->statusWebsite)->background_color.';'])
+                        </a>
+                    </li>
+                @else
+                    <li>
+                        +{{count($item->managerWebsites()) - $indexWebsite}} <button onclick="onViewAllWebsite({{$item->id}})" class="btn btn-outline-primary">(View All)</button>
+                    </li>
+                    @break
+                @endif
+            @endforeach
+        </ul>
+    </td>
     <td>{{$item->name}}</td>
     <td>{{$item->phone}}</td>
     <td>{{$item->email}}</td>

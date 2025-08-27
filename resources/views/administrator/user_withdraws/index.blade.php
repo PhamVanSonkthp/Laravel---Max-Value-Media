@@ -35,10 +35,26 @@
                                     <th>Est. payment</th>
                                     <th>Publisher</th>
                                     <th>Account manager</th>
-                                    <th>Amount</th>
-                                    <th>Deduction</th>
-                                    <th>Invalid amount</th>
-                                    <th>Status</th>
+                                    <th onclick='onSortSearch(`total`, `{{ \App\Models\Helper::getValueInFilterReuquest('total') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('total') != "desc" ? "desc" : "") }}`)'>
+                                        <div>
+                                            Amount {!! \App\Models\Helper::getValueInFilterReuquest('total') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('total') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
+                                    <th onclick='onSortSearch(`deduction`, `{{ \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? "desc" : "") }}`)'>
+                                        <div>
+                                            Deduction {!! \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
+                                    <th onclick='onSortSearch(`invalid`, `{{ \App\Models\Helper::getValueInFilterReuquest('invalid') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('invalid') != "desc" ? "desc" : "") }}`)'>
+                                        <div>
+                                            Invalid amount {!! \App\Models\Helper::getValueInFilterReuquest('invalid') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('invalid') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
+                                    <th onclick='onSortSearch(`payment_status_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('payment_status_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('payment_status_id') != "desc" ? "desc" : "") }}`)'>
+                                        <div>
+                                            Status {!! \App\Models\Helper::getValueInFilterReuquest('payment_status_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('payment_status_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
                                     <th>Method</th>
                                 </tr>
                                 </thead>
@@ -60,10 +76,26 @@
                                         <th>Est. payment</th>
                                         <th>Publisher</th>
                                         <th>Account manager</th>
-                                        <th>Amount</th>
-                                        <th>Deduction</th>
-                                        <th>Invalid amount</th>
-                                        <th>Status</th>
+                                        <th onclick='onSortSearch(`total`, `{{ \App\Models\Helper::getValueInFilterReuquest('total') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('total') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Amount {!! \App\Models\Helper::getValueInFilterReuquest('total') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('total') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                        <th onclick='onSortSearch(`deduction`, `{{ \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Deduction {!! \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                        <th onclick='onSortSearch(`invalid`, `{{ \App\Models\Helper::getValueInFilterReuquest('invalid') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('invalid') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Invalid amount {!! \App\Models\Helper::getValueInFilterReuquest('invalid') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('invalid') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
+                                        <th onclick='onSortSearch(`payment_status_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('payment_status_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('payment_status_id') != "desc" ? "desc" : "") }}`)'>
+                                            <div>
+                                                Status {!! \App\Models\Helper::getValueInFilterReuquest('payment_status_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('payment_status_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            </div>
+                                        </th>
                                         <th>Method</th>
                                     </tr>
                                 </tfoot>

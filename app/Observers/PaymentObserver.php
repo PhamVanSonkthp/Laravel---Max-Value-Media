@@ -40,6 +40,11 @@ class PaymentObserver
             $payment->total = $payment->earning - $payment->deduction;
             $payment->saveQuietly();
         }
+        if ($payment->wasChanged('payment_status_id') && $payment->payment_status_id == 2) {
+            $userPaymentMethod = $payment->userPaymentMethod;
+            $new = $userPaymentMethod->replicate();
+            $new->saveQuietly();
+        }
     }
 
     /**

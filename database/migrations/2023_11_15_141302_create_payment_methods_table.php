@@ -16,8 +16,10 @@ class CreatePaymentMethodsTable extends Migration
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('public_token');
-            $table->string('private_token');
+            $table->string('public_token')->nullable();
+            $table->string('private_token')->nullable();
+            $table->text('description')->nullable();
+            $table->double('min_payment',8,2)->default(0);
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);

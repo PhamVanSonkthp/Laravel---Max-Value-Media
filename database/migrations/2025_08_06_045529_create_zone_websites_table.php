@@ -29,6 +29,9 @@ class CreateZoneWebsitesTable extends Migration
             $table->text('gam_code')->nullable();
             $table->string('width')->nullable();
             $table->string('height')->nullable();
+            $table->integer('time_delay')->default(0);
+            $table->integer('time_refresh')->default(0);
+            $table->integer('zone_time_type_id')->default(1);
 
             $table->bigInteger('priority')->default(0)->index();
             $table->bigInteger('created_by_id')->default(0);

@@ -800,6 +800,25 @@
             )
         }
 
+        function onSaveZone(zone_id) {
+            callAjax(
+                "PUT",
+                "{{route('ajax.administrator.zone_websites.update_time')}}",
+                {
+                    id: zone_id,
+                    time_delay: $('#panel_zone_item_zone_input_time_delay').val(),
+                    time_refresh: $('#panel_zone_item_zone_input_time_refresh').val(),
+                    zone_time_type_id: $('#panel_zone_item_zone_select_time_type_id').val(),
+                },
+                (response) => {
+
+                },
+                (error) => {
+
+                }
+            )
+        }
+
 
     </script>
 @endsection

@@ -14,37 +14,50 @@
 
     </div>
 
-    <div class="float-start ms-2">
-        <div>
-            Time
-        </div>
-        <div>
-            <input id="input_search_datetime" type="date"
-                   class="bg-white form-control open-jquery-date-range" placeholder="--/--/--">
-        </div>
+    @if(!isset($hideTime))
+        <div class="float-start ms-2">
+            <div>
+                Time
+            </div>
+            <div>
+                <input id="input_search_datetime" type="date"
+                       class="bg-white form-control open-jquery-date-range" placeholder="--/--/--">
+            </div>
 
-    </div>
+        </div>
+    @endif
 
     @if(!isset($hideFind))
 
-    <div class="float-start ms-2">
-        <div>
-            Find
+        <div class="float-start ms-2">
+            <div>
+                Find
+            </div>
+
+            <div class="d-flex">
+                <input id="input_search_query" type="text" class="form-control" placeholder="Enter..."
+                       value="{{request('search_query')}}">
+                <button class="btn btn-outline-primary ms-2" type="button" onclick="onSearchQuery()"><i
+                        class="fa-solid fa-magnifying-glass" title="Find"></i></button>
+                @if(request()->query->count() && (request("trash") != true) || request()->query->count() > 1)
+                    <button class="btn btn-outline-danger ms-2" type="button" onclick="onClearQuery()"><i
+                            class="fa-solid fa-x" title="Clear"></i></button>
+                @endif
+            </div>
+
         </div>
 
-        <div class="d-flex">
-            <input id="input_search_query" type="text" class="form-control" placeholder="Enter..."
-                   value="{{request('search_query')}}">
-            <button class="btn btn-outline-primary ms-2" type="button" onclick="onSearchQuery()"><i
-                    class="fa-solid fa-magnifying-glass" title="Find"></i></button>
-            @if(request()->query->count() && (request("trash") != true) || request()->query->count() > 1)
-            <button class="btn btn-outline-danger ms-2" type="button" onclick="onClearQuery()"><i
-                    class="fa-solid fa-x" title="Xóa"></i></button>
-            @endif
+    @else
+        <div class="float-start ms-2 mt-4">
+
+            <div class="d-flex">
+                @if(request()->query->count() && (request("trash") != true) || request()->query->count() > 1)
+                    <button class="btn btn-outline-danger ms-2" type="button" onclick="onClearQuery()"><i
+                            class="fa-solid fa-x" title="Clear"></i></button>
+                @endif
+            </div>
+
         </div>
-
-    </div>
-
     @endif
 
 </div>

@@ -90,7 +90,7 @@
 <div class="row" id="panel_zone_container_zones">
 
     @foreach($item->zoneWebsites as $zone)
-        @include('administrator.websites.panel_zone_item_zone', ['website' => $item, 'zone' => $zone, 'zoneStatuses' => $zoneStatuses])
+        @include('administrator.websites.panel_zone_item_zone', ['website' => $item, 'zone' => $zone, 'zoneStatuses' => $zoneStatuses,'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes])
     @endforeach
 
 </div>

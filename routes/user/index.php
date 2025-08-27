@@ -40,7 +40,10 @@ Route::group(['middleware' => ['auth']], function () {
         ]);
     });
 
-
+    Route::get('user/logout', [
+        'as' => 'user.logout',
+        'uses'=>'App\Http\Controllers\User\UserController@logout',
+    ]);
 
 });
 

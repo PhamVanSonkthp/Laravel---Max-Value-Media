@@ -64,7 +64,7 @@
                         </li>
 
                         <li class="dropdown-item py-2">
-                            <a href="{{route('administrator.logout')}}" class="text-body ms-0 text-danger">
+                            <a href="{{route('user.logout')}}" class="text-body ms-0 text-danger">
                                 <svg style="color: red" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                      stroke-linecap="round" stroke-linejoin="round"

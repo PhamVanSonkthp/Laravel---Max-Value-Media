@@ -67,6 +67,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CreatePaymentStatusSeeder::class);
         $this->call(CreateStatusWebsiteReasonSeeder::class);
         $this->call(CreateReportTypeSeeder::class);
+        $this->call(CreateZoneWebsiteTimeTypeSeeder::class);
 
     }
 }

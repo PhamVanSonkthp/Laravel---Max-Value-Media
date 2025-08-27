@@ -42,6 +42,7 @@ use App\Models\VoucherUsed;
 use App\Models\Website;
 use App\Models\ZoneStatus;
 use App\Models\ZoneWebsite;
+use App\Models\ZoneWebsiteTimeType;
 use App\Traits\AdScoreTrait;
 use App\Traits\AdserverTrait;
 use App\Traits\StorageImageTrait;
@@ -206,10 +207,11 @@ Route::prefix('ajax/administrator')->group(function () {
                     }
 
                     $zoneStatuses = ZoneStatus::all();
+                    $zoneWebsiteTimeTypes = ZoneWebsiteTimeType::all();
                     $responseHTML = "";
                     foreach ($cacheValue['zone_ids'] as $zone_id) {
                         $zoneWebsite = ZoneWebsite::findOrFail($zone_id);
-                        $responseHTML .= View::make('administrator.websites.panel_zone_item_zone', ['zone' => $zoneWebsite, 'zoneStatuses' => $zoneStatuses])->render();
+                        $responseHTML .= View::make('administrator.websites.panel_zone_item_zone', ['zone' => $zoneWebsite, 'zoneStatuses' => $zoneStatuses, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes])->render();
                     }
 
                     Cache::forget($keyCache);
@@ -244,6 +246,27 @@ Route::prefix('ajax/administrator')->group(function () {
 
             })->name('ajax.administrator.zone_websites.update_status');
 
+            Route::put('update_time', function (Request $request) {
+
+                $request->validate([
+                    'time_delay' => 'required',
+                    'time_refresh' => 'required',
+                    'zone_time_type_id' => 'required',
+                ]);
+
+                $zoneWebsite = ZoneWebsite::findOrFail($request->id);
+
+                $zoneWebsite->time_delay = $request->time_delay;
+                $zoneWebsite->time_refresh = $request->time_refresh;
+                $zoneWebsite->zone_time_type_id = $request->zone_time_type_id;
+                $zoneWebsite->save();
+
+                return response()->json(Helper::successAPI(200, [
+
+                ]));
+
+            })->name('ajax.administrator.zone_websites.update_time');
+
             Route::put('update_zone_and_campaign', function (Request $request) {
                 $request->validate([
                     'width' => 'required',
@@ -268,8 +291,6 @@ Route::prefix('ajax/administrator')->group(function () {
                     $adScore->generate_code = $request->generate_code;
                     $adScore->save();
                 }
-
-
             })->name('ajax.administrator.zone_websites.update_zone_and_campaign');
 
             Route::delete('delete', function (Request $request) {
@@ -370,12 +391,13 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $website = Website::findOrFail($request->website_id);
                 $groupZoneDimensions = GroupZoneDimension::all();
+                $zoneWebsiteTimeTypes = ZoneWebsiteTimeType::all();
 
                 $zoneStatuses = Helper::searchAllByQuery(new ZoneStatus(), null);
                 $zoneTypes = [new Balance(1, "Banner")];
                 return response()->json(Helper::successAPI(200, [
                     'website' => $website,
-                    "html" => View::make('administrator.websites.panel_zone', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'groupZoneDimensions' => $groupZoneDimensions, 'zoneTypes' => $zoneTypes])->render()
+                    "html" => View::make('administrator.websites.panel_zone', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'groupZoneDimensions' => $groupZoneDimensions, 'zoneTypes' => $zoneTypes, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes])->render()
                 ]));
             })->name('ajax.administrator.websites.panel_zone');
 
@@ -867,6 +889,26 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 return response()->json($item);
             })->name('ajax.administrator.user_transaction.store');
+        });
+
+        Route::prefix('employees')->group(function () {
+
+            Route::get('view_all_website', function (Request $request) {
+
+                $manager = User::findOrFail($request->id);
+
+                $websites = $manager->managerWebsites();
+
+                $statusWebsites = WebsiteTrait::statusWebsites();
+
+                $htmlRow = View::make('administrator.users.modal_view_all_website', ['websites' => $websites, 'statusWebsites' => $statusWebsites])->render();
+
+                return response()->json(Helper::successAPI(200, [
+                    'user' => $manager,
+                    'html' => $htmlRow,
+                ]));
+
+            })->name('ajax.administrator.employees.view_all_website');
         });
 
         Route::prefix('/email')->group(function () {

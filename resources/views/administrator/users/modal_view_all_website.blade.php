@@ -1,11 +1,4 @@
 <div class="card">
-
-    <div class="card-header">
-
-
-
-    </div>
-
     <div class="card-body">
 
         <div class="table-responsive product-table">

@@ -3,10 +3,13 @@
         class="fa-solid fa-plus"></i></a>
 @endif
 
+@if(!isset($hideExport))
 <a href="{{route('administrator.'.$prefixView.'.export') . "?" . request()->getQueryString()}}" class="btn btn-outline-primary float-end me-2" data-bs-original-title="" title="Excel"><i class="fa-sharp fa-solid fa-file-excel"></i></a>
+@endif
 
-
+@if(!isset($hideTrash))
 <a href="{{ request()->url() . (request('trash') == "true" ? '' : '?trash=true')}}" class="btn btn-{{request('trash') == "true" ? '' : 'outline-'}}secondary float-end me-2"  title="{{request('trash') == "true" ? 'Đang xem chế độ thùng rác, nhấn để quay lại' : 'Thùng rác'}}">
     <i class="fa-solid fa-recycle"></i>
 </a>
 
+@endif

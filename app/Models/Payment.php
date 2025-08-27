@@ -33,6 +33,35 @@ class Payment extends Model implements Auditable
 
     public function userPaymentMethod()
     {
+        if ($this->payment_status_id == 2) {
+            $item = UserPaymentMethod::find($this->user_payment_method_id);
+        } else {
+            $item = UserPaymentMethod::where(['id' => $this->user_payment_method_id, 'is_default' => true])->first();
+        }
+
+
+        if (!$item) {
+            $userPaymentMethod = UserPaymentMethod::where(['user_id' => $this->user_id, 'is_default' => true])->first();
+
+            if ($userPaymentMethod) {
+                $this->user_payment_method_id = $userPaymentMethod->id;
+                $this->save();
+            } else {
+                $userPaymentMethod = UserPaymentMethod::firstOrCreate([
+                    'user_id' => $this->user_id,
+                    'payment_method_id' => 1,
+                ], [
+                    'user_id' => $this->user_id,
+                    'payment_method_id' => 1,
+                    'is_default' => true,
+                ]);
+
+                $this->user_payment_method_id = $userPaymentMethod->id;
+                $this->save();
+
+            }
+        }
+
         return $this->hasOne(UserPaymentMethod::class, 'id', 'user_payment_method_id');
     }
 

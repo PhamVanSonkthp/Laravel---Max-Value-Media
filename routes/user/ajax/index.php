@@ -31,6 +31,7 @@ use App\Models\SingleImage;
 use App\Models\StatusWebsite;
 use App\Models\User;
 use App\Models\UserCart;
+use App\Models\UserPaymentMethod;
 use App\Models\UserPoint;
 use App\Models\UserStatus;
 use App\Models\UserTransaction;
@@ -271,12 +272,91 @@ Route::prefix('ajax/user')->group(function () {
 
             Route::get('modal_create_payment_method', function (Request $request) {
 
+                $userPaymentMethodPaypal = UserPaymentMethod::firstOrCreate([
+                    'user_id' => auth()->id(),
+                    'payment_method_id' => 1,
+                ],[
+                    'user_id' => auth()->id(),
+                    'payment_method_id' => 1,
+                ]);
+
+                $userPaymentMethodCrypto = UserPaymentMethod::firstOrCreate([
+                    'user_id' => auth()->id(),
+                    'payment_method_id' => 3,
+                ],[
+                    'user_id' => auth()->id(),
+                    'payment_method_id' => 3,
+                ]);
+
+                $userPaymentMethodWireTransfer = UserPaymentMethod::firstOrCreate([
+                    'user_id' => auth()->id(),
+                    'payment_method_id' => 7,
+                ],[
+                    'user_id' => auth()->id(),
+                    'payment_method_id' => 7,
+                ]);
+
+                $userPaymentMethodPingpong = UserPaymentMethod::firstOrCreate([
+                    'user_id' => auth()->id(),
+                    'payment_method_id' => 8,
+                ],[
+                    'user_id' => auth()->id(),
+                    'payment_method_id' => 8,
+                ]);
+
+                if (!$userPaymentMethodPaypal->is_default && !$userPaymentMethodCrypto->is_default && !$userPaymentMethodWireTransfer->is_default && !$userPaymentMethodPingpong->is_default){
+                    $userPaymentMethodPaypal->is_default = true;
+                    $userPaymentMethodPaypal->save();
+                }
+
                 return response()->json(Helper::successAPI(200, [
 
-                    "html" => View::make('user.wallet.modal_create_payment_method')->render()
+                    "html" => View::make('user.wallet.modal_create_payment_method', compact('userPaymentMethodPaypal','userPaymentMethodCrypto','userPaymentMethodPingpong','userPaymentMethodWireTransfer'))->render()
                 ]));
 
             })->name('ajax.user.wallet.modal_create_payment_method');
+
+            Route::put('save_payment', function (Request $request) {
+
+                $userPaymentMethod = UserPaymentMethod::firstOrCreate([
+                    'user_id' => auth()->id(),
+                    'payment_method_id' => $request->payment_method_id,
+                ]);
+
+                if ($request->payment_method_id == 1){
+                    $userPaymentMethod->paypal_email = $request->paypal_email;
+                }
+
+                if ($request->payment_method_id == 3){
+                    $userPaymentMethod->crypto_coin = $request->crypto_coin;
+                    $userPaymentMethod->crypto_network = $request->crypto_network;
+                    $userPaymentMethod->crypto_address = $request->crypto_address;
+                }
+
+                if ($request->payment_method_id == 7){
+                    $userPaymentMethod->wire_transfer_beneficiary_name = $request->wire_transfer_beneficiary_name;
+                    $userPaymentMethod->wire_transfer_account_number = $request->wire_transfer_account_number;
+                    $userPaymentMethod->wire_transfer_bank_name = $request->wire_transfer_bank_name;
+                    $userPaymentMethod->wire_transfer_swift_code = $request->wire_transfer_swift_code;
+                    $userPaymentMethod->wire_transfer_bank_address = $request->wire_transfer_bank_address;
+                    $userPaymentMethod->wire_transfer_routing_number = $request->wire_transfer_routing_number;
+                }
+                if ($request->payment_method_id == 8){
+                    $userPaymentMethod->ping_pong_email = $request->ping_pong_email;
+                }
+
+                UserPaymentMethod::where(['user_id' => auth()->id()])->update(['is_default' => false]);
+                $userPaymentMethod->is_default = true;
+                $userPaymentMethod->save();
+
+                $userPaymentMethod = UserPaymentMethod::where(['user_id' => auth()->id(), 'is_default' => true])->first();
+
+                return response()->json(Helper::successAPI(200, [
+
+                    "html" => View::make('user.wallet.container_paymen_method', compact('userPaymentMethod'))->render()
+                ]));
+
+            })->name('ajax.user.wallet.save_payment');
 
         });
     });

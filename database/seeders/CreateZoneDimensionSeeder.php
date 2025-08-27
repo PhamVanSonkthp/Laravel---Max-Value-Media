@@ -153,8 +153,18 @@ class CreateZoneDimensionSeeder extends Seeder
         ZoneDimension::firstOrCreate([
             "name" => "SIDE RAIL",
             "code" => "AD_UNIT_SIDE_RAIL",
-            "width" => "1",
-            "height" => "1",
+            "width" => "100%",
+            "height" => "100%",
+            "group_zone_dimension_id" => 2,
+            "zone_dimension_type_id" => 1,
+            "zone_dimension_position_id" => 1,
+        ]);
+
+        ZoneDimension::firstOrCreate([
+            "name" => "INTERSTITIAL",
+            "code" => "AD_UNIT_INTERSTITIAL",
+            "width" => "100%",
+            "height" => "100%",
             "group_zone_dimension_id" => 2,
             "zone_dimension_type_id" => 1,
             "zone_dimension_position_id" => 1,
