@@ -123,7 +123,7 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
             "=ROUND(H{$this->currentRow}*M{$this->currentRow}/100,0)",
             "=ROUND(K{$this->currentRow}*N{$this->currentRow}/100,2)",
             "=ROUND(O{$this->currentRow}*P{$this->currentRow}/1000,2)",
-            $row['profit'],
+            "=ROUND(L{$this->currentRow}*Q{$this->currentRow}/1000,2)",
         ];
     }
 
