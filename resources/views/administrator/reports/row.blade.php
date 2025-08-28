@@ -47,7 +47,7 @@
             {{\App\Models\Formatter::formatNumber($item->d_impression_us_uk)}}
         </td>
         <td>
-            {{\App\Models\Formatter::formatNumber(min($item->d_impression / max(1 , $item->d_request ?? optional($item->reportWithAdserver())->d_request) * 100 , 100), 2)}}%
+            {{\App\Models\Formatter::formatNumber(min($item->d_impression / max(1 , optional($item->reportWithAdserver())->d_request) * 100 , 100), 2)}}%
         </td>
     @if(in_array("d_ecpm",$modelColums))
         <td>
