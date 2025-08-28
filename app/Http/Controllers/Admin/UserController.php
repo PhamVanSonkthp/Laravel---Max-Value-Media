@@ -40,38 +40,53 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $items = $this->model->searchByQuery($request, ['is_admin' => 0], null,null,true);
-        if ($request->is_verify == 1){
+        $queries = [];
+        $queries['is_admin'] = 0;
+
+        $items = $this->model->searchByQuery($request, $queries, null, null, true);
+
+        if ($request->is_verify == 1) {
             $items = $items->whereNotNull('email_verified_at');
-        }else if ($request->is_verify == 2){
+        } else if ($request->is_verify == 2) {
             $items = $items->whereNull('email_verified_at');
         }
-        if ($request->is_balance == 1){
+        if ($request->is_balance == 1) {
             $items = $items->where('amount', ">", 0);
-        }else if ($request->is_balance == 2){
+        } else if ($request->is_balance == 2) {
             $items = $items->where('amount', 0);
         }
-        if ($request->website_id){
+        if ($request->website_id) {
             $items = $items->select('users.*')->join('websites', 'websites.user_id', '=', 'users.id')
                 ->where('websites.id', $request->website_id);
         }
-        if ($request->status_website_id){
-            if (empty($request->website_id)){
+        if ($request->status_website_id) {
+            if (empty($request->website_id)) {
                 $items = $items->select('users.*')->join('websites', 'websites.user_id', '=', 'users.id');
             }
-            $items = $items->where('websites.status_website_id',$request->status_website_id);
+            $items = $items->where('websites.status_website_id', $request->status_website_id);
         }
+
+        $items = $items->with(['manager', 'cs', 'websites', 'websites.statusWebsite', 'status']);
+
+        if (auth()->user()->is_admin == 1) {
+            $items = $items->where(function ($query) {
+                $query->where('manager_id', auth()->id())
+                    ->orWhere('cs_id', auth()->id());
+            });
+        }
+
+        $managers = $this->managers();
 
         $items = $items->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
-        $managers = $this->managers();
+
         $cses = $this->cses();
         $userStatus = $this->userStatus();
         $statusWebsite = (new StatusWebsite())->get();
-        $isBalances = [new Balance(1,"Yes"), new Balance(2,"No")];
-        $isVerifies = [new Balance(1,"Yes"), new Balance(2,"No")];
+        $isBalances = [new Balance(1, "Yes"), new Balance(2, "No")];
+        $isVerifies = [new Balance(1, "Yes"), new Balance(2, "No")];
 
-        return view('administrator.' . $this->prefixView . '.index', compact('items','managers','userStatus','statusWebsite','isBalances','isVerifies','cses'));
+        return view('administrator.' . $this->prefixView . '.index', compact('items', 'managers', 'userStatus', 'statusWebsite', 'isBalances', 'isVerifies', 'cses'));
     }
 
     public function get(Request $request, $id)
@@ -104,8 +119,8 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'phone' => 'required|unique:users,phone,'.$id,
-            'email' => 'required|unique:users,email,'.$id,
+            'phone' => 'required|unique:users,phone,' . $id,
+            'email' => 'required|unique:users,email,' . $id,
         ]);
         $item = $this->model->updateByQuery($request, $id);
         return redirect()->route('administrator.' . $this->prefixView . '.index');

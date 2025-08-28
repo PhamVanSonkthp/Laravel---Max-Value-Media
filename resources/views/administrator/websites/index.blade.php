@@ -3,114 +3,9 @@
 @include('administrator.'.$prefixView.'.header')
 
 @section('css')
-    <style>
-        .group {
-            margin-bottom: 18px;
-            border-left: 4px solid transparent;
-            padding-left: 10px;
-        }
-        .group-title {
-            font-size: 15px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .group-title button {
-            font-size: 12px;
-            padding: 4px 8px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            background: #e5e7eb;
-            color: #111827;
-        }
-        .group-title button:hover {
-            background: #d1d5db;
-        }
 
-        /* Custom checkbox */
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #f9fafb;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 6px;
-            cursor: pointer;
-            transition: background .2s, transform .2s;
-        }
-        .checkbox-item:hover {
-            background: #eef2ff;
-            transform: translateX(2px);
-        }
-        .checkbox-item input {
-            display: none;
-        }
-        .checkmark {
-            width: 18px;
-            height: 18px;
-            border-radius: 5px;
-            border: 2px solid #9ca3af;
-            display: inline-block;
-            margin-right: 10px;
-            position: relative;
-            transition: border .2s, background .2s;
-            top: 4px;
-        }
-        .checkbox-item input:checked + .checkmark {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-        .checkbox-item input:checked + .checkmark::after {
-            content: "✓";
-            color: white;
-            font-size: 12px;
-            position: absolute;
-            top: -2px; left: 3px;
-        }
-        .label-text {
-            font-size: 14px;
-            color: #374151;
-            font-weight: 500;
-        }
+    @include('administrator.websites.style')
 
-        .group.blue { border-color: #3b82f6; --accent: #3b82f6; }
-    </style>
-
-    <style>
-
-        .card:hover {
-            border-color: #cbd5e1; /* darker border on hover */
-        }
-
-        .name {
-            font-size: 15px;
-            font-weight: 600;
-            margin-top: 2px;
-        }
-
-
-        .btn svg { width: 18px; height: 18px; }
-
-        .btn-code { background: #3b82f6; color: white; }
-        .btn-config { background: #10b981; color: white; }
-        .btn-delete { background: #ef4444; color: white; }
-
-        .checkbox-item input[type="number"] {
-            width: 60px;
-            padding: 4px;
-            font-size: 13px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            text-align: center;
-            display: block !important;
-        }
-
-
-    </style>
 @endsection
 
 @section('content')
@@ -138,11 +33,13 @@
                                     <th><input id="check_box_delete_all" type="checkbox" class="checkbox-parent"
                                                onclick="onSelectCheckboxDeleteItem()"></th>
                                     <th onclick='onSortSearch(`manager_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? "desc" : "") }}`)'>
-                                        <div>Manager {!! \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        <div>
+                                            Manager {!! \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
                                     <th onclick='onSortSearch(`cs_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? "desc" : "") }}`)'>
-                                        <div>CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        <div>
+                                            CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
                                     <th onclick='onSortSearch(`url`, `{{ \App\Models\Helper::getValueInFilterReuquest('url') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('url') != "desc" ? "desc" : "") }}`)'>
@@ -178,7 +75,8 @@
 
                                     <th onclick='onSortSearch(`created_at`, `{{ \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? "desc" : "") }}`)'>
                                         <div>
-                                            Created at {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            Created
+                                            at {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
                                     <th>Action</th>
@@ -196,11 +94,13 @@
                                     <th><input id="check_box_delete_all_footer" type="checkbox" class="checkbox-parent"
                                                onclick="onSelectCheckboxDeleteItemFooter()"></th>
                                     <th onclick='onSortSearch(`manager_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? "desc" : "") }}`)'>
-                                        <div>Manager {!! \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        <div>
+                                            Manager {!! \App\Models\Helper::getValueInFilterReuquest('manager_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('manager_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
                                     <th onclick='onSortSearch(`cs_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? "desc" : "") }}`)'>
-                                        <div>CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        <div>
+                                            CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
                                     <th onclick='onSortSearch(`url`, `{{ \App\Models\Helper::getValueInFilterReuquest('url') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('url') != "desc" ? "desc" : "") }}`)'>
@@ -236,7 +136,8 @@
 
                                     <th onclick='onSortSearch(`created_at`, `{{ \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? "desc" : "") }}`)'>
                                         <div>
-                                            Created at {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            Created
+                                            at {!! \App\Models\Helper::getValueInFilterReuquest('created_at') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('created_at') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
                                     <th>Action</th>
@@ -304,10 +205,25 @@
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Ad code</h5>
+                    <h5 class="modal-title" id="title_ad_zone_website_modal"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="container_ad_zone_website_modal">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal get time zone website -->
+    <div class="modal fade" id="time_zone_website_modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_time_zone_website_modal"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_time_zone_website_modal">
 
                 </div>
             </div>
@@ -349,7 +265,7 @@
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Infor</h5>
+                    <h5 class="modal-title" id="title_modal_panel_zone_detail_zone"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="container_panel_zone_detail_zone">
@@ -364,10 +280,33 @@
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal_view_all_zone_title">Infor</h5>
+                    <div class="d-flex gap-1">
+                        <h5 class="modal-title" id="modal_view_all_zone_title"></h5>
+                        <button onclick="onShowModalCreateZone()" class="btn btn-outline-success float-end"
+                                title="Create zone"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="container_modal_view_all_zone">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Create zone -->
+    <div class="modal fade" id="modal_create_zone" aria-hidden="true" style="z-index:1051;">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="d-flex gap-1">
+                        <h5 class="modal-title" id="title_modal_create_zone"></h5>
+                    </div>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_modal_create_zone">
 
                 </div>
             </div>
@@ -389,23 +328,44 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered custom-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User View: <span id="modalUserName"></span></h5>
+                </div>
+                <div class="modal-body p-0">
+                    <iframe id="userIframe" src="" width="100%" style="height: 80vh" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('js')
     <script>
         $(function () {
 
-            $(document).on('click','#body_container_item > tr > td > *', function (ev) {
-                ev.stopPropagation();
-            });
-            // Click on row
-            $(document).on('click','#body_container_item tr', function () {
-                // onViewAndEdit(this.getAttribute('data-id'))
+            const time_zone_website_modal = document.querySelector('#time_zone_website_modal');
+            time_zone_website_modal.addEventListener('hidden.bs.modal', function () {
+                showModal('modal_view_all_zone');
             });
 
-            // Close button
-            $('#closePanel').on('click', function () {
-                $('#infoPanel').fadeOut(200);
+            const ad_zone_website_modal = document.querySelector('#ad_zone_website_modal');
+            ad_zone_website_modal.addEventListener('hidden.bs.modal', function () {
+                showModal('modal_view_all_zone');
+            });
+
+            const modal_panel_zone_detail_zone = document.querySelector('#modal_panel_zone_detail_zone');
+            modal_panel_zone_detail_zone.addEventListener('hidden.bs.modal', function () {
+                showModal('modal_view_all_zone');
+            });
+
+            const modal_create_zone = document.querySelector('#modal_create_zone');
+            modal_create_zone.addEventListener('hidden.bs.modal', function () {
+                showModal('modal_view_all_zone');
             });
 
         });
@@ -481,34 +441,25 @@
             )
         }
 
-        function onCreateZone(website_id) {
-            if ($('.modal:visible').length) {
-                // Modal is open, ignore this click
-                return;
-            }
-
-            const id = $(this).data('id');
-
-            $('#panelContent').html("<div class=\"spinner-border text-primary\" role=\"status\">\n" +
-                "  <span class=\"visually-hidden\">Loading...</span>\n" +
-                "</div>")
+        function onShowModalCreateZone(website_id = null) {
+            if (!website_id) website_id = $('#modal_view_all_zone_title').attr("data-id");
 
             callAjax(
                 "GET",
-                "{{route('ajax.administrator.'.$prefixView.'.panel_zone')}}",
+                "{{route('ajax.administrator.zone_websites.modal_create')}}",
                 {
-                    'website_id': website_id
+                    website_id: website_id,
+                    is_hide_all_pre_modal: true,
                 },
                 (response) => {
-                    $('#panel_zone_label_url_website').html(response.data.website.url);
-                    $('#panelContent').html(response.data.html);
+                    showModal('modal_create_zone');
+                    $('#title_modal_create_zone').html(response.data.website.name);
+                    $('#container_modal_create_zone').html(response.data.html).fadeIn(1000);
                 },
                 (error) => {
 
-                },false
+                }
             )
-
-            $('#infoPanel').hide().show("slide", { direction: "right" }, 500);
         }
 
         function onGetAdCodeZone(zone_website_id) {
@@ -516,10 +467,12 @@
                 "GET",
                 "{{route('ajax.administrator.zone_websites.ad_code')}}",
                 {
-                    'zone_website_id': zone_website_id
+                    zone_website_id: zone_website_id,
+                    is_hide_all_pre_modal: true,
                 },
                 (response) => {
-                    showModal('ad_zone_website_modal')
+                    showModal('ad_zone_website_modal');
+                    $('#title_ad_zone_website_modal').html(response.data.item.name + " #" + response.data.item.id);
                     $('#container_ad_zone_website_modal').html(response.data.html).fadeIn(1000);
                 },
                 (error) => {
@@ -528,16 +481,35 @@
             )
         }
 
-        function onDeleteZone(website_id, zone_website_id) {
+        function onGetTimeZone(zone_website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.zone_websites.time')}}",
+                {
+                    zone_website_id: zone_website_id,
+                    is_hide_all_pre_modal: true,
+                },
+                (response) => {
+                    showModal('time_zone_website_modal');
+                    $('#title_time_zone_website_modal').html(response.data.item.name + " #" + response.data.item.id);
+                    $('#container_time_zone_website_modal').html(response.data.html).fadeIn(1000);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onDeleteZone(website_id, zone_website_id, message = "Are you sure?") {
             Swal.fire({
-                title: 'Bạn có chắc?',
-                text: "Tác vụ sẽ không thể hoàn tác!",
+                title: message,
+                text: "The action cannot be undone!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Vâng, xóa nó!',
-                cancelButtonText: 'Không'
+                confirmButtonText: 'Yes, Do it!',
+                cancelButtonText: 'No'
             }).then((result) => {
                 if (result.isConfirmed) {
                     callAjax(
@@ -547,8 +519,8 @@
                             'zone_website_id': zone_website_id
                         },
                         (response) => {
-                            showToastSuccess("Deleted Zone");
-                            $('#container_zone_website_' + zone_website_id).fadeOut(200);
+                            showToastSuccess("Deleted!");
+                            $('#modal_view_all_zones_tr_row_' + zone_website_id).fadeOut(1000);
                             onRefreshRow(website_id);
                         },
                         (error) => {
@@ -578,8 +550,7 @@
         }
 
         function onStoreZones(website_id) {
-            $('#panel_zone_collapse').collapse('hide');
-            showToastLoading("Creating Zone...");
+            showLoading("Creating Zone...");
             processStoreZone(website_id);
         }
 
@@ -608,16 +579,12 @@
                     if (response.code == 219) {
                         setTimeout(processStoreZone(website_id), 5000);
                     } else {
-                        hideAllToast()
                         if (response.is_success || response.code == 200) {
+                            hideLoading();
+                            hideModal('modal_create_zone');
                             showToastSuccess('Created Zone');
-                            prependWithAnimation("#panel_zone_container_zones", response.data.html);
                             onRefreshRow(website_id);
-
-                            $(".panel_zone_checkbox_dimension").prop("checked", false).trigger("change");
-                            $(".panel_zone_input_number_dimension").val(1);
-
-
+                            prependWithAnimation('#modal_view_all_zones_body_container_item', response.data.html, 'pop', false, 1500)
                         } else {
                             showToastError('Có lỗi khởi tạo');
                         }
@@ -706,11 +673,12 @@
                 "{{route('ajax.administrator.zone_websites.modal_detail_zone')}}",
                 {
                     id: id,
+                    is_hide_all_pre_modal: true,
                 },
                 (response) => {
-
-                    $('#container_panel_zone_detail_zone').html(response.data.html)
-                    showModal('modal_panel_zone_detail_zone')
+                    $('#title_modal_panel_zone_detail_zone').html(response.data.item.name + " #" + response.data.item.id);
+                    $('#container_panel_zone_detail_zone').html(response.data.html).fadeIn(1000);
+                    showModal('modal_panel_zone_detail_zone');
                 },
                 (error) => {
 
@@ -737,6 +705,7 @@
                 (response) => {
                     showModal('modal_view_all_zone');
                     $('#modal_view_all_zone_title').html(response.data.website.name);
+                    $('#modal_view_all_zone_title').attr("data-id", website_id);
                     $('#container_modal_view_all_zone').html(response.data.html);
                 },
                 (error) => {
@@ -776,7 +745,7 @@
                 },
                 (response) => {
                     hideModal('modal_change_status');
-                    $('tr[data-id="'+website_id+'"]').after(response.data.html).remove();
+                    $('tr[data-id="' + website_id + '"]').after(response.data.html).remove();
                 },
                 (error) => {
 
@@ -792,11 +761,11 @@
                     website_id: website_id,
                 },
                 (response) => {
-                    $('tr[data-id="'+website_id+'"]').after(response.data.html).remove();
+                    $('tr[data-id="' + website_id + '"]').after(response.data.html).remove();
                 },
                 (error) => {
 
-                },false
+                }, false
             )
         }
 
@@ -811,7 +780,8 @@
                     zone_time_type_id: $('#panel_zone_item_zone_select_time_type_id').val(),
                 },
                 (response) => {
-
+                    hideModal('time_zone_website_modal');
+                    showToastSuccess("Save!");
                 },
                 (error) => {
 
@@ -819,7 +789,52 @@
             )
         }
 
+        function onSaveZoneAndCampaign(zone_id) {
+            callAjax(
+                "PUT",
+                "{{route('ajax.administrator.zone_websites.update_zone_and_campaign')}}",
+                {
+                    id: zone_id,
+                    width: $('#panel_zone_detail_zone_input_width').val(),
+                    height: $('#panel_zone_detail_zone_input_height').val(),
+                    content_html: $('#panel_zone_detail_zone_input_content_html').val(),
+                    generate_code: $('#panel_zone_detail_zone_input_generate_code').val(),
+                },
+                (response) => {
+                    hideModal('modal_panel_zone_detail_zone');
+                    showToastSuccess("Save!")
+                },
+                (error) => {
 
+                }
+            )
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            let modal = document.getElementById('userModal');
+            let iframe = document.getElementById("userIframe");
+
+            modal.addEventListener('show.bs.modal', function (event) {
+                let button = event.relatedTarget;
+                let userId = button.getAttribute('data-userid');
+                let userName = button.getAttribute('data-username');
+
+                document.getElementById('modalUserName').innerText = userName;
+                iframe.src = "/admin/user-view/" + userId;
+            });
+
+            iframe.onload = function() {
+
+            };
+        });
+
+        window.addEventListener("message", function(event) {
+            if (event.data.action === "closeModal") {
+                let modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+                modal.hide();
+            }
+        });
     </script>
+
 @endsection
 

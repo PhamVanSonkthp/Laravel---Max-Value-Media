@@ -37,9 +37,7 @@
                         </strong>
                     </th>
                     <th style="width: 20%;">
-                        <strong>
-                            {{\App\Models\Formatter::formatNumber(array_sum(array_column($trafficByContries, "trafq")) / max(count($trafficByContries), 1), 2)}}
-                        </strong>
+
                     </th>
                 </tr>
 
@@ -68,7 +66,7 @@
                             {{\App\Models\Formatter::formatNumber($trafficByContry['impressions'])}}
                         </td>
                         <td style="width: 20%;">
-                            {{\App\Models\Formatter::formatNumber($trafficByContry['trafq'], 2)}}
+                            {{\App\Models\Formatter::formatNumber($trafficByContry['requests'] / max(1, array_sum(array_column($trafficByContries, "requests"))) * 100, 2)}}
                         </td>
                     </tr>
                 @endforeach

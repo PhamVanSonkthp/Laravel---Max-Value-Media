@@ -6,37 +6,78 @@
 </div>
 
 <div class="clearfix"></div>
-{{--        write your filter here ...--}}
-{{--example--}}
-    <div class="row">
 
-        <div class="col-md-3">
-            <div class="mt-3">
-                <label>Time</label>
-                <input id="input_search_month" type="date"
-                       class="bg-white form-control" placeholder="--/--/--">
+<div class="row mt-1">
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h3>
+                    ${{\App\Models\Formatter::formatNumber($summary->total, 2)}}
+                </h3>
+                <div>
+                    Total
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-3">
-            <div>
-                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'user_id' , 'label' => 'Publisher', 'url' => route('ajax.administrator.model.search', ['is_admin' => 0]), 'model' => 'users'])
-            </div>
         </div>
-
-        <div class="col-md-3">
-            <div>
-                @include('administrator.components.search_select2_allow_clear' , ['name' => 'payment_method_id' , 'label' => 'Method', 'select2Items' => $paymentMethos])
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div>
-                @include('administrator.components.search_select2_allow_clear' , ['name' => 'payment_status_id' , 'label' => 'Status', 'select2Items' => $paymentStatuses])
-            </div>
-        </div>
-
     </div>
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h3>
+                    ${{\App\Models\Formatter::formatNumber($summary->unpaid, 2)}}
+                </h3>
+                <div>
+                    Unpaid
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h3>
+                    ${{\App\Models\Formatter::formatNumber($summary->invalid, 2)}}
+                </h3>
+                <div>
+                    Invalid
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-md-3">
+        <div class="mt-3">
+            <label>Time</label>
+            <input id="input_search_month" type="date"
+                   class="bg-white form-control" placeholder="--/--/--">
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div>
+            @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'user_id' , 'label' => 'Publisher', 'url' => route('ajax.administrator.model.search', ['is_admin' => 0]), 'model' => 'users'])
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div>
+            @include('administrator.components.search_select2_allow_clear' , ['name' => 'payment_method_id' , 'label' => 'Method', 'select2Items' => $paymentMethos])
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div>
+            @include('administrator.components.search_select2_allow_clear' , ['name' => 'payment_status_id' , 'label' => 'Status', 'select2Items' => $paymentStatuses])
+        </div>
+    </div>
+
+</div>
 
 <script>
     $(document).ready(function () {
@@ -50,8 +91,8 @@
                 })
             ],
             maxDate: '{{\Carbon\Carbon::today()->toDateString()}}',
-            onClose: function(selectedDates, dateStr, instance) {
-                if(dateStr != "{{request('date')}}"){
+            onClose: function (selectedDates, dateStr, instance) {
+                if (dateStr != "{{request('date')}}") {
                     addUrlParameter('date', dateStr)
                 }
 
@@ -63,7 +104,6 @@
         });
 
     });
-
 
 
     // Change filter if you want

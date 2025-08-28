@@ -798,7 +798,8 @@ $(document).ready(function (e) {
     $(document).on('click', '.action_delete', function(ev){
         ev.preventDefault();
         ev.stopPropagation();
-        let urlRequest = $(this).data('url')
+        let urlRequest = $(this).data('url');
+        let message = $(this).data('message');
         let that = $(this)
 
         if (!urlRequest) {
@@ -806,8 +807,8 @@ $(document).ready(function (e) {
         }
 
         Swal.fire({
-            title: 'Bạn có chắc?',
-            text: "Tác vụ sẽ không thể hoàn tác!",
+            title: message ?? 'Are you sure?',
+            text: "The action cannot be undone!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -1048,9 +1049,7 @@ function callAjax(method = "GET", url, data, success, error, is_loading = true, 
                 window.location.reload();
                 return;
             }
-            if(is_loading){
-                hideLoading()
-            }
+            hideLoading();
             hideAllToast()
             if (is_show_sweet_alert_error){
                 Swal.fire(
@@ -1159,7 +1158,7 @@ function onSortSearch(key, value) {
 
 }
 
-function prependWithAnimation(container, html, effect = "vibrate", is_append = false) {
+function prependWithAnimation(container, html, effect = "vibrate", is_append = false, duration = 1000) {
     let newItem = $(html);
 
     // Hide first so we can animate
@@ -1173,15 +1172,15 @@ function prependWithAnimation(container, html, effect = "vibrate", is_append = f
     // Run chosen animation
     switch (effect) {
         case "fade":
-            newItem.fadeIn(500);
+            newItem.fadeIn(duration);
             break;
         case "slide":
-            newItem.slideDown(500);
+            newItem.slideDown(duration);
             break;
         case "pop":
             newItem.css({ opacity: 0, transform: "scale(0.8)" }).show();
             newItem.animate({ opacity: 1 }, {
-                duration: 500,
+                duration: duration,
                 step: function(now, fx) {
                     if (fx.prop === "opacity") {
                         $(this).css("transform", "scale(" + (0.8 + now * 0.2) + ")");
@@ -1200,4 +1199,12 @@ function prependWithAnimation(container, html, effect = "vibrate", is_append = f
         default:
             newItem.show();
     }
+}
+
+function hideAllModal() {
+
+    document.querySelectorAll('.modal.show').forEach(m => {
+        const instance = bootstrap.Modal.getInstance(m);
+        if (instance) instance.hide();
+    });
 }

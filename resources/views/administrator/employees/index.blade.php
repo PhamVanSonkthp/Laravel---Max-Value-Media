@@ -28,10 +28,10 @@
                                 <tr>
                                     <th><input id="check_box_delete_all" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItem()"></th>
                                     <th>#</th>
-                                    <th>Avatar</th>
+                                    <th>Name</th>
                                     <th>Roles</th>
                                     <th>Sites</th>
-                                    <th>Name</th>
+                                    <th>Avatar</th>
                                     <th>Phone</th>
                                     <th>Email</th>
                                     <th>Date of birth</th>
@@ -50,10 +50,10 @@
                                 <tr>
                                     <th><input id="check_box_delete_all_footer" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItemFooter()"></th>
                                     <th>#</th>
-                                    <th>Avatar</th>
+                                    <th>Name</th>
                                     <th>Roles</th>
                                     <th>Sites</th>
-                                    <th>Name</th>
+                                    <th>Avatar</th>
                                     <th>Phone</th>
                                     <th>Email</th>
                                     <th>Date of birth</th>

@@ -25,6 +25,9 @@ use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\ParticipantChat;
+use App\Models\Payment;
+use App\Models\PaymentMethod;
+use App\Models\PaymentStatus;
 use App\Models\Product;
 use App\Models\Report;
 use App\Models\RestfulAPI;
@@ -161,9 +164,25 @@ Route::prefix('ajax/administrator')->group(function () {
                 $websiteStatus = StatusWebsite::all();
 
                 return response()->json(Helper::successAPI(200, [
-                    'html' => View::make('administrator.websites.panel_zone_detail_zone', ['item' => $item, 'zoneStatus' => $zoneStatus, 'websiteStatus' => $websiteStatus])->render()
+                    'item' => $item,
+                    'html' => View::make('administrator.websites.panel_zone_detail_zone', ['item' => $item, 'zoneStatus' => $zoneStatus, 'websiteStatus' => $websiteStatus, 'hideAllPreModal' => $request->is_hide_all_pre_modal])->render()
                 ]));
             })->name('ajax.administrator.zone_websites.modal_detail_zone');
+
+            Route::get('modal_create', function (Request $request) {
+
+                $website = Website::findOrFail($request->website_id);
+                $groupZoneDimensions = GroupZoneDimension::all();
+                $zoneWebsiteTimeTypes = ZoneWebsiteTimeType::all();
+
+                $zoneStatuses = Helper::searchAllByQuery(new ZoneStatus(), null);
+                $zoneTypes = [new Balance(1, "Banner")];
+
+                return response()->json(Helper::successAPI(200, [
+                    'website' => $website,
+                    "html" => View::make('administrator.websites.modal_create_zone_website', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'groupZoneDimensions' => $groupZoneDimensions, 'zoneTypes' => $zoneTypes, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes, 'hideAllPreModal' => $request->is_hide_all_pre_modal])->render()
+                ]));
+            })->name('ajax.administrator.zone_websites.modal_create');
 
             Route::post('store', function (Request $request) {
 
@@ -211,7 +230,7 @@ Route::prefix('ajax/administrator')->group(function () {
                     $responseHTML = "";
                     foreach ($cacheValue['zone_ids'] as $zone_id) {
                         $zoneWebsite = ZoneWebsite::findOrFail($zone_id);
-                        $responseHTML .= View::make('administrator.websites.panel_zone_item_zone', ['zone' => $zoneWebsite, 'zoneStatuses' => $zoneStatuses, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes])->render();
+                        $responseHTML .= View::make('administrator.websites.modal_zone_item_zone', ['item' => $zoneWebsite, 'zoneStatuses' => $zoneStatuses, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes])->render();
                     }
 
                     Cache::forget($keyCache);
@@ -308,9 +327,21 @@ Route::prefix('ajax/administrator')->group(function () {
                 $zoneWebsite = ZoneWebsite::findOrFail($request->zone_website_id);
 
                 return response()->json(Helper::successAPI(200, [
-                    'html' => View::make('administrator.websites.modal_ad_zone_website', ['zoneWebsite' => $zoneWebsite])->render()
+                    'item' => $zoneWebsite,
+                    'html' => View::make('administrator.websites.modal_ad_zone_website', ['zoneWebsite' => $zoneWebsite, 'hideAllPreModal' => $request->is_hide_all_pre_modal])->render()
                 ]));
             })->name('ajax.administrator.zone_websites.ad_code');
+
+            Route::get('time', function (Request $request) {
+
+                $zoneWebsite = ZoneWebsite::findOrFail($request->zone_website_id);
+                $zoneWebsiteTimeTypes = ZoneWebsiteTimeType::all();
+
+                return response()->json(Helper::successAPI(200, [
+                    'item' => $zoneWebsite,
+                    'html' => View::make('administrator.websites.modal_time_zone_website', ['zone' => $zoneWebsite, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes, 'hideAllPreModal' => $request->is_hide_all_pre_modal])->render()
+                ]));
+            })->name('ajax.administrator.zone_websites.time');
         });
 
         Route::prefix('websites')->group(function () {
@@ -367,6 +398,10 @@ Route::prefix('ajax/administrator')->group(function () {
                         }
                     }
                 }
+
+                usort($trafficByContries, function ($a, $b) {
+                    return $b['requests'] <=> $a['requests'];
+                });
 
                 return response()->json(Helper::successAPI(200, [
                     "html" => View::make('administrator.websites.modal_view_and_edit_website',
@@ -427,10 +462,11 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $website = Website::findOrFail($request->id);
                 $items = $website->zoneWebsites;
+                $zoneStatuses = ZoneStatus::all();
 
                 return response()->json(Helper::successAPI(200, [
                     "website" => $website,
-                    "html" => View::make('administrator.websites.modal_view_all_zones', ['items' => $items])->render()
+                    "html" => View::make('administrator.websites.modal_view_all_zones', ['items' => $items, 'zoneStatuses' => $zoneStatuses])->render()
                 ]));
             })->name('ajax.administrator.websites.view_all_zones');
 
@@ -564,8 +600,8 @@ Route::prefix('ajax/administrator')->group(function () {
                 if (count($adScoreZones)) {
                     $firstAdScoreZones = $adScoreZones[0];
 
-                    if ($firstAdScoreZones->total_hits == 0){
-                        return response()->json(Helper::errorAPI(400, [] , 'Data is latest!'), 400);
+                    if ($firstAdScoreZones->total_hits == 0) {
+                        return response()->json(Helper::errorAPI(400, [], 'Data is latest!'), 400);
                     }
 
                     AdScoreZoneHistory::create([
@@ -629,6 +665,10 @@ Route::prefix('ajax/administrator')->group(function () {
                     }
                 }
 
+                usort($trafficByContries, function ($a, $b) {
+                    return $b['requests'] <=> $a['requests'];
+                });
+
                 return response()->json(Helper::successAPI(200, [
                     "html" => View::make('administrator.websites.modal_view_and_edit_website_traffics', [
                         'item' => $item, 'timeBeginCheckTraffic' => $timeBeginCheckTraffic,
@@ -677,6 +717,10 @@ Route::prefix('ajax/administrator')->group(function () {
                         }
                     }
                 }
+
+                usort($trafficByContries, function ($a, $b) {
+                    return $b['requests'] <=> $a['requests'];
+                });
 
                 return response()->json(Helper::successAPI(200, [
                     "html" => View::make('administrator.websites.modal_view_and_edit_website_traffic_countries',
@@ -909,6 +953,58 @@ Route::prefix('ajax/administrator')->group(function () {
                 ]));
 
             })->name('ajax.administrator.employees.view_all_website');
+        });
+
+        Route::prefix('payments')->group(function () {
+
+            Route::put('update_deduction', function (Request $request) {
+
+                $item = Payment::findOrFail($request->id);
+
+                $request->validate([
+                    'deduction' => 'required|numeric',
+                ]);
+
+                $item->deduction = $request->deduction;
+                $item->save();
+                $item->refresh();
+
+                $paymentStatuses = PaymentStatus::all();
+                $paymentMethos = PaymentMethod::all();
+
+                $htmlRow = View::make('administrator.user_withdraws.row', ['item' => $item, 'index' => $request->index,'paymentStatuses' => $paymentStatuses,'paymentMethos'=>$paymentMethos])->render();
+
+                return response()->json([
+                    'message' => 'saved!',
+                    'item' => $item,
+                    'row_html' => $htmlRow,
+                ]);
+            })->name('ajax.administrator.payments.update_deduction');
+
+            Route::put('update_invalid', function (Request $request) {
+
+                $item = Payment::findOrFail($request->id);
+
+                $request->validate([
+                    'invalid' => 'required|numeric',
+                ]);
+
+                $item->invalid = $request->invalid;
+                $item->save();
+                $item->refresh();
+
+                $paymentStatuses = PaymentStatus::all();
+                $paymentMethos = PaymentMethod::all();
+
+                $htmlRow = View::make('administrator.user_withdraws.row', ['item' => $item, 'index' => $request->index,'paymentStatuses' => $paymentStatuses,'paymentMethos'=>$paymentMethos])->render();
+
+                return response()->json([
+                    'message' => 'saved!',
+                    'item' => $item,
+                    'row_html' => $htmlRow,
+                ]);
+            })->name('ajax.administrator.payments.update_invalid');
+
         });
 
         Route::prefix('/email')->group(function () {

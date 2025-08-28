@@ -1,7 +1,7 @@
 <div>
     @include('administrator.components.search')
 
-    @include('administrator.components.search_right')
+    @include('administrator.components.search_right', ['hideCreate' => !auth()->user()->can('employees-add')])
 
 </div>
 

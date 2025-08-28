@@ -143,10 +143,10 @@
                     <div class="col-8">
                         <div class="row">
                             <div class="col-6">
-                                @include('administrator.components.input_text', ['id'=>'panel_zone_detail_zone_input_width_' . $item->id, 'label' => 'Width', 'name' => 'width', 'item' => $item])
+                                @include('administrator.components.input_text', ['id'=>'panel_zone_detail_zone_input_width', 'label' => 'Width', 'name' => 'width', 'item' => $item])
                             </div>
                             <div class="col-6">
-                                @include('administrator.components.input_text', ['id'=>'panel_zone_detail_zone_input_height_' . $item->id, 'label' => 'Height', 'name' => 'height', 'item' => $item])
+                                @include('administrator.components.input_text', ['id'=>'panel_zone_detail_zone_input_height', 'label' => 'Height', 'name' => 'height', 'item' => $item])
                             </div>
                         </div>
                     </div>
@@ -170,11 +170,11 @@
 
             <div class="row">
                 <div class="col-xl-6 col-12">
-                    @include('administrator.components.require_textarea', ['id' => 'panel_zone_detail_zone_input_content_html_' . $item->id,'name' => 'content_html', 'label' => 'Html/Javascript code', 'item' => $item->adsCampaign])
+                    @include('administrator.components.require_textarea', ['id' => 'panel_zone_detail_zone_input_content_html','name' => 'content_html', 'label' => 'Html/Javascript code', 'item' => $item->adsCampaign])
                 </div>
 
                 <div class="col-xl-6 col-12">
-                    @include('administrator.components.textarea', ['id' => 'panel_zone_detail_zone_input_generate_code_' . $item->id, 'name' => 'generate_code', 'label' => 'Pixel HTML', 'item' => $item->adScore])
+                    @include('administrator.components.textarea', ['id' => 'panel_zone_detail_zone_input_generate_code', 'name' => 'generate_code', 'label' => 'Pixel HTML', 'item' => $item->adScore])
                 </div>
 
             </div>
@@ -184,7 +184,7 @@
 
         <div class="card-footer">
             <div class="float-end">
-                <button class="btn btn-primary mt-3" onclick="onSaveZoneAndCampaign{{$item->id}}()">Save</button>
+                <button class="btn btn-primary mt-3" onclick="onSaveZoneAndCampaign({{$item->id}})">Save</button>
             </div>
         </div>
 
@@ -193,24 +193,8 @@
 
 <script>
 
+    @if(isset($hideAllPreModal))
+    hideAllModal();
+    @endif
 
-    function onSaveZoneAndCampaign{{$item->id}}() {
-        callAjax(
-            "PUT",
-            "{{route('ajax.administrator.zone_websites.update_zone_and_campaign')}}",
-            {
-                id: {{$item->id}},
-                width: $('#panel_zone_detail_zone_input_width_{{$item->id}}').val(),
-                height: $('#panel_zone_detail_zone_input_height_{{$item->id}}').val(),
-                content_html: $('#panel_zone_detail_zone_input_content_html_{{$item->id}}').val(),
-                generate_code: $('#panel_zone_detail_zone_input_generate_code_{{$item->id}}').val(),
-            },
-            (response) => {
-                showToastSuccess("Save!")
-            },
-            (error) => {
-
-            }
-        )
-    }
 </script>

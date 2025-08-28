@@ -40,12 +40,12 @@
                                             Amount {!! \App\Models\Helper::getValueInFilterReuquest('total') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('total') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
-                                    <th onclick='onSortSearch(`deduction`, `{{ \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? "desc" : "") }}`)'>
+                                    <th style="width:50px;" onclick='onSortSearch(`deduction`, `{{ \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? "desc" : "") }}`)'>
                                         <div>
                                             Deduction {!! \App\Models\Helper::getValueInFilterReuquest('deduction') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('deduction') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>
                                     </th>
-                                    <th onclick='onSortSearch(`invalid`, `{{ \App\Models\Helper::getValueInFilterReuquest('invalid') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('invalid') != "desc" ? "desc" : "") }}`)'>
+                                    <th style="width:50px;" onclick='onSortSearch(`invalid`, `{{ \App\Models\Helper::getValueInFilterReuquest('invalid') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('invalid') != "desc" ? "desc" : "") }}`)'>
                                         <div>
                                             Invalid amount {!! \App\Models\Helper::getValueInFilterReuquest('invalid') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('invalid') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
                                         </div>

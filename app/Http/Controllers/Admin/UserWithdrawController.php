@@ -37,6 +37,13 @@ class UserWithdrawController extends Controller
     {
         $items = $this->model->searchByQuery($request, [],null,null,true);
 
+        $summary = (new Payment())->searchByQuery($request, [],null,null,true);
+        $summary = $summary->selectRaw('sum(total) as total, sum(invalid) as invalid, sum(deduction) as deduction')->first();
+
+        $summaryUnpaid = (new Payment())->searchByQuery($request, ['payment_status_id'=> 1],null,null,true);
+        $summaryUnpaid = $summaryUnpaid->selectRaw('sum(total) as total')->first();
+
+        $summary->unpaid = $summaryUnpaid->total;
         if ($request->payment_method_id){
             $items = $items->select('payments.*')->join('user_payment_methods', 'user_payment_methods.id', '=', 'payments.user_payment_method_id')
                     ->where('user_payment_methods.payment_method_id', $request->payment_method_id);
@@ -51,7 +58,7 @@ class UserWithdrawController extends Controller
 
         $paymentStatuses = PaymentStatus::all();
         $paymentMethos = PaymentMethod::all();
-        return view('administrator.' . $this->prefixView . '.index', compact('items','paymentStatuses','paymentMethos'));
+        return view('administrator.' . $this->prefixView . '.index', compact('items','paymentStatuses','paymentMethos','summary'));
     }
 
     public function get(Request $request, $id)

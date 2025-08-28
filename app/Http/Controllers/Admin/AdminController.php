@@ -107,6 +107,6 @@ class AdminController extends Controller
             session()->forget('impersonate');
         }
 
-        return redirect()->route('administrator.dashboard.index');
+        return view('administrator.components.leave_impersonate');
     }
 }

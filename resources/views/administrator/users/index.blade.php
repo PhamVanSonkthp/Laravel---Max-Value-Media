@@ -3,7 +3,20 @@
 @include('administrator.'.$prefixView.'.header')
 
 @section('css')
-
+    <style>
+        /* Custom size: 80% width & height */
+        .modal-dialog.custom-modal {
+            max-width: 80% !important;
+            width: 80% !important;
+            margin: auto;
+        }
+        .modal-content {
+            height: 100%;
+        }
+        .modal-body {
+            overflow-y: auto;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -265,6 +278,20 @@
                 <div class="modal-body" id="container_view_all_website_modal">
 
 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered custom-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User View: <span id="modalUserName"></span></h5>
+                </div>
+                <div class="modal-body p-0">
+                    <iframe id="userIframe" src="" width="100%" style="height: 80vh" frameborder="0"></iframe>
                 </div>
             </div>
         </div>
@@ -567,7 +594,31 @@
             )
         }
 
-    </script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let modal = document.getElementById('userModal');
+            let iframe = document.getElementById("userIframe");
 
+            modal.addEventListener('show.bs.modal', function (event) {
+                let button = event.relatedTarget;
+                let userId = button.getAttribute('data-userid');
+                let userName = button.getAttribute('data-username');
+
+                document.getElementById('modalUserName').innerText = userName;
+                iframe.src = "/admin/user-view/" + userId;
+            });
+
+            iframe.onload = function() {
+
+            };
+        });
+
+        window.addEventListener("message", function(event) {
+            if (event.data.action === "closeModal") {
+                let modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+                modal.hide();
+            }
+        });
+
+    </script>
 
 @endsection

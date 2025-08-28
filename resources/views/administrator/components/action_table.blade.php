@@ -1,10 +1,12 @@
 @if(request('trash') != "true")
 
+    @if(isset($isShowEdit) && $isShowEdit == true)
     <a href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id ])}}" title="Sửa"
        class="btn btn-outline-secondary btn-sm edit"
        data-id="{{$item->id}}">
         <i class="fa-solid fa-pen"></i>
     </a>
+    @endif
 
 @endif
 
@@ -17,12 +19,16 @@
     </a>
 @endif
 
-<a href="#" title="Xóa"
-   data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
-   class="btn btn-outline-danger btn-sm delete action_delete"
-   data-id="{{$item->id}}">
-    <i class="fa-solid fa-x"></i>
-</a>
+@if(isset($isShowDelete) && $isShowDelete == true)
+    <a href="#" title="Xóa"
+       data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
+       class="btn btn-outline-danger btn-sm delete action_delete"
+       data-id="{{$item->id}}">
+        <i class="fa-solid fa-x"></i>
+    </a>
+@endif
+
+
 
 @if(request('trash') != "true")
     @if( optional(\App\Models\Setting::first())->is_show_audit_row == 1)

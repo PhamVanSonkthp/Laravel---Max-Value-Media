@@ -35,7 +35,7 @@
     @endif
     @if(in_array("d_request",$modelColums))
         <td>
-            {{\App\Models\Formatter::formatNumber($item->d_request ?? optional($item->reportWithAdserver())->d_request)}}
+            {{\App\Models\Formatter::formatNumber(optional($item->reportWithAdserver())->d_request)}}
         </td>
     @endif
     @if(in_array("d_impression",$modelColums))
@@ -114,7 +114,6 @@
 
             $("#input_count_{{$item->id}}").keypress(function (e) {
                 if (e.which == 13) {
-                    console.log(this.value);
 
                     callAjax(
                         "PUT",
@@ -136,7 +135,6 @@
 
             $("#input_share_{{$item->id}}").keypress(function (e) {
                 if (e.which == 13) {
-                    console.log(this.value);
 
                     callAjax(
                         "PUT",
@@ -158,7 +156,6 @@
 
             $("#input_salary_{{$item->id}}").keypress(function (e) {
                 if (e.which == 13) {
-                    console.log(this.value);
 
                     callAjax(
                         "PUT",
@@ -180,7 +177,6 @@
 
             $("#input_deduction_{{$item->id}}").keypress(function (e) {
                 if (e.which == 13) {
-                    console.log(this.value);
 
                     callAjax(
                         "PUT",

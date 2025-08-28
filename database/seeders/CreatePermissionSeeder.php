@@ -53,33 +53,33 @@ class CreatePermissionSeeder extends Seeder
                 'key_code' => $module_item . '_' . 'delete',
             ]);
 
-            if ($index == 5){
-
-                Permission::firstOrCreate([
-                    'name' => 'import',
-                    'display_name' => 'edit_import',
-                    'parent_id' => $permision->id,
-                    'key_code' => $module_item . '_' . 'edit_import',
-                ]);
-
-                Permission::firstOrCreate([
-                    'name' => 'export',
-                    'display_name' => 'list_export',
-                    'parent_id' => $permision->id,
-                    'key_code' => $module_item . '_' . 'list_export',
-                ]);
-
-                $modelColums = Helper::getAllColumsOfTable(new Report());
-
-                foreach ($modelColums as $modelColum){
-                    Permission::firstOrCreate([
-                        'name' => 'View ' . $modelColum,
-                        'display_name' => 'list',
-                        'parent_id' => $permision->id,
-                        'key_code' => $module_item . '_' . 'list_' . $modelColum,
-                    ]);
-                }
-            }
+//            if ($index == 5){
+//
+//                Permission::firstOrCreate([
+//                    'name' => 'import',
+//                    'display_name' => 'edit_import',
+//                    'parent_id' => $permision->id,
+//                    'key_code' => $module_item . '_' . 'edit_import',
+//                ]);
+//
+//                Permission::firstOrCreate([
+//                    'name' => 'export',
+//                    'display_name' => 'list_export',
+//                    'parent_id' => $permision->id,
+//                    'key_code' => $module_item . '_' . 'list_export',
+//                ]);
+//
+//                $modelColums = Helper::getAllColumsOfTable(new Report());
+//
+//                foreach ($modelColums as $modelColum){
+//                    Permission::firstOrCreate([
+//                        'name' => 'View ' . $modelColum,
+//                        'display_name' => 'list',
+//                        'parent_id' => $permision->id,
+//                        'key_code' => $module_item . '_' . 'list_' . $modelColum,
+//                    ]);
+//                }
+//            }
 
         }
     }

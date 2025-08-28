@@ -55,9 +55,12 @@
            class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-chart-line"></i>
         </a>
-        <a href="{{route('administrator.impersonate', ['id' => $item->id])}}" title="Impersonate" class="btn btn-outline-primary btn-sm">
+
+        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#userModal"
+                data-userid="{{ $item->id }}" data-username="{{ $item->name }}">
             <i class="fa-solid fa-user"></i>
-        </a>
+        </button>
+
         <a href="{{route('administrator.websites.index', ['user_id' => $item->id])}}" title="Websites"
            class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-globe"></i>

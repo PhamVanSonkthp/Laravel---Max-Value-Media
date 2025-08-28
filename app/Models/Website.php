@@ -58,7 +58,7 @@ class Website extends Model implements Auditable
 
     public function zoneWebsites()
     {
-        return $this->hasMany(ZoneWebsite::class, 'website_id', 'id')->latest();
+        return $this->hasMany(ZoneWebsite::class, 'website_id', 'id')->orderBy('zone_dimension_id', 'ASC');
     }
 
     public function getMaxDImpressionOneDay()

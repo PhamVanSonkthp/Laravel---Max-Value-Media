@@ -14,12 +14,7 @@
 </style>
 
 <div>
-    <h2 class="modal-title">{{ optional($zoneWebsite->website)->name }}</h2>
-
     <div class="getcode__info">
-        <div class="getcode__info--name">
-            <input type="text" class="form-control" value="{{ $zoneWebsite->name }}" disabled>
-        </div>
         <div class="getcode__info--code mt-3">
             <div class="alert alert-primary" role="alert">
                 {!! optional(optional($zoneWebsite->zoneDimension)->zoneDimensionPosition)->description !!}
@@ -78,11 +73,15 @@
     function myFunction(id) {
         // Get the text field
         var copyText = document.getElementById("text" + id);
-        console.log(22, id, copyText)
         // Select the text field
         copyText.select();
         copyText.setSelectionRange(0, 99999); // For mobile devices
         // Copy the text inside the text field
         navigator.clipboard.writeText(copyText.value);
     }
+
+    @if(isset($hideAllPreModal))
+        hideAllModal();
+    @endif
+
 </script>

@@ -1,7 +1,36 @@
 <?php
 
+use App\Models\Report;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
+
+Route::middleware(['auth'])->get('/admin/user-view/{id}', function($id) {
+
+    session(['impersonate' => auth()->id()]);
+    $user = \App\Models\User::findOrFail($id);
+
+    \Illuminate\Support\Facades\Auth::logout();
+    \Illuminate\Support\Facades\Auth::login($user);
+
+    if (auth()->check()) {
+        if (optional(auth()->user())->is_admin == 1) {
+            return redirect()->route('administrator.dashboard.index');
+        }
+    }
+
+    $revenueNow = Report::where(['report_type_id' => 1, 'user_id' => auth()->id(), 'date' => Carbon::today()->toDateString()])->sum('p_revenue');
+    $revenueYesterday = Report::where(['report_type_id' => 1, 'user_id' => auth()->id(), 'date' => Carbon::yesterday()->toDateString()])->sum('p_revenue');
+
+    $revenueThisMonth = Report::where(['report_type_id' => 1, 'user_id' => auth()->id()])
+        ->whereDate('date', '>=', Carbon::today()->startOfMonth()->toDateString())
+        ->whereDate('date', '<=', Carbon::today()->endOfMonth()->toDateString())
+        ->sum('p_revenue');
+
+    $revenueTotal = Report::where(['report_type_id' => 1, 'user_id' => auth()->id()])->sum('p_revenue');
+    return view('user.home.index', compact('revenueNow', 'revenueYesterday', 'revenueThisMonth', 'revenueTotal'));
+
+})->name('admin.userView');
 
 Route::get('/admin', 'App\Http\Controllers\Admin\AdminController@loginAdmin')->name('login');
 Route::post('/admin', 'App\Http\Controllers\Admin\AdminController@postLoginAdmin')->name('postLoginAdmin');

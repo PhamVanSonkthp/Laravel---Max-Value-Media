@@ -22,20 +22,23 @@
         </div>
     </td>
     <td>
-        <ul>
-            @foreach($item->zoneWebsites as $index => $zoneWebsites)
-                @if($index < 3)
-                    <li>
-                        @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($zoneWebsites->name), 'style' => 'color: '.optional($zoneWebsites->zoneStatus)->background_color.';'])
-                    </li>
-                @else
-                    <li>
-                        +{{count($item->zoneWebsites) - $index}} <button onclick="onViewAllZone({{$item->id}})" class="btn btn-outline-primary">(View All)</button>
-                    </li>
-                    @break
-                @endif
-            @endforeach
-        </ul>
+        <div onclick="onViewAllZone({{$item->id}})" style="cursor: pointer;">
+            <ul>
+                @foreach($item->zoneWebsites as $index => $zoneWebsites)
+                    @if($index < 3)
+                        <li>
+                            @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($zoneWebsites->name), 'style' => 'color: '.optional($zoneWebsites->zoneStatus)->background_color.';'])
+                        </li>
+                    @else
+                        <li>
+                            +{{count($item->zoneWebsites) - $index}}
+                        </li>
+                        @break
+                    @endif
+                @endforeach
+            </ul>
+        </div>
+
     </td>
     <td>
         <div>
@@ -54,7 +57,6 @@
             {{optional($item->statusWebsite)->name}}
         </span>
 
-{{--        @include('administrator.components.modal_change_id', ['label' => optional($item->statusWebsite)->name, 'select2Items' => $statusWebsites, 'field' => 'status_website_id', 'style' => ''])--}}
     </td>
 
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
@@ -66,19 +68,26 @@
             <i class="fa-solid fa-pen"></i>
         </a>
 
+        @if($item->user)
+        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#userModal"
+                data-userid="{{ $item->user->id }}" data-username="{{ $item->user->name }}">
+            <i class="fa-solid fa-user"></i>
+        </button>
+        @endif
+
         <a title="Report" target="_blank" class="btn btn-outline-primary btn-sm" href="{{route('administrator.reports.index', ['website_id' => $item->id])}}">
             <i class="fa-solid fa-chart-line"></i>
         </a>
 
         <a title="Zones" class="btn btn-outline-success btn-sm"
-           onclick="onCreateZone('{{$item->id}}')"
+           onclick="onViewAllZone('{{$item->id}}')"
            data-id="{{$item->id}}">
             <i class="fa-solid fa-cloud"></i>
         </a>
 
-        <a href="#" title="Xóa"
+        <a href="#" title="Delete"
            data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
-           class="btn btn-outline-danger btn-sm delete action_delete"
+           class="btn btn-outline-danger btn-sm delete action_delete" data-message="Delete {{$item->name}} #{{$item->id}}"
            data-id="{{$item->id}}">
             <i class="fa-solid fa-x"></i>
         </a>

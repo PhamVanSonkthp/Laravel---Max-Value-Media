@@ -20,10 +20,10 @@
         ${{ \App\Models\Formatter::formatNumber($item->total, 2) }}
     </td>
     <td>
-        ${{ \App\Models\Formatter::formatNumber($item->deduction, 2) }}
+        @include('administrator.components.require_input_text', ['no_margin' => true,'name' => "input_deduction",'id' => "input_deduction_". $item->id, 'value'=> $item->deduction ?? 0])
     </td>
     <td>
-        ${{ \App\Models\Formatter::formatNumber($item->invalid, 2) }}
+        @include('administrator.components.require_input_text', ['no_margin' => true,'name' => "input_invalid",'id' => "input_invalid_". $item->id, 'value'=> $item->invalid ?? 0])
     </td>
     <td>
         @include('administrator.components.modal_change_id', ['item' => $item, 'field' => 'payment_status_id', 'label' => optional($item->paymentStatus)->name, 'select2Items' => $paymentStatuses])
@@ -65,3 +65,53 @@
         @endif
     </td>
 </tr>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#input_invalid_{{$item->id}}").keypress(function (e) {
+            if (e.which == 13) {
+
+                callAjax(
+                    "PUT",
+                    "{{route('ajax.administrator.payments.update_invalid')}}",
+                    {
+                        "invalid": this.value,
+                        "id": "{{$item->id}}",
+                        "index": "{{$index}}",
+                    },
+                    (response) => {
+                        $('#tr_container_index_{{$index}}').after(response.row_html).remove()
+                    },
+                    (error) => {
+
+                    }
+                )
+            }
+        });
+
+        $("#input_deduction_{{$item->id}}").keypress(function (e) {
+            if (e.which == 13) {
+
+                callAjax(
+                    "PUT",
+                    "{{route('ajax.administrator.payments.update_deduction')}}",
+                    {
+                        "deduction": this.value,
+                        "id": "{{$item->id}}",
+                        "index": "{{$index}}",
+                    },
+                    (response) => {
+                        $('#tr_container_index_{{$index}}').after(response.row_html).remove()
+                    },
+                    (error) => {
+
+                    }
+                )
+            }
+        });
+
+    });
+
+</script>
