@@ -83,7 +83,7 @@ return [
     'zone_dimension_type_game_id' => 1,
 
 
-    'max_row_export' => 20000,
+    'max_row_export' => 10000,
     'items_show_in_table' => [
         50, 100, 500, 1000
     ],
