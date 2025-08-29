@@ -58,75 +58,88 @@ class PermissionGateAndPolicyAccess
         Gate::define('f_a_q_s-add', 'App\Policies\FAQPolicy@create');
         Gate::define('f_a_q_s-edit', 'App\Policies\FAQPolicy@update');
         Gate::define('f_a_q_s-delete', 'App\Policies\FAQPolicy@delete');
-    }public function defineGatePosts()
+    }
+
+    public function defineGatePosts()
     {
         Gate::define('posts-list', 'App\Policies\PostPolicy@view');
         Gate::define('posts-add', 'App\Policies\PostPolicy@create');
         Gate::define('posts-edit', 'App\Policies\PostPolicy@update');
         Gate::define('posts-delete', 'App\Policies\PostPolicy@delete');
-    }public function defineGatePostComments()
+    }
+
+    public function defineGatePostComments()
     {
         Gate::define('post_comments-list', 'App\Policies\PostCommentPolicy@view');
         Gate::define('post_comments-add', 'App\Policies\PostCommentPolicy@create');
         Gate::define('post_comments-edit', 'App\Policies\PostCommentPolicy@update');
         Gate::define('post_comments-delete', 'App\Policies\PostCommentPolicy@delete');
-    }public function defineGateReasonCancels()
+    }
+
+    public function defineGateReasonCancels()
     {
         Gate::define('reason_cancels-list', 'App\Policies\ReasonCancelPolicy@view');
         Gate::define('reason_cancels-add', 'App\Policies\ReasonCancelPolicy@create');
         Gate::define('reason_cancels-edit', 'App\Policies\ReasonCancelPolicy@update');
         Gate::define('reason_cancels-delete', 'App\Policies\ReasonCancelPolicy@delete');
-    }public function defineGateAppVersions()
+    }
+
+    public function defineGateAppVersions()
     {
         Gate::define('app_versions-list', 'App\Policies\AppVersionPolicy@view');
         Gate::define('app_versions-add', 'App\Policies\AppVersionPolicy@create');
         Gate::define('app_versions-edit', 'App\Policies\AppVersionPolicy@update');
         Gate::define('app_versions-delete', 'App\Policies\AppVersionPolicy@delete');
-    }public function defineGateUserWithdraws()
+    }
+
+    public function defineGateUserWithdraws()
     {
         Gate::define('user_withdraws-list', 'App\Policies\UserWithdrawPolicy@view');
         Gate::define('user_withdraws-add', 'App\Policies\UserWithdrawPolicy@create');
         Gate::define('user_withdraws-edit', 'App\Policies\UserWithdrawPolicy@update');
         Gate::define('user_withdraws-delete', 'App\Policies\UserWithdrawPolicy@delete');
-    }public function defineGateWebsites()
+    }
+
+    public function defineGateWebsites()
     {
         Gate::define('websites-list', 'App\Policies\WebsitePolicy@view');
         Gate::define('websites-add', 'App\Policies\WebsitePolicy@create');
         Gate::define('websites-edit', 'App\Policies\WebsitePolicy@update');
         Gate::define('websites-delete', 'App\Policies\WebsitePolicy@delete');
-    }public function defineGateReports()
+
+        Gate::define('websites-list-zone', 'App\Policies\WebsitePolicy@viewZone');
+        Gate::define('websites-add-zone', 'App\Policies\WebsitePolicy@createZone');
+        Gate::define('websites-edit-zone', 'App\Policies\WebsitePolicy@updateZone');
+        Gate::define('websites-delete-zone', 'App\Policies\WebsitePolicy@deleteZone');
+    }
+
+    public function defineGateReports()
     {
         Gate::define('reports-list', 'App\Policies\ReportPolicy@view');
         Gate::define('reports-add', 'App\Policies\ReportPolicy@create');
         Gate::define('reports-edit', 'App\Policies\ReportPolicy@update');
         Gate::define('reports-delete', 'App\Policies\ReportPolicy@delete');
 
-        Gate::define('reports-list-id', 'App\Policies\ReportPolicy@viewID');
-        Gate::define('reports-list-website_id', [ReportPolicy::class, 'viewWebsiteID']);
-        Gate::define('reports-list-user_id', [ReportPolicy::class, 'viewUserID']);
-        Gate::define('reports-list-zone_website_id', [ReportPolicy::class, 'viewZoneWebsiteID']);
-        Gate::define('reports-list-demand_id', [ReportPolicy::class, 'viewDemandID']);
-        Gate::define('reports-list-date', [ReportPolicy::class, 'viewDate']);
+        Gate::define('reports-list-demand', [ReportPolicy::class, 'viewDemand']);
+        Gate::define('reports-list-website', [ReportPolicy::class, 'viewWebsite']);
+        Gate::define('reports-list-zone_website', [ReportPolicy::class, 'viewZoneWebsite']);
         Gate::define('reports-list-d_request', [ReportPolicy::class, 'viewDRequest']);
-        Gate::define('reports-list-d_requests_empty', [ReportPolicy::class, 'viewDRequestsEmpty']);
         Gate::define('reports-list-d_impression', [ReportPolicy::class, 'viewDImpression']);
-        Gate::define('reports-list-d_impressions_unique', [ReportPolicy::class, 'viewDImpressionsUnique']);
+        Gate::define('reports-list-d_impressions_us_uk', [ReportPolicy::class, 'viewDImpressionsUSUK']);
+        Gate::define('reports-list-d_fill_rate', [ReportPolicy::class, 'viewDImpressionsFillRate']);
         Gate::define('reports-list-d_ecpm', [ReportPolicy::class, 'viewDEcpm']);
         Gate::define('reports-list-d_revenue', [ReportPolicy::class, 'viewDRevenue']);
         Gate::define('reports-list-count', [ReportPolicy::class, 'viewCount']);
         Gate::define('reports-list-share', [ReportPolicy::class, 'viewShare']);
+        Gate::define('reports-edit-count', [ReportPolicy::class, 'editCount']);
+        Gate::define('reports-edit-share', [ReportPolicy::class, 'editShare']);
+
         Gate::define('reports-list-p_impression', [ReportPolicy::class, 'viewPImpression']);
-        Gate::define('reports-list-trafq', [ReportPolicy::class, 'viewTrafq']);
         Gate::define('reports-list-p_ecpm', [ReportPolicy::class, 'viewPEcpm']);
         Gate::define('reports-list-p_revenue', [ReportPolicy::class, 'viewPRevenue']);
         Gate::define('reports-list-profit', [ReportPolicy::class, 'viewProfit']);
-        Gate::define('reports-list-sale_percent', [ReportPolicy::class, 'viewSalePercent']);
-        Gate::define('reports-list-system_percent', [ReportPolicy::class, 'viewSystemPercent']);
-        Gate::define('reports-list-tax', [ReportPolicy::class, 'viewTax']);
-        Gate::define('reports-list-fix_cost', [ReportPolicy::class, 'viewFixCost']);
-        Gate::define('reports-list-salary', [ReportPolicy::class, 'viewSalary']);
-        Gate::define('reports-list-deduction', [ReportPolicy::class, 'viewDeduction']);
-        Gate::define('reports-list-net_profit', [ReportPolicy::class, 'viewNetProfit']);
+        Gate::define('reports-list-status', [ReportPolicy::class, 'viewStatus']);
+
         Gate::define('reports-edit_import', [ReportPolicy::class, 'editImport']);
         Gate::define('reports-list_export', [ReportPolicy::class, 'listExport']);
 

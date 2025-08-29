@@ -4,7 +4,10 @@
         <strong>
             Traffic statistics
         </strong>
+
+        @can('websites-edit')
         <button onclick="onRefreshTraffic({{$item->id}})" class="btn btn-outline-success" title="Đo lại"><i class="fa-solid fa-arrows-rotate"></i></button>
+        @endcan
     </div>
 
 </div>

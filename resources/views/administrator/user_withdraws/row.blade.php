@@ -20,10 +20,19 @@
         ${{ \App\Models\Formatter::formatNumber($item->total, 2) }}
     </td>
     <td>
-        @include('administrator.components.require_input_text', ['no_margin' => true,'name' => "input_deduction",'id' => "input_deduction_". $item->id, 'value'=> $item->deduction ?? 0])
+        @can('user_withdraws-edit')
+            @include('administrator.components.require_input_text', ['no_margin' => true,'name' => "input_deduction",'id' => "input_deduction_". $item->id, 'value'=> $item->deduction ?? 0])
+        @else
+            @include('administrator.components.label', ['label'=> $item->deduction ?? 0])
+        @endcan
     </td>
     <td>
-        @include('administrator.components.require_input_text', ['no_margin' => true,'name' => "input_invalid",'id' => "input_invalid_". $item->id, 'value'=> $item->invalid ?? 0])
+        @can('user_withdraws-edit')
+            @include('administrator.components.require_input_text', ['no_margin' => true,'name' => "input_invalid",'id' => "input_invalid_". $item->id, 'value'=> $item->invalid ?? 0])
+        @else
+            @include('administrator.components.label', ['label'=> $item->invalid ?? 0])
+        @endcan
+
     </td>
     <td>
         @include('administrator.components.modal_change_id', ['item' => $item, 'field' => 'payment_status_id', 'label' => optional($item->paymentStatus)->name, 'select2Items' => $paymentStatuses])

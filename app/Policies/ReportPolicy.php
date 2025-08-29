@@ -37,9 +37,9 @@ class ReportPolicy
         return $user->checkPermissionAccess(config('permissions.access.reports-list-id'));
     }
 
-    public function viewWebsiteID(User $user)
+    public function viewWebsite(User $user)
     {
-        return $user->checkPermissionAccess(config('permissions.access.reports-list-website_id'));
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-website'));
     }
 
     public function viewUserID(User $user)
@@ -47,14 +47,14 @@ class ReportPolicy
         return $user->checkPermissionAccess(config('permissions.access.reports-list-user_id'));
     }
 
-    public function viewZoneWebsiteID(User $user)
+    public function viewZoneWebsite(User $user)
     {
         return $user->checkPermissionAccess(config('permissions.access.reports-list-zone_website_id'));
     }
 
-    public function viewDemandID(User $user)
+    public function viewDemand(User $user)
     {
-        return $user->checkPermissionAccess(config('permissions.access.reports-list-demand_id'));
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-demand'));
     }
 
     public function viewDate(User $user)
@@ -81,6 +81,14 @@ class ReportPolicy
     {
         return $user->checkPermissionAccess(config('permissions.access.reports-list-d_impressions_unique'));
     }
+    public function viewDImpressionsUSUK(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-d_impressions_us_uk'));
+    }
+    public function viewDImpressionsFillRate(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-d_fill_rate'));
+    }
 
     public function viewDEcpm(User $user)
     {
@@ -95,10 +103,18 @@ class ReportPolicy
     {
         return $user->checkPermissionAccess(config('permissions.access.reports-list-count'));
     }
+    public function editCount(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-edit-count'));
+    }
 
     public function viewShare(User $user)
     {
         return $user->checkPermissionAccess(config('permissions.access.reports-list-share'));
+    }
+    public function editShare(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-edit-share'));
     }
 
     public function viewPImpression(User $user)
@@ -124,6 +140,11 @@ class ReportPolicy
     public function viewProfit(User $user)
     {
         return $user->checkPermissionAccess(config('permissions.access.reports-list-profit'));
+    }
+
+    public function viewStatus(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.reports-list-status'));
     }
 
     public function viewSalePercent(User $user)

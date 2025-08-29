@@ -32,6 +32,11 @@ class WebsitePolicy
         return $user->checkPermissionAccess(config('permissions.access.websites-list'));
     }
 
+    public function viewZone(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.websites-list-zone'));
+    }
+
     /**
      * Determine whether the user can create models.
      *
@@ -41,6 +46,10 @@ class WebsitePolicy
     public function create(User $user)
     {
         return $user->checkPermissionAccess(config('permissions.access.websites-add'));
+    }
+    public function createZone(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.websites-add-zone'));
     }
 
     /**
@@ -54,6 +63,10 @@ class WebsitePolicy
     {
         return $user->checkPermissionAccess(config('permissions.access.websites-edit'));
     }
+    public function updateZone(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.websites-edit-zone'));
+    }
 
     /**
      * Determine whether the user can delete the model.
@@ -65,6 +78,10 @@ class WebsitePolicy
     public function delete(User $user)
     {
         return $user->checkPermissionAccess(config('permissions.access.websites-delete'));
+    }
+    public function deleteZone(User $user)
+    {
+        return $user->checkPermissionAccess(config('permissions.access.websites-delete-zone'));
     }
 
     /**

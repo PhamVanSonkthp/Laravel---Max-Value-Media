@@ -52,6 +52,7 @@ class UserPolicy
      */
     public function update(User $user)
     {
+
         return $user->checkPermissionAccess(config('permissions.access.users-edit'));
     }
 

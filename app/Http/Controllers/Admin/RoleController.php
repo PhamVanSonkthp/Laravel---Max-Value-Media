@@ -71,7 +71,7 @@ class RoleController extends Controller
 
     public function edit($id)
     {
-        $premissionsParent = $this->premission->where('parent_id', 0)->orderBy('display_name')->get();
+        $premissionsParent = $this->premission->where('parent_id', 0)->orderBy('id')->get();
         $role = $this->model->find($id);
         $permissionsChecked = $role->permissions;
         return view('administrator.'.$this->prefixView.'.edit', compact('premissionsParent', 'role', 'permissionsChecked'));

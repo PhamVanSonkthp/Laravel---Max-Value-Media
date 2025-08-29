@@ -68,13 +68,6 @@ class UserController extends Controller
 
         $items = $items->with(['manager', 'cs', 'websites', 'websites.statusWebsite', 'status']);
 
-        if (auth()->user()->is_admin == 1) {
-            $items = $items->where(function ($query) {
-                $query->where('manager_id', auth()->id())
-                    ->orWhere('cs_id', auth()->id());
-            });
-        }
-
         $managers = $this->managers();
 
         $items = $items->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());

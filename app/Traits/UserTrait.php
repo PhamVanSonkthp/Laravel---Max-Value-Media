@@ -8,23 +8,35 @@ use App\Models\UserStatus;
 trait UserTrait
 {
 
-    public static  function managers()
+    public static function managers()
     {
-        return User::select('users.*')
+        $users = User::select('users.*')
             ->join('role_user', 'role_user.user_id', '=', 'users.id')
-            ->where('role_user.role_id', config('_my_config.role_manager_id'))
-            ->get();
+            ->where('role_user.role_id', config('_my_config.role_manager_id'));
+        if (auth()->user()->is_admin == 1) {
+            $users = $users->where('users.id', auth()->id());
+        }
+
+        $users = $users->get();
+
+        return $users;
     }
 
-    public static  function cses()
+    public static function cses()
     {
-        return User::select('users.*')
+        $users = User::select('users.*')
             ->join('role_user', 'role_user.user_id', '=', 'users.id')
-            ->where('role_user.role_id', config('_my_config.role_cs_id'))
-            ->get();
+            ->where('role_user.role_id', config('_my_config.role_cs_id'));
+        if (auth()->user()->is_admin == 1) {
+            $users = $users->where('users.id', auth()->id());
+        }
+
+        $users = $users->get();
+
+        return $users;
     }
 
-    public static  function userStatus()
+    public static function userStatus()
     {
         return (new UserStatus())->get();
     }

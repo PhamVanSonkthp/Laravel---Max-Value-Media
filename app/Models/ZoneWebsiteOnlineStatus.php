@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 
-class ZoneWebsite extends Model implements Auditable
+class ZoneWebsiteOnlineStatus extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use HasFactory;
@@ -26,36 +26,9 @@ class ZoneWebsite extends Model implements Auditable
 
     // begin
 
-    public function zoneWebsiteOnlineStatus()
-    {
-        return $this->hasOne(ZoneWebsiteOnlineStatus::class, 'id', 'zone_online_status_id');
-    }
-
-    public function adsCampaign()
-    {
-        return $this->hasOne(AdsCampaign::class, 'zone_website_id', 'id');
-    }
-
-    public function adScore()
-    {
-        return $this->hasOne(AdScoreZone::class, 'zone_website_id', 'id');
-    }
-
-    public function zoneDimension()
-    {
-        return $this->hasOne(ZoneDimension::class, 'id', 'zone_dimension_id');
-    }
-
-    public function zoneStatus()
-    {
-        return $this->hasOne(ZoneStatus::class, 'id', 'zone_status_id');
-    }
-
-    public function website()
-    {
-        return $this->hasOne(Website::class, 'id', 'website_id');
-    }
-
+    //    public function one(){
+    //        return $this->hasOne(Model::class, 'id', 'local_id');
+    //    }
     //
     //    public function multiples(){
     //        return $this->hasMany(Model::class, 'id', 'local_id');
@@ -78,7 +51,7 @@ class ZoneWebsite extends Model implements Auditable
 
     public function avatar($size = "100x100")
     {
-        return Helper::getDefaultIcon($this, $size);
+       return Helper::getDefaultIcon($this, $size);
     }
 
     public function image()
@@ -91,9 +64,8 @@ class ZoneWebsite extends Model implements Auditable
         return Helper::images($this);
     }
 
-    public function createdBy()
-    {
-        return $this->hasOne(User::class, 'id', 'created_by_id');
+    public function createdBy(){
+        return $this->hasOne(User::class,'id','created_by_id');
     }
 
     public function searchByQuery($request, $queries = [], $randomRecord = null, $makeHiddens = null, $isCustom = false)
@@ -135,9 +107,9 @@ class ZoneWebsite extends Model implements Auditable
         return Helper::deleteManyByIds($this, $request, $forceDelete);
     }
 
-    public function findById($id)
-    {
+    public function findById($id){
         $item = $this->find($id);
         return $item;
     }
+
 }

@@ -1,21 +1,16 @@
 <tr class="" id="tr_container_index_{{$index}}" data-id="{{$item->id}}">
-    @foreach($showColums as $showColum)
-        <td>
-            {{$item->$showColum}}
-        </td>
-    @endforeach
 
-    @if(in_array("date",$modelColums))
-        <td>
-            {{\App\Models\Formatter::getOnlyDate($item->date)}}
-        </td>
-    @endif
-    @if(in_array("demand_id",$modelColums))
+    <td>
+        {{\App\Models\Formatter::getOnlyDate($item->date)}}
+    </td>
+
+    @can('reports-list-demand')
         <td>
             {{ optional($item->demand)->name}}
         </td>
-    @endif
-    @if(in_array("website_id",$modelColums))
+    @endcan
+
+    @can('reports-list-website')
         <td>
             <div style="max-width: 200px;overflow: hidden;">
                 <a target="_blank" href="{{ optional($item->website)->url}}">
@@ -23,81 +18,95 @@
                 </a>
             </div>
         </td>
-    @endif
+    @endcan
 
-    @if(in_array("zone_website_id",$modelColums))
+    @can('reports-list-zone_website')
         <td>
             {{ optional($item->zoneWebsite)->id}}
         </td>
         <td>
             {{ optional($item->zoneWebsite)->name}}
         </td>
-    @endif
-    @if(in_array("d_request",$modelColums))
+    @endcan
+
+    @can('reports-list-d_request')
         <td>
             {{\App\Models\Formatter::formatNumber(optional($item->reportWithAdserver())->d_request)}}
         </td>
-    @endif
-    @if(in_array("d_impression",$modelColums))
+    @endcan
+
+    @can('reports-list-d_impression')
         <td>
             {{\App\Models\Formatter::formatNumber($item->d_impression)}}
         </td>
-    @endif
+    @endcan
+
+    @can('reports-list-d_impression_us_uk')
         <td>
             {{\App\Models\Formatter::formatNumber($item->d_impression_us_uk)}}
         </td>
+    @endcan
+    @can('reports-list-d_fill_rate')
         <td>
-            {{\App\Models\Formatter::formatNumber(min($item->d_impression / max(1 , optional($item->reportWithAdserver())->d_request) * 100 , 100), 2)}}%
+            {{\App\Models\Formatter::formatNumber(min($item->d_impression / max(1 , optional($item->reportWithAdserver())->d_request) * 100 , 100), 2)}}
+            %
         </td>
-    @if(in_array("d_ecpm",$modelColums))
+    @endcan
+    @can('reports-list-d_ecpm')
         <td>
             ${{\App\Models\Formatter::formatNumber(round($item->d_ecpm, 2),2)}}
         </td>
-    @endif
-    @if(in_array("d_revenue",$modelColums))
+    @endcan
+
+    @can('reports-list-d_revenue')
         <td>
             ${{\App\Models\Formatter::formatNumber(round($item->d_revenue,2), 2)}}
         </td>
-    @endif
-    @if(in_array("count",$modelColums))
+    @endcan
+
+    @can('reports-list-count')
         <td style="white-space: normal; word-wrap: break-word;">
-            @if(auth()->user()->can('reports-edit'))
+            @can('reports-edit-count')
                 @include('administrator.components.require_input_number_add_on', ['no_margin' => true,'name' => "input_count",'id' => "input_count_". $item->id, 'value'=> $item->count])
             @else
                 @include('administrator.components.label', ['label'=> $item->count])
-            @endif
+            @endcan
         </td>
-    @endif
-    @if(in_array("share",$modelColums))
+    @endcan
+
+    @can('reports-list-share')
         <td style="white-space: normal; word-wrap: break-word;">
-            @if(auth()->user()->can('reports-edit'))
+            @can('reports-edit-share')
                 @include('administrator.components.require_input_number_add_on', ['no_margin' => true,'name' => "input_share_". $item->id,'id' => "input_share_". $item->id, 'value'=> $item->share])
             @else
                 @include('administrator.components.label', ['label'=> $item->share])
             @endif
         </td>
-    @endif
-    @if(in_array("p_impression",$modelColums))
+    @endcan
+    @can('reports-list-p_impression')
         <td>
             {{\App\Models\Formatter::formatNumber($item->p_impression)}}
         </td>
-    @endif
-    @if(in_array("p_ecpm",$modelColums))
+    @endcan
+
+    @can('reports-list-p_ecpm')
         <td>
             ${{round($item->p_ecpm,2)}}
         </td>
-    @endif
-    @if(in_array("p_revenue",$modelColums))
+    @endcan
+
+    @can('reports-list-p_revenue')
         <td>
             ${{\App\Models\Formatter::formatNumber(round($item->p_revenue,2),2)}}
         </td>
-    @endif
-    @if(in_array("profit",$modelColums))
+    @endcan
+    @can('reports-list-profit')
         <td>
             ${{\App\Models\Formatter::formatNumber(round($item->profit,2),2)}}
         </td>
-    @endif
+    @endcan
 
+    @can('reports-list-status')
         <td>
             @include('administrator.components.label', ['label' => optional($item->reportStatus)->name,'style' => 'display: inline-block;
                 margin-top: 6px;
@@ -107,6 +116,7 @@
                 font-weight: 600;
                 color: white !important;background: '.optional($item->reportStatus)->background_color.';'])
         </td>
+    @endcan
 
     <script>
 

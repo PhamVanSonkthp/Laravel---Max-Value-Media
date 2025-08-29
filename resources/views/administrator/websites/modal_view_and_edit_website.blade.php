@@ -44,9 +44,13 @@
         @include('administrator.components.textarea',['label' => 'Note', 'name' => 'note', 'id' => 'modal_view_and_edit_website_input_note'])
     </div>
 
+    @can('websites-edit')
+
     <div class="float-end">
         <button class="btn btn-primary mt-3" onclick="onUpdateWebsite({{$item->id}})">Save</button>
     </div>
+
+    @endcan
 
 
 </div>

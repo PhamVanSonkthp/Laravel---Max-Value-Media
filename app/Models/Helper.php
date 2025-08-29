@@ -104,10 +104,10 @@ class Helper extends Model
         $columns = Schema::getColumnListing($object->getTableName());
         $query = $object->query();
 
-        $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name','description'];
+        $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name', 'description'];
         $searchColumnBanned = ['limit', 'page', 'with_trashed'];
 
-        if ($request){
+        if ($request) {
             foreach ($request->all() as $key => $item) {
                 if (is_string($item)) {
                     $item = trim($item);
@@ -272,6 +272,8 @@ class Helper extends Model
             }
         }
 
+        $query = self::permission($object->getTableName(), $query);
+
         if ($is_custom) {
             return $query;
         }
@@ -280,7 +282,8 @@ class Helper extends Model
             $query = $query->orderBy('priority', 'DESC');
         }
 
-        $items = $query->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
+
+        $items = $query->orderBy('created_at', 'DESC')->orderBy($object->getTableName() . '.id', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
 
         if (!empty($make_hiddens) && is_array($make_hiddens)) {
             foreach ($items as $item) {
@@ -288,6 +291,29 @@ class Helper extends Model
             }
         }
         return $items;
+    }
+
+    static function permission($table, $query)
+    {
+
+        if (auth()->user()->is_admin == 1) {
+            switch ($table) {
+                case "users":
+                    $query = $query->where(function ($query) use ($table) {
+                        $query->where($table . '.manager_id', auth()->id())
+                            ->orWhere($table . '.cs_id', auth()->id());
+                    });
+                    break;
+            }
+            switch ($table) {
+                case "websites":
+                    $query = $query->where($table . '.cs_id', auth()->id());
+                    break;
+            }
+        }
+
+
+        return $query;
     }
 
     public static function roundDown($decimal, $precision)
@@ -332,7 +358,7 @@ class Helper extends Model
         $searchLikeColumns = ['name', 'title', 'search_query', 'id', 'sku', 'phone', 'email', 'code', 'short_name'];
         $searchColumnBanned = ['limit', 'page', 'with_trashed'];
 
-        if ($request){
+        if ($request) {
             foreach ($request->all() as $key => $item) {
                 if (is_string($item)) {
                     $item = trim($item);
@@ -455,7 +481,7 @@ class Helper extends Model
         }
 
 
-        if ($request){
+        if ($request) {
             if ($request->trash) {
                 if (in_array('deleted_at', $columns)) {
                     $query = $query->onlyTrashed();
@@ -477,7 +503,7 @@ class Helper extends Model
             }
         }
 
-        return $query->latest()->limit(10000)->get();
+        return $query->latest()->limit(config('_my_config.max_row_export'))->get();
     }
 
     public static function storeByQuery($object, $request, $data_create)
@@ -974,14 +1000,14 @@ class Helper extends Model
                 return ($node->attr($attr));
             });
 
-            if ($one_tag){
-                if (count($datas) > 0){
+            if ($one_tag) {
+                if (count($datas) > 0) {
                     return $datas;
                 }
-            }else{
+            } else {
                 return $datas;
             }
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
 
         }
 

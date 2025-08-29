@@ -5,22 +5,25 @@ namespace App\Exports;
 use App\Models\Formatter;
 use App\Models\Helper;
 use App\Models\Report;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
-use Maatwebsite\Excel\Events\AfterSheet;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Color;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 
-class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, WithStrictNullComparison, WithMapping, WithEvents
+class ReportExport implements FromQuery, WithMapping, WithHeadings, WithChunkReading, ShouldQueue, WithStrictNullComparison
 {
-    use RegistersEventListeners;
+    use Dispatchable, InteractsWithQueue, Queueable;
 
     private $request;
     private $model;
@@ -28,12 +31,15 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
     private $heading;
     private $approvedColums;
     private $currentRow = 1;
+    private $perChunk = 100;
+    private $maxRows;
 
     public function __construct($request, $queries = [], $heading = null, $approvedColums = null)
     {
         $this->request = $request;
         $this->model = new Report();
         $this->queries = $queries;
+        $this->maxRows = config('_my_config.max_row_export');
 
         $heading = [
             "ID",
@@ -60,42 +66,10 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
         $this->approvedColums = $approvedColums;
     }
 
-    /**
-     * @return Collection
-     */
-    public function collection()
+
+    public function query()
     {
-        $items = Helper::searchByQuery($this->model, $this->request, $this->queries, null, null, true);
-
-        $items = $items->orderBy('date', 'DESC')->orderBy('id', 'DESC')->paginate(config('_my_config.max_row_export'))->appends(request()->query());
-
-
-        $itemFilters = [];
-
-        foreach ($items as $key => $item) {
-            $itemFilters[] = [
-                'id' => $item->id,
-                'date' => $item->date,
-                'demand_name' => optional($item->demand)->name,
-                'site' => optional($item->website)->name,
-                'zone_id' => $item->zone_website_id,
-                'zone_name' => optional($item->zoneWebsite)->name,
-                'd_request' => optional($item->reportWithAdserver())->d_request ?? 0,
-                'd_impression' => $item->d_impression,
-                'd_impression_us_uk' => $item->d_impression_us_uk,
-                'd_fill_rate' => Formatter::formatNumber(min($item->d_impression / max(1 , $item->d_request ?? optional($item->reportWithAdserver())->d_request) * 100 , 100), 2) . "%",
-                'd_ecpm' => $item->d_ecpm,
-                'd_revenue' => $item->d_revenue,
-                'count' => $item->count,
-                'share' => $item->share,
-                'p_impression' => $item->p_impression,
-                'p_ecpm' => $item->p_ecpm,
-                'p_revenue' => $item->p_revenue,
-                'profit' => $item->profit,
-            ];
-        }
-
-        return collect($itemFilters);
+        return Helper::searchByQuery($this->model, $this->request, $this->queries, null, null, true)->with(['zoneWebsite', 'website', 'demand'])->limit($this->maxRows);;
     }
 
 
@@ -103,23 +77,20 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
     {
         $this->currentRow++;
         return [
-            $row['id'],
-            $row['date'],
-            $row['demand_name'],
-            $row['site'],
-            $row['zone_id'],
-            $row['zone_name'],
-            $row['d_request'],
-            $row['d_impression'],
-            $row['d_impression_us_uk'],
-            $row['d_fill_rate'],
-            $row['d_ecpm'],
-            $row['d_revenue'],
-            $row['count'],
-            $row['share'],
-//            $row['p_impression'],
-//            $row['p_ecpm'],
-//            $row['p_revenue'],
+            $row->id,
+            $row->date,
+            optional($row->demand)->name,
+            optional($row->website)->name,
+            $row->zone_website_id,
+            optional($row->zoneWebsite)->name,
+            optional($row->reportWithAdserver())->d_request ?? 0,
+            $row->d_impression,
+            $row->d_impression_us_uk,
+            Formatter::formatNumber(min($row->d_impression / max(1, optional($row->reportWithAdserver())->d_request) * 100, 100), 2) . "%",
+            $row->d_ecpm,
+            $row->d_revenue,
+            $row->count,
+            $row->share,
             "=ROUND(H{$this->currentRow}*M{$this->currentRow}/100,0)",
             "=ROUND(K{$this->currentRow}*N{$this->currentRow}/100,2)",
             "=ROUND(O{$this->currentRow}*P{$this->currentRow}/1000,2)",
@@ -132,24 +103,9 @@ class ReportExport implements FromCollection, ShouldAutoSize, WithHeadings, With
         return $this->heading;
     }
 
-    public static function afterSheet(AfterSheet $event)
-    {
-        $sheet = $event->sheet->getDelegate(); // Get the underlying PhpSpreadsheet sheet object
 
-        // Apply styling to the first row (row 1)
-        $sheet->getStyle('1')->getFill()
-            ->setFillType(Fill::FILL_SOLID)
-            ->getStartColor()->setARGB(Color::COLOR_RED);
-    }
-
-    public function registerEvents(): array
+    public function chunkSize(): int
     {
-        return [
-            AfterSheet::class => function (AfterSheet $event) {
-                /** @var Worksheet $sheet */
-                $sheet = $event->sheet->getDelegate();
-                $sheet->freezePane('A2'); // Freezes the row above A2, which is the first row
-            },
-        ];
+        return $this->perChunk; // fetch 100 rows per chunk
     }
 }

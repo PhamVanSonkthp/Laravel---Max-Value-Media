@@ -282,8 +282,11 @@
                 <div class="modal-header">
                     <div class="d-flex gap-1">
                         <h5 class="modal-title" id="modal_view_all_zone_title"></h5>
+
+                        @can('websites-add-zone')
                         <button onclick="onShowModalCreateZone()" class="btn btn-outline-success float-end"
                                 title="Create zone"><i class="fa-solid fa-plus"></i></button>
+                        @endcan
                     </div>
 
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

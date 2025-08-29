@@ -4,10 +4,18 @@
     </td>
     <td>{{$item->id}}</td>
     <td>
-        @include('administrator.components.modal_change_id', ['label' => optional($item->manager)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $managers, 'field' => 'manager_id', 'item' => $item,])
+        @if(auth()->user()->is_admin == 2)
+            @include('administrator.components.modal_change_id', ['label' => optional($item->manager)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $managers, 'field' => 'manager_id', 'item' => $item,])
+        @else
+            @include('administrator.components.label', ['label' => optional($item->manager)->name])
+        @endif
     </td>
     <td>
-        @include('administrator.components.modal_change_id', ['label' => optional($item->cs)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $cses, 'field' => 'cs_id', 'item' => $item,])
+        @if(auth()->user()->is_admin == 2)
+            @include('administrator.components.modal_change_id', ['label' => optional($item->cs)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $cses, 'field' => 'cs_id', 'item' => $item,])
+        @else
+            @include('administrator.components.label', ['label' => optional($item->cs)->name])
+        @endif
     </td>
     <td>{{$item->email}}</td>
     <td>
@@ -22,7 +30,10 @@
                         </li>
                     @else
                         <li>
-                            +{{count($item->websites) - $indexWebsite}} <button onclick="onViewAllWebsite({{$item->id}})" class="btn btn-outline-primary">(View All)</button>
+                            +{{count($item->websites) - $indexWebsite}}
+                            <button onclick="onViewAllWebsite({{$item->id}})" class="btn btn-outline-primary">(View
+                                All)
+                            </button>
                         </li>
                         @break
                     @endif
@@ -30,17 +41,23 @@
             </ul>
         </div>
         <div class="text-center">
-            <a title="Add Website" onclick="onShowModalAddWebsite({{$item->id}})" class="btn btn-outline-success"><i class="fa-solid fa-plus"></i></a>
+            <a title="Add Website" onclick="onShowModalAddWebsite({{$item->id}})" class="btn btn-outline-success"><i
+                    class="fa-solid fa-plus"></i></a>
         </div>
     </td>
-
     <td>
-        <div id="toucher_status_{{$item->id}}"
-             onclick="onEditStatus('toucher_status_{{$item->id}}','{{$item->id}}','{{ optional($item->status)->id  }}' )"
-             style="cursor: pointer;display: flex;" data-bs-toggle="modal"
-             data-bs-target="#editStatus">
-            {!! \App\Models\UserStatus::htmlStatus( optional($item->status)->name ) !!}
-        </div>
+
+        @can('users-edit')
+            <div id="toucher_status_{{$item->id}}"
+                 onclick="onEditStatus('toucher_status_{{$item->id}}','{{$item->id}}','{{ optional($item->status)->id  }}' )"
+                 style="cursor: pointer;display: flex;" data-bs-toggle="modal"
+                 data-bs-target="#editStatus">
+                {!! \App\Models\UserStatus::htmlStatus( optional($item->status)->name ) !!}
+            </div>
+        @else
+            {{optional($item->status)->name}}
+        @endcan
+
     </td>
     <td>
         <strong>
@@ -51,36 +68,44 @@
 
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
     <td>
+        @can('reports-list')
         <a href="{{route('administrator.reports.index', ['user_id' => $item->id])}}" title="Report"
            class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-chart-line"></i>
         </a>
+        @endcan
 
         <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#userModal"
                 data-userid="{{ $item->id }}" data-username="{{ $item->name }}">
             <i class="fa-solid fa-user"></i>
         </button>
 
+
+        @can('websites-list')
         <a href="{{route('administrator.websites.index', ['user_id' => $item->id])}}" title="Websites"
            class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-globe"></i>
         </a>
+        @endcan
 
-        <a id="editer_status_{{$item->id}}"
-           title="Edit"
-           onclick="onDetail('toucher_status_{{$item->id}}','{{$item->id}}')"
-           href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id])}}"
-           data-bs-toggle="modal"
-           data-bs-target="#editUserModal"
-           class="btn btn-outline-primary btn-sm edit"><i
-                class="fa-solid fa-pen"></i></a>
+        @can('users-edit')
+            <a id="editer_status_{{$item->id}}"
+               title="Edit"
+               onclick="onDetail('toucher_status_{{$item->id}}','{{$item->id}}')"
+               href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id])}}"
+               data-bs-toggle="modal"
+               data-bs-target="#editUserModal"
+               class="btn btn-outline-primary btn-sm edit"><i
+                    class="fa-solid fa-pen"></i></a>
+        @endcan
 
 
+        @can('users-delete')
         <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}" title="Delete"
            data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
            class="btn btn-outline-danger btn-sm delete action_delete">
             <i class="fa-solid fa-x"></i>
         </a>
-
+        @endcan
     </td>
 </tr>
