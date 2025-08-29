@@ -16,10 +16,6 @@ class DashboardController extends Controller
     {
         if (auth()->check()) {
 
-            if (auth()->user()->is_admin != 0){
-                return redirect()->route('administrator.dashboard.index');
-            }
-
             $totalUser = User::where('is_admin', 0)->count();
             $totalWebsite = Website::count();
             $totalZone = ZoneWebsite::count();

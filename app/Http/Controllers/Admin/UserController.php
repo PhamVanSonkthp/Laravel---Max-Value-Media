@@ -40,6 +40,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+
         $queries = [];
         $queries['is_admin'] = 0;
 

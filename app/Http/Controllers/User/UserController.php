@@ -29,7 +29,7 @@ class UserController extends Controller
     public function dashboard(Request $request)
     {
         if (auth()->check()) {
-            if (optional(auth()->user())->is_admin == 1) {
+            if (optional(auth()->user())->is_admin != 0) {
                 return redirect()->route('administrator.dashboard.index');
             }
         }
