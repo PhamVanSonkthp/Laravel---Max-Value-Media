@@ -16,21 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/assets/{type}/{user_id}/{id}/{size}/{slug}', [
-    'uses' => 'App\Http\Controllers\ImagesController@show',
-]);
-
-Route::prefix('/demo')->group(function () {
-    Route::get('/', function (Request $request) {
-    });
-});
-
-Route::prefix('/news')->group(function () {
-    Route::get('/{id}', [
-        'as' => 'news.detail',
-        'uses' => 'App\Http\Controllers\NewsController@detail',
-    ]);
-});
+//Route::get('/assets/{type}/{user_id}/{id}/{size}/{slug}', [
+//    'uses' => 'App\Http\Controllers\ImagesController@show',
+//]);
 
 Route::get('/web/robots.txt', function () {
     $robots = new \Mguinea\Robots\Robots;
