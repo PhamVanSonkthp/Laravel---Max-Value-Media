@@ -299,7 +299,7 @@
     </div>
 
     <!-- Modal Create zone -->
-    <div class="modal fade" id="modal_create_zone" aria-hidden="true" style="z-index:1051;">
+    <div class="modal fade" id="modal_create_zone" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -317,14 +317,29 @@
     </div>
 
     <!-- Modal change status -->
-    <div class="modal fade" id="modal_change_status" aria-hidden="true" style="z-index:1051;">
+    <div class="modal fade" id="modal_change_status" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal_change_status_title">Infor</h5>
+                    <h5 class="modal-title" id="modal_change_status_title"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="container_modal_change_status">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal check status zone online status -->
+    <div class="modal fade" id="modal_check_status_zone_online" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal_check_status_zone_online_title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_modal_check_status_zone_online">
 
                 </div>
             </div>
@@ -368,6 +383,11 @@
 
             const modal_create_zone = document.querySelector('#modal_create_zone');
             modal_create_zone.addEventListener('hidden.bs.modal', function () {
+                showModal('modal_view_all_zone');
+            });
+
+            const modal_check_status_zone_online = document.querySelector('#modal_check_status_zone_online');
+            modal_check_status_zone_online.addEventListener('hidden.bs.modal', function () {
                 showModal('modal_view_all_zone');
             });
 
@@ -733,6 +753,62 @@
                 (error) => {
 
                 }
+            )
+        }
+
+        function onShowModalCheckStatusZoneOnline(zone_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.zone_websites.modal_check_status_zone_online')}}",
+                {
+                    id: zone_id,
+                    modal_id: 'modal_check_status_zone_online',
+                    is_hide_all_pre_modal: true,
+                },
+                (response) => {
+                    showModal('modal_check_status_zone_online');
+                    $('#modal_check_status_zone_online_title').html(response.data.item.name);
+                    $('#container_modal_check_status_zone_online').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onCheckStatusZoneOnline(zone_id) {
+            showLoading("Checking Zone...");
+            processCheckStatusZoneOnline(zone_id);
+        }
+
+        function processCheckStatusZoneOnline(zone_id) {
+
+            callAjax(
+                "POST",
+                "{{route('ajax.administrator.zone_websites.check_status_zone_online')}}",
+                {
+                    id: zone_id,
+                    url: $('#modal_check_status_zone_online_input_url').val(),
+                },
+                (response) => {
+                    if (response.code == 219) {
+                        setTimeout(processCheckStatusZoneOnline(zone_id), 5000);
+                    } else {
+                        if (response.is_success || response.code == 200) {
+                            $('#modal_view_all_zones_tr_row_' + zone_id).after(response.data.html).remove();
+                            hideLoading();
+                            hideModal('modal_check_status_zone_online');
+                            showToastSuccess(response.data.item.zone_website_online_status.name);
+                            onRefreshRow(response.data.website.id);
+                        } else {
+                            showToastError();
+                        }
+                    }
+
+                },
+                (error) => {
+
+                }, false
             )
         }
 

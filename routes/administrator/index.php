@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
-Route::middleware(['auth'])->get('/admin/user-view/{id}', function($id) {
+Route::middleware(['auth','admin'])->get('/admin/user-view/{id}', function($id) {
 
     session(['impersonate' => auth()->id()]);
     $user = User::findOrFail($id);
@@ -42,7 +42,7 @@ Route::get('/admin/logout', [
     'uses' => '\App\Http\Controllers\Admin\AdminController@logout'
 ]);
 
-Route::group(['prefix' => 'administrator', 'middleware' => ['cacheResponse:600']], function () {
+Route::group(['prefix' => 'administrator', 'middleware' => ['admin']], function () {
     Route::prefix('impersonate')->group(function () {
 
         Route::get('/', [

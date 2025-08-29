@@ -25,6 +25,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('job:create_check_ads_website')
             ->everyMinute()->withoutOverlapping();
 
+        $schedule->command('job:check_status_zone_online')
+            ->everyMinute()->withoutOverlapping();
+
         $schedule->command('job:create_check_verify_website')
             ->everyMinute()->withoutOverlapping();
 
@@ -43,23 +46,15 @@ class Kernel extends ConsoleKernel
         $schedule->command('email:job_email')
             ->everyMinute()->withoutOverlapping();
 
-//        $schedule->command('cache:clear-expired')
-//            ->timezone('Asia/Ho_Chi_Minh')
-//            ->dailyAt('00:00');
-//
-//        $schedule->command('schedule:sitemap')
-//            ->timezone('Asia/Ho_Chi_Minh')
-//            ->dailyAt('00:00');
-//
-//        $schedule->command('backup:run')
-//            ->timezone('Asia/Ho_Chi_Minh')
-//            ->dailyAt('00:00');
+        $schedule->command('cache:clear-expired')
+            ->hourly();
 
-        // duplicate with cores of servers
-//        $schedule->command('queue:listen --timeout=60')
-//            ->everyMinute()
-//            ->withoutOverlapping()
-//            ->sendOutputTo(storage_path() . '/logs/queue-jobs.log');
+        $schedule->command('schedule:sitemap')
+            ->dailyAt('00:00');
+//
+        $schedule->command('backup:run')
+            ->dailyAt('00:00');
+
         //
     }
 

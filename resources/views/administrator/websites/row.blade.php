@@ -8,8 +8,6 @@
         @else
             @include('administrator.components.label', ['label' => optional(optional($item->user)->manager)->name])
         @endif
-
-
     </td>
     <td>
         @if(auth()->user()->is_admin == 2)
@@ -33,7 +31,6 @@
         </div>
     </td>
     <td>
-
         @can('websites-list-zone')
         <div onclick="onViewAllZone({{$item->id}})" style="cursor: pointer;">
             @if(count($item->zoneWebsites))
@@ -41,7 +38,7 @@
                     @foreach($item->zoneWebsites as $index => $zoneWebsites)
                         @if($index < 3)
                             <li>
-                                @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($zoneWebsites->name), 'style' => 'color: '.optional($zoneWebsites->zoneStatus)->background_color.';'])
+                                @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($zoneWebsites->name), 'style' => 'color: '.optional($zoneWebsites->zoneStatus)->background_color.';','title' => ''])
 
                                 @include('administrator.components.label', ['title' => optional($zoneWebsites->zoneWebsiteOnlineStatus)->name, 'style' => 'display:inline-block;width:8px;height:8px;border-radius:50%;background:'.optional($zoneWebsites->zoneWebsiteOnlineStatus)->background_color.';vertical-align:middle;margin-right:6px;'])
                             </li>

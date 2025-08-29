@@ -1014,4 +1014,21 @@ class Helper extends Model
 
         return null;
     }
+
+    public static function isHasTagFromURL($url, $tag)
+    {
+        try {
+            $response = Http::get($url);
+            if ($response->ok()) {
+                $html = $response->body();
+
+                return str_contains($html, $tag);
+            }
+        } catch (\Exception $exception) {
+
+        }
+
+
+        return false;
+    }
 }

@@ -10,6 +10,7 @@ use App\Jobs\QueueAdserverCreateWebsite;
 use App\Jobs\QueueAdserverCreateZone;
 use App\Jobs\QueueAdserverUpdateAdsCampaign;
 use App\Jobs\QueueAdserverUpdateStatusZone;
+use App\Jobs\QueueCheckZoneStatusOnline;
 use App\Models\AdScoreZoneHistory;
 use App\Models\CategoryWebsite;
 use App\Models\Chat;
@@ -61,7 +62,7 @@ use Illuminate\Support\Facades\View;
 
 // ajax
 Route::prefix('ajax/administrator')->group(function () {
-    Route::group(['middleware' => ['auth']], function () {
+    Route::group(['middleware' => ['auth','admin']], function () {
 
         Route::prefix('model')->group(function () {
 
@@ -169,6 +170,16 @@ Route::prefix('ajax/administrator')->group(function () {
                 ]));
             })->name('ajax.administrator.zone_websites.modal_detail_zone');
 
+            Route::get('modal_check_status_zone_online', function (Request $request) {
+
+                $item = ZoneWebsite::findOrFail($request->id);
+
+                return response()->json(Helper::successAPI(200, [
+                    'item' => $item,
+                    'html' => View::make('administrator.websites.modal_check_status_zone_online', ['item' => $item,'hideAllPreModal' => $request->is_hide_all_pre_modal])->render()
+                ]));
+            })->name('ajax.administrator.zone_websites.modal_check_status_zone_online');
+
             Route::get('modal_create', function (Request $request) {
 
                 $website = Website::findOrFail($request->website_id);
@@ -247,6 +258,43 @@ Route::prefix('ajax/administrator')->group(function () {
                 return response()->json(Helper::successAPI(219, [], 'Processing'));
 
             })->name('ajax.administrator.zone_websites.store');
+
+            Route::post('check_status_zone_online', function (Request $request) {
+
+                $request->validate([
+                    'id' => 'required',
+                ]);
+
+                $item = ZoneWebsite::findOrFail($request->id);
+
+                $keyCache = WebsiteTrait::$KEY_CACHE_CHECK_STATUS_ZONE_ONLINE
+                    . $request->id;
+                $cacheValue = Cache::get($keyCache);
+
+                if (!empty($cacheValue)) {
+                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
+                        goto skip;
+                    }
+
+                    $item = ZoneWebsite::find($cacheValue['zone_id']);
+                    $zoneStatuses = ZoneStatus::all();
+                    Cache::forget($keyCache);
+
+                    return response()->json(Helper::successAPI(200, [
+                        'item' => $item,
+                        'website' => $item->website,
+                        'zone_website_online_status' => $item->zoneWebsiteOnlineStatus,
+                        'html' => View::make('administrator.websites.modal_zone_item_zone', ['item' => $item,'zoneStatuses' => $zoneStatuses])->render()
+                    ]));
+                }
+
+                QueueCheckZoneStatusOnline::dispatch($keyCache, $item, $request->url);
+                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
+
+                skip:
+                return response()->json(Helper::successAPI(219, [], 'Processing'));
+
+            })->name('ajax.administrator.zone_websites.check_status_zone_online');
 
             Route::put('update_status', function (Request $request) {
 

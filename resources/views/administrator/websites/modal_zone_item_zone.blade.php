@@ -5,20 +5,11 @@
     <td>
         @include('administrator.components.label', ['label' => $item->name])
 
-        @include('administrator.components.label', ['title' => optional($item->zoneWebsiteOnlineStatus)->name, 'style' => 'display:inline-block;width:8px;height:8px;border-radius:50%;background:'.optional($item->zoneWebsiteOnlineStatus)->background_color.';vertical-align:middle;margin-right:6px;'])
+        @include('administrator.components.label', ['onclick' => 'onShowModalCheckStatusZoneOnline('.$item->id.')','title' => optional($item->zoneWebsiteOnlineStatus)->name, 'style' => 'display:inline-block;width:8px;height:8px;border-radius:50%;background:'.optional($item->zoneWebsiteOnlineStatus)->background_color.';vertical-align:middle;margin-right:6px;'])
     </td>
     <td>
         <div>
-            @include('administrator.websites.panel_zone_item_zone_modal_change_status_id', ['label' => optional($item->zoneStatus)->name, 'select2Items' => $zoneStatuses, 'field' => 'zone_status_id', 'item' => $item,
-    'style' => 'display: inline-block;
-    margin-top: 6px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 600;
-    color: white !important;background: '.optional($item->zoneStatus)->background_color.';'])
-
-
+            @include('administrator.websites.panel_zone_item_zone_modal_change_status_id', ['label' => optional($item->zoneStatus)->name, 'select2Items' => $zoneStatuses, 'field' => 'zone_status_id', 'item' => $item,'style' => 'display: inline-block;margin-top: 6px;padding: 2px 8px;border-radius: 999px;font-size: 11px;font-weight: 600;color: white !important;background: '.optional($item->zoneStatus)->background_color.';'])
         </div>
     </td>
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>

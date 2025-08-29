@@ -779,7 +779,7 @@ function showToastSuccess(content = null, duration = null){
 function showToastError(content = null, duration = null){
     const toast = Toastify({
         position: "center",
-        text: content ?? "Có lỗi",
+        text: content ?? "Error",
         duration: duration ?? 3000,
         background: "linear-gradient(to right, #ff5f6d, #ffc371)"
     });

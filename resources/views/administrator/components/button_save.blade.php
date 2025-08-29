@@ -1,4 +1,4 @@
 <div style="position: relative;">
-    <button id="{{isset($id) ? $id : \App\Models\Helper::randomString()}}" type="submit" class="btn btn-primary mt-3">Save</button>
+    <button onclick="{{isset($onclick) ? $onclick : ''}}" id="{{isset($id) ? $id : \App\Models\Helper::randomString()}}" type="submit" class="btn btn-primary mt-3">{{isset($label) ? $label : 'Save'}}</button>
 </div>
 

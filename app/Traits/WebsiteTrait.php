@@ -8,6 +8,7 @@ use App\Models\StatusWebsiteReason;
 
 trait WebsiteTrait
 {
+    public static $KEY_CACHE_CHECK_STATUS_ZONE_ONLINE = "KEY_CACHE_CHECK_STATUS_ZONE_ONLINE";
 
     public static function statusWebsites()
     {
