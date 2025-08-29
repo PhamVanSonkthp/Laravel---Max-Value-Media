@@ -42,17 +42,17 @@ Route::get('/admin/logout', [
     'uses' => '\App\Http\Controllers\Admin\AdminController@logout'
 ]);
 
+Route::get('administrator/leave', [
+    'as' => 'administrator.impersonate.leave',
+    'uses' => 'App\Http\Controllers\Admin\AdminController@leave',
+]);
+
 Route::group(['prefix' => 'administrator', 'middleware' => ['admin']], function () {
     Route::prefix('impersonate')->group(function () {
 
         Route::get('/', [
             'as' => 'administrator.impersonate',
             'uses' => 'App\Http\Controllers\Admin\AdminController@impersonate',
-        ]);
-
-        Route::get('leave', [
-            'as' => 'administrator.impersonate.leave',
-            'uses' => 'App\Http\Controllers\Admin\AdminController@leave',
         ]);
 
     });
