@@ -1,17 +1,19 @@
 <?php
 
 use App\Models\Report;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 Route::middleware(['auth'])->get('/admin/user-view/{id}', function($id) {
 
     session(['impersonate' => auth()->id()]);
-    $user = \App\Models\User::findOrFail($id);
+    $user = User::findOrFail($id);
 
-    \Illuminate\Support\Facades\Auth::logout();
-    \Illuminate\Support\Facades\Auth::login($user);
+    Auth::logout();
+    Auth::login($user);
 
     if (auth()->check()) {
         if (optional(auth()->user())->is_admin == 1) {
