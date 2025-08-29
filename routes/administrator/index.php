@@ -32,7 +32,7 @@ Route::middleware(['auth'])->get('/admin/user-view/{id}', function($id) {
 
 })->name('admin.userView');
 
-Route::get('/admin', 'App\Http\Controllers\Admin\AdminController@loginAdmin')->name('login');
+Route::get('/admin', 'App\Http\Controllers\Admin\AdminController@loginAdmin')->name('loginAdmin');
 Route::post('/admin', 'App\Http\Controllers\Admin\AdminController@postLoginAdmin')->name('postLoginAdmin');
 
 Route::get('/admin/logout', [
