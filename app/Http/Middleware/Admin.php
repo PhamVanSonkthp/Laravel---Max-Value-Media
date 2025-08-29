@@ -16,9 +16,9 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
-
-        if ($request->user()->is_admin == 0) {
-            abort(403, 'Unauthorized.');
+        if (optional($request->user())->is_admin == 0) {
+            optional($request->user())->logout();
+            return redirect()->route('loginAdmin');
         }
 
         return $next($request);
