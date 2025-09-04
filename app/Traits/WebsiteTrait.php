@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\Report;
 use App\Models\StatusWebsite;
 use App\Models\StatusWebsiteReason;
+use App\Models\Website;
 
 trait WebsiteTrait
 {
@@ -30,6 +31,41 @@ trait WebsiteTrait
         }
 
         return $reports->get();
+    }
+
+    public static function pageView($id, $from, $to)
+    {
+        $reports = Report::where(['website_id' => $id, 'report_type_id' => 2]);
+        $website = Website::find($id);
+        if ($website){
+            $zoneWebsiteTraffic = $website->zoneWebsiteTraffic;
+            if ($zoneWebsiteTraffic){
+                $reports = $reports->where('zone_website_id', $zoneWebsiteTraffic->id);
+            }
+        }
+
+        $reports = $reports->whereDate('date', '>=', $from)->whereDate('date', '<=', $to);
+
+        return $reports->sum('d_request');
+    }
+
+
+    public static function impressions($id, $from, $to)
+    {
+        $reports = Report::where(['website_id' => $id, 'report_type_id' => 1]);
+
+        $reports = $reports->whereDate('date', '>=', $from)->whereDate('date', '<=', $to);
+
+        return $reports->sum('p_impression');
+    }
+
+    public static function revenue($id, $from, $to)
+    {
+        $reports = Report::where(['website_id' => $id, 'report_type_id' => 1]);
+
+        $reports = $reports->whereDate('date', '>=', $from)->whereDate('date', '<=', $to);
+
+        return $reports->sum('p_revenue');
     }
 
 

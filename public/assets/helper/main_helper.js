@@ -1076,9 +1076,9 @@ function isCheckedInput(id){
     return $("#" + id).is(":checked") == "true" || $("#" + id).is(":checked") == true
 }
 
-$("input.number").maskNumber({
-    integer: true
-})
+// $("input.number").maskNumber({
+//     integer: true
+// })
 
 
 function onSortSearch(key, value) {

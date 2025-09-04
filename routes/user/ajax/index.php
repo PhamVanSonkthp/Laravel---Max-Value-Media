@@ -85,7 +85,7 @@ Route::prefix('ajax/user')->group(function () {
                 $statusWebsite = StatusWebsite::findOrFail(config('_my_config.default_status_website_id'));
 
                 $name = Formatter::removeHttps(Formatter::trimer($request->url));
-                $url = Formatter::removeHttps(Formatter::trimer($request->url));
+                $url = Formatter::addHttps(Formatter::removeHttps(Formatter::trimer($request->url)));
 
                 $keyCache = AdserverTrait::$KEY_CACHE_CREATE_WEBSITE
                     . $name
@@ -193,6 +193,22 @@ Route::prefix('ajax/user')->group(function () {
 
             })->name('ajax.user.zone_website.modal_create');
 
+            Route::get('search', function (Request $request) {
+
+                $items = Helper::searchByQuery(new Website(), $request, ['user_id' => auth()->id()]);
+
+                $html = "";
+                foreach ($items as $item){
+                    $html .= View::make('user.website.row', ['item' => $item])->render();
+                }
+                return response()->json(Helper::successAPI(200, [
+                    'search_query' => $request->search_query,
+                    'items' => $items,
+                    "html" => $html
+                ]));
+
+            })->name('ajax.user.website.search');
+
             Route::post('store', function (Request $request) {
 
                 $request->validate([
@@ -210,17 +226,17 @@ Route::prefix('ajax/user')->group(function () {
                         goto skip;
                     }
 
-                    $zoneStatuses = ZoneStatus::all();
-                    $responseHTML = "";
-                    foreach ($cacheValue['zone_ids'] as $zone_id) {
-                        $zoneWebsite = ZoneWebsite::findOrFail($zone_id);
-                        $responseHTML .= View::make('administrator.websites.panel_zone_item_zone', ['zone' => $zoneWebsite, 'zoneStatuses' => $zoneStatuses])->render();
-                    }
+//                    $zoneStatuses = ZoneStatus::all();
+//                    $responseHTML = "";
+//                    foreach ($cacheValue['zone_ids'] as $zone_id) {
+//                        $zoneWebsite = ZoneWebsite::findOrFail($zone_id);
+//                        $responseHTML .= View::make('administrator.websites.panel_zone_item_zone', ['zone' => $zoneWebsite, 'zoneStatuses' => $zoneStatuses])->render();
+//                    }
 
                     Cache::forget($keyCache);
 
                     return response()->json(Helper::successAPI(200, [
-                        'html' => $responseHTML
+
                     ]));
                 }
 

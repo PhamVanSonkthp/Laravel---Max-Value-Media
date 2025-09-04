@@ -1,25 +1,23 @@
 <?php
 
+use App\Models\Formatter;
+use App\Models\Helper;
 use App\Models\Report;
 use App\Models\User;
+use App\Models\Website;
+use App\Traits\WebsiteTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
-Route::middleware(['auth','admin'])->get('/admin/user-view/{id}', function($id) {
+Route::middleware(['auth', 'admin'])->get('/admin/user-view/{id}', function ($id) {
 
     session(['impersonate' => auth()->id()]);
     $user = User::findOrFail($id);
 
     Auth::logout();
     Auth::login($user);
-
-    if (auth()->check()) {
-        if (optional(auth()->user())->is_admin == 1) {
-            return redirect()->route('administrator.dashboard.index');
-        }
-    }
 
     $revenueNow = Report::where(['report_type_id' => 1, 'user_id' => auth()->id(), 'date' => Carbon::today()->toDateString()])->sum('p_revenue');
     $revenueYesterday = Report::where(['report_type_id' => 1, 'user_id' => auth()->id(), 'date' => Carbon::yesterday()->toDateString()])->sum('p_revenue');
@@ -29,8 +27,135 @@ Route::middleware(['auth','admin'])->get('/admin/user-view/{id}', function($id) 
         ->whereDate('date', '<=', Carbon::today()->endOfMonth()->toDateString())
         ->sum('p_revenue');
 
-    $revenueTotal = Report::where(['report_type_id' => 1, 'user_id' => auth()->id()])->sum('p_revenue');
-    return view('user.home.index', compact('revenueNow', 'revenueYesterday', 'revenueThisMonth', 'revenueTotal'));
+    $revenueLastMonth = Report::where(['report_type_id' => 1, 'user_id' => auth()->id()])
+        ->whereDate('date', '>=', Carbon::today()->subMonth()->startOfMonth()->toDateString())
+        ->whereDate('date', '<=', Carbon::today()->subMonth()->endOfMonth()->toDateString())
+        ->sum('p_revenue');
+
+    $siteCharts = [];
+
+    $from = Carbon::today()->subDays(7);
+    $to = Carbon::today();
+
+
+    $sites = Website::where('user_id', auth()->id())->get();
+
+    $dateRanger = Helper::daysBetweenTwoDates($from, $to);
+    for ($i = 0; $i <= $dateRanger; $i++) {
+        $row = [
+            'period' => $from->copy()->addDays($i)->format('M-d-Y'),
+        ];
+
+        foreach ($sites as $site) {
+            $row[$site->name] = WebsiteTrait::revenue($site->id, $from->copy()->addDays($i)->toDateString(), $from->copy()->addDays($i + 1)->toDateString());
+        }
+
+        $siteCharts[] = $row;
+    }
+
+    $performanceSites = Website::where('user_id', auth()->id())->get()->toArray();
+
+    foreach ($performanceSites as &$performanceSite){
+        $performanceSite['page_view'] = WebsiteTrait::pageView($performanceSite['id'], $from, $to);
+        $performanceSite['impressions'] = WebsiteTrait::impressions($performanceSite['id'], $from, $to);
+        $performanceSite['revenue'] = WebsiteTrait::revenue($performanceSite['id'], $from, $to);
+    }
+    unset($performanceSite);
+
+    $trafficByContries = [];
+    $trafficByDevices = [];
+    $trafficByReferrers = [];
+
+    foreach (Website::where(['user_id' => auth()->id()])->get() as $item){
+        foreach (WebsiteTrait::reports($item->id, 2, $from->toDateString(), $to->toDateString()) as $report) {
+            $reportByCountries = $report->reportByCountries;
+            foreach ($reportByCountries as $reportByCountry) {
+                $reportByCountryGeoID = current(array_filter($trafficByContries, fn($tmp) => $tmp->national_id == $reportByCountry->national_id));
+                if (!$reportByCountryGeoID) {
+                    $trafficByContries[] = $reportByCountry;
+                } else {
+                    $reportByCountryGeoID['requests'] += $reportByCountry['requests'];
+                    $reportByCountryGeoID['requests_empty'] += $reportByCountry['requests_empty'];
+                    $reportByCountryGeoID['impressions'] += $reportByCountry['impressions'];
+                    $reportByCountryGeoID['impressions_unique'] += $reportByCountry['impressions_unique'];
+                }
+            }
+
+            $reportByDevices = $report->reportByDevices;
+            foreach ($reportByDevices as $reportByDevice) {
+                $reportByDeviceID = current(array_filter($trafficByDevices, fn($tmp) => $tmp->device_id == $reportByDevice->device_id));
+                if (!$reportByDeviceID) {
+                    $trafficByDevices[] = $reportByDevice;
+                } else {
+                    $reportByDeviceID['requests'] += $reportByDevice['requests'];
+                    $reportByDeviceID['requests_empty'] += $reportByDevice['requests_empty'];
+                    $reportByDeviceID['impressions'] += $reportByDevice['impressions'];
+                    $reportByDeviceID['impressions_unique'] += $reportByDevice['impressions_unique'];
+                }
+            }
+
+            $reportByReferrers = $report->reportByReferrers;
+            foreach ($reportByReferrers as $reportByReferrer) {
+                $reportByReferrerID = current(array_filter($trafficByReferrers, fn($tmp) => $tmp->referrer_id == $reportByReferrer->referrer_id));
+                if (!$reportByReferrerID) {
+                    $trafficByReferrers[] = $reportByReferrer;
+                } else {
+                    $reportByReferrerID['requests'] += $reportByReferrer['requests'];
+                    $reportByReferrerID['requests_empty'] += $reportByReferrer['requests_empty'];
+                    $reportByReferrerID['impressions'] += $reportByReferrer['impressions'];
+                    $reportByReferrerID['impressions_unique'] += $reportByReferrer['impressions_unique'];
+                }
+            }
+        }
+    }
+
+    usort($performanceSites, function ($a, $b) {
+        return $b['impressions'] <=> $a['impressions'];
+    });
+
+    if (count($trafficByContries) > 10){
+        $trafficByContries = array_slice($trafficByContries, 0, 10);
+    }
+
+    if (count($trafficByDevices) > 10){
+        $trafficByDevices = array_slice($trafficByDevices, 0, 10);
+    }
+
+    if (count($trafficByReferrers) > 10){
+        $trafficByReferrers = array_slice($trafficByReferrers, 0, 10);
+    }
+
+    $colors = [
+        "#ff3c3c",
+        "#3d8b1c",
+        "#1c4ddb",
+        "#e68a00",
+        "#6b1cdb",
+        "#0099cc",
+        "#00cc9c",
+        "#0033cc",
+        "#60acc6",
+        "#064155",
+    ];
+    $jsonDrawMaps = [];
+    $jsonColorMaps = [];
+
+    foreach ($trafficByContries as $index => $trafficByContry){
+        $jsonDrawMaps[] = [optional($trafficByContry->national)->name, $index,Formatter::formatNumber($trafficByContry['requests'] / max(1, array_sum(array_column($trafficByContries, "requests"))) * 100, 2) . '%'];
+        $jsonColorMaps[] = $colors[$index];
+    }
+
+    $jsonDrawChartDevices = [];
+    $jsonColorChartDevices = ["#4b8bff", '#6abf4b','#ffb84b','#e68a00','#6b1cdb','#0099cc','#00cc9c','#0033cc','#60acc6','#064155'];
+    $jsonDrawChartDevices[] = ["Device", "Users"];
+    foreach ($trafficByDevices as $trafficByDevice){
+        $jsonDrawChartDevices[] = [
+            optional($trafficByDevice->device)->name,
+            $trafficByDevice->requests
+        ];
+    }
+
+    return view('user.home.index', compact('revenueNow', 'revenueYesterday', 'revenueThisMonth', 'revenueLastMonth','siteCharts','sites','performanceSites','trafficByContries','jsonDrawMaps','jsonColorMaps','trafficByDevices','jsonDrawChartDevices','jsonColorChartDevices','trafficByReferrers'));
 
 })->name('admin.userView');
 
@@ -2454,109 +2579,109 @@ Route::group(['prefix' => 'administrator', 'middleware' => ['admin']], function 
     });
 
     Route::prefix('posts')->group(function () {
-        Route::get('/', ['as'=>'administrator.posts.index','uses'=>'App\Http\Controllers\Admin\PostController@index','middleware'=>'can:posts-list',]);
-        Route::get('/create', ['as'=>'administrator.posts.create','uses'=>'App\Http\Controllers\Admin\PostController@create','middleware'=>'can:posts-add',]);
-        Route::post('/store', ['as'=>'administrator.posts.store','uses'=>'App\Http\Controllers\Admin\PostController@store','middleware'=>'can:posts-add',]);
-        Route::get('/edit/{id}', ['as'=>'administrator.posts.edit','uses'=>'App\Http\Controllers\Admin\PostController@edit','middleware'=>'can:posts-edit',]);
-        Route::put('/update/{id}', ['as'=>'administrator.posts.update','uses'=>'App\Http\Controllers\Admin\PostController@update','middleware'=>'can:posts-edit',]);
-        Route::delete('/delete/{id}', ['as'=>'administrator.posts.delete','uses'=>'App\Http\Controllers\Admin\PostController@delete','middleware'=>'can:posts-delete',]);
-        Route::delete('/delete-many', ['as'=>'administrator.posts.delete_many','uses'=>'App\Http\Controllers\Admin\PostController@deleteManyByIds','middleware'=>'can:posts-delete',]);
-        Route::post('/restore/{id}', ['as' => 'administrator.posts.restore','uses' => 'App\Http\Controllers\Admin\PostController@restore','middleware' => 'can:posts-edit',]);
-        Route::get('/export', ['as'=>'administrator.posts.export','uses'=>'App\Http\Controllers\Admin\PostController@export','middleware'=>'can:posts-list',]);
-        Route::get('/audit/{id}', ['as'=>'administrator.posts.audit','uses'=>'App\Http\Controllers\Admin\PostController@audit','middleware'=>'can:posts-list',]);
-        Route::get('/import', ['as'=>'administrator.posts.import','uses'=>'App\Http\Controllers\Admin\PostController@import','middleware'=>'can:posts-list',]);
-        Route::get('/{id}', ['as'=>'administrator.posts.get','uses'=>'App\Http\Controllers\Admin\PostController@get','middleware'=>'can:posts-list',]);
-        Route::put('/', ['as'=>'administrator.posts.sort','uses'=>'App\Http\Controllers\Admin\PostController@sort','middleware'=>'can:posts-edit',]);
+        Route::get('/', ['as' => 'administrator.posts.index', 'uses' => 'App\Http\Controllers\Admin\PostController@index', 'middleware' => 'can:posts-list',]);
+        Route::get('/create', ['as' => 'administrator.posts.create', 'uses' => 'App\Http\Controllers\Admin\PostController@create', 'middleware' => 'can:posts-add',]);
+        Route::post('/store', ['as' => 'administrator.posts.store', 'uses' => 'App\Http\Controllers\Admin\PostController@store', 'middleware' => 'can:posts-add',]);
+        Route::get('/edit/{id}', ['as' => 'administrator.posts.edit', 'uses' => 'App\Http\Controllers\Admin\PostController@edit', 'middleware' => 'can:posts-edit',]);
+        Route::put('/update/{id}', ['as' => 'administrator.posts.update', 'uses' => 'App\Http\Controllers\Admin\PostController@update', 'middleware' => 'can:posts-edit',]);
+        Route::delete('/delete/{id}', ['as' => 'administrator.posts.delete', 'uses' => 'App\Http\Controllers\Admin\PostController@delete', 'middleware' => 'can:posts-delete',]);
+        Route::delete('/delete-many', ['as' => 'administrator.posts.delete_many', 'uses' => 'App\Http\Controllers\Admin\PostController@deleteManyByIds', 'middleware' => 'can:posts-delete',]);
+        Route::post('/restore/{id}', ['as' => 'administrator.posts.restore', 'uses' => 'App\Http\Controllers\Admin\PostController@restore', 'middleware' => 'can:posts-edit',]);
+        Route::get('/export', ['as' => 'administrator.posts.export', 'uses' => 'App\Http\Controllers\Admin\PostController@export', 'middleware' => 'can:posts-list',]);
+        Route::get('/audit/{id}', ['as' => 'administrator.posts.audit', 'uses' => 'App\Http\Controllers\Admin\PostController@audit', 'middleware' => 'can:posts-list',]);
+        Route::get('/import', ['as' => 'administrator.posts.import', 'uses' => 'App\Http\Controllers\Admin\PostController@import', 'middleware' => 'can:posts-list',]);
+        Route::get('/{id}', ['as' => 'administrator.posts.get', 'uses' => 'App\Http\Controllers\Admin\PostController@get', 'middleware' => 'can:posts-list',]);
+        Route::put('/', ['as' => 'administrator.posts.sort', 'uses' => 'App\Http\Controllers\Admin\PostController@sort', 'middleware' => 'can:posts-edit',]);
     });
     Route::prefix('post_comments')->group(function () {
-        Route::get('/', ['as'=>'administrator.post_comments.index','uses'=>'App\Http\Controllers\Admin\PostCommentController@index','middleware'=>'can:post_comments-list',]);
-        Route::get('/create', ['as'=>'administrator.post_comments.create','uses'=>'App\Http\Controllers\Admin\PostCommentController@create','middleware'=>'can:post_comments-add',]);
-        Route::post('/store', ['as'=>'administrator.post_comments.store','uses'=>'App\Http\Controllers\Admin\PostCommentController@store','middleware'=>'can:post_comments-add',]);
-        Route::get('/edit/{id}', ['as'=>'administrator.post_comments.edit','uses'=>'App\Http\Controllers\Admin\PostCommentController@edit','middleware'=>'can:post_comments-edit',]);
-        Route::put('/update/{id}', ['as'=>'administrator.post_comments.update','uses'=>'App\Http\Controllers\Admin\PostCommentController@update','middleware'=>'can:post_comments-edit',]);
-        Route::delete('/delete/{id}', ['as'=>'administrator.post_comments.delete','uses'=>'App\Http\Controllers\Admin\PostCommentController@delete','middleware'=>'can:post_comments-delete',]);
-        Route::delete('/delete-many', ['as'=>'administrator.post_comments.delete_many','uses'=>'App\Http\Controllers\Admin\PostCommentController@deleteManyByIds','middleware'=>'can:post_comments-delete',]);
-        Route::post('/restore/{id}', ['as' => 'administrator.post_comments.restore','uses' => 'App\Http\Controllers\Admin\PostCommentController@restore','middleware' => 'can:post_comments-edit',]);
-        Route::get('/export', ['as'=>'administrator.post_comments.export','uses'=>'App\Http\Controllers\Admin\PostCommentController@export','middleware'=>'can:post_comments-list',]);
-        Route::get('/audit/{id}', ['as'=>'administrator.post_comments.audit','uses'=>'App\Http\Controllers\Admin\PostCommentController@audit','middleware'=>'can:post_comments-list',]);
-        Route::get('/import', ['as'=>'administrator.post_comments.import','uses'=>'App\Http\Controllers\Admin\PostCommentController@import','middleware'=>'can:post_comments-list',]);
-        Route::get('/{id}', ['as'=>'administrator.post_comments.get','uses'=>'App\Http\Controllers\Admin\PostCommentController@get','middleware'=>'can:post_comments-list',]);
-        Route::put('/', ['as'=>'administrator.post_comments.sort','uses'=>'App\Http\Controllers\Admin\PostCommentController@sort','middleware'=>'can:post_comments-edit',]);
+        Route::get('/', ['as' => 'administrator.post_comments.index', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@index', 'middleware' => 'can:post_comments-list',]);
+        Route::get('/create', ['as' => 'administrator.post_comments.create', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@create', 'middleware' => 'can:post_comments-add',]);
+        Route::post('/store', ['as' => 'administrator.post_comments.store', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@store', 'middleware' => 'can:post_comments-add',]);
+        Route::get('/edit/{id}', ['as' => 'administrator.post_comments.edit', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@edit', 'middleware' => 'can:post_comments-edit',]);
+        Route::put('/update/{id}', ['as' => 'administrator.post_comments.update', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@update', 'middleware' => 'can:post_comments-edit',]);
+        Route::delete('/delete/{id}', ['as' => 'administrator.post_comments.delete', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@delete', 'middleware' => 'can:post_comments-delete',]);
+        Route::delete('/delete-many', ['as' => 'administrator.post_comments.delete_many', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@deleteManyByIds', 'middleware' => 'can:post_comments-delete',]);
+        Route::post('/restore/{id}', ['as' => 'administrator.post_comments.restore', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@restore', 'middleware' => 'can:post_comments-edit',]);
+        Route::get('/export', ['as' => 'administrator.post_comments.export', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@export', 'middleware' => 'can:post_comments-list',]);
+        Route::get('/audit/{id}', ['as' => 'administrator.post_comments.audit', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@audit', 'middleware' => 'can:post_comments-list',]);
+        Route::get('/import', ['as' => 'administrator.post_comments.import', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@import', 'middleware' => 'can:post_comments-list',]);
+        Route::get('/{id}', ['as' => 'administrator.post_comments.get', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@get', 'middleware' => 'can:post_comments-list',]);
+        Route::put('/', ['as' => 'administrator.post_comments.sort', 'uses' => 'App\Http\Controllers\Admin\PostCommentController@sort', 'middleware' => 'can:post_comments-edit',]);
     });
     Route::prefix('reason_cancels')->group(function () {
-        Route::get('/', ['as'=>'administrator.reason_cancels.index','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@index','middleware'=>'can:reason_cancels-list',]);
-        Route::get('/create', ['as'=>'administrator.reason_cancels.create','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@create','middleware'=>'can:reason_cancels-add',]);
-        Route::post('/store', ['as'=>'administrator.reason_cancels.store','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@store','middleware'=>'can:reason_cancels-add',]);
-        Route::get('/edit/{id}', ['as'=>'administrator.reason_cancels.edit','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@edit','middleware'=>'can:reason_cancels-edit',]);
-        Route::put('/update/{id}', ['as'=>'administrator.reason_cancels.update','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@update','middleware'=>'can:reason_cancels-edit',]);
-        Route::delete('/delete/{id}', ['as'=>'administrator.reason_cancels.delete','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@delete','middleware'=>'can:reason_cancels-delete',]);
-        Route::delete('/delete-many', ['as'=>'administrator.reason_cancels.delete_many','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@deleteManyByIds','middleware'=>'can:reason_cancels-delete',]);
-        Route::post('/restore/{id}', ['as' => 'administrator.reason_cancels.restore','uses' => 'App\Http\Controllers\Admin\ReasonCancelController@restore','middleware' => 'can:reason_cancels-edit',]);
-        Route::get('/export', ['as'=>'administrator.reason_cancels.export','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@export','middleware'=>'can:reason_cancels-list',]);
-        Route::get('/audit/{id}', ['as'=>'administrator.reason_cancels.audit','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@audit','middleware'=>'can:reason_cancels-list',]);
-        Route::get('/import', ['as'=>'administrator.reason_cancels.import','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@import','middleware'=>'can:reason_cancels-list',]);
-        Route::get('/{id}', ['as'=>'administrator.reason_cancels.get','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@get','middleware'=>'can:reason_cancels-list',]);
-        Route::put('/', ['as'=>'administrator.reason_cancels.sort','uses'=>'App\Http\Controllers\Admin\ReasonCancelController@sort','middleware'=>'can:reason_cancels-edit',]);
+        Route::get('/', ['as' => 'administrator.reason_cancels.index', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@index', 'middleware' => 'can:reason_cancels-list',]);
+        Route::get('/create', ['as' => 'administrator.reason_cancels.create', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@create', 'middleware' => 'can:reason_cancels-add',]);
+        Route::post('/store', ['as' => 'administrator.reason_cancels.store', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@store', 'middleware' => 'can:reason_cancels-add',]);
+        Route::get('/edit/{id}', ['as' => 'administrator.reason_cancels.edit', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@edit', 'middleware' => 'can:reason_cancels-edit',]);
+        Route::put('/update/{id}', ['as' => 'administrator.reason_cancels.update', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@update', 'middleware' => 'can:reason_cancels-edit',]);
+        Route::delete('/delete/{id}', ['as' => 'administrator.reason_cancels.delete', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@delete', 'middleware' => 'can:reason_cancels-delete',]);
+        Route::delete('/delete-many', ['as' => 'administrator.reason_cancels.delete_many', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@deleteManyByIds', 'middleware' => 'can:reason_cancels-delete',]);
+        Route::post('/restore/{id}', ['as' => 'administrator.reason_cancels.restore', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@restore', 'middleware' => 'can:reason_cancels-edit',]);
+        Route::get('/export', ['as' => 'administrator.reason_cancels.export', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@export', 'middleware' => 'can:reason_cancels-list',]);
+        Route::get('/audit/{id}', ['as' => 'administrator.reason_cancels.audit', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@audit', 'middleware' => 'can:reason_cancels-list',]);
+        Route::get('/import', ['as' => 'administrator.reason_cancels.import', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@import', 'middleware' => 'can:reason_cancels-list',]);
+        Route::get('/{id}', ['as' => 'administrator.reason_cancels.get', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@get', 'middleware' => 'can:reason_cancels-list',]);
+        Route::put('/', ['as' => 'administrator.reason_cancels.sort', 'uses' => 'App\Http\Controllers\Admin\ReasonCancelController@sort', 'middleware' => 'can:reason_cancels-edit',]);
     });
     Route::prefix('app_versions')->group(function () {
-        Route::get('/', ['as'=>'administrator.app_versions.index','uses'=>'App\Http\Controllers\Admin\AppVersionController@index','middleware'=>'can:app_versions-list',]);
-        Route::get('/create', ['as'=>'administrator.app_versions.create','uses'=>'App\Http\Controllers\Admin\AppVersionController@create','middleware'=>'can:app_versions-add',]);
-        Route::post('/store', ['as'=>'administrator.app_versions.store','uses'=>'App\Http\Controllers\Admin\AppVersionController@store','middleware'=>'can:app_versions-add',]);
-        Route::get('/edit/{id}', ['as'=>'administrator.app_versions.edit','uses'=>'App\Http\Controllers\Admin\AppVersionController@edit','middleware'=>'can:app_versions-edit',]);
-        Route::put('/update/{id}', ['as'=>'administrator.app_versions.update','uses'=>'App\Http\Controllers\Admin\AppVersionController@update','middleware'=>'can:app_versions-edit',]);
-        Route::delete('/delete/{id}', ['as'=>'administrator.app_versions.delete','uses'=>'App\Http\Controllers\Admin\AppVersionController@delete','middleware'=>'can:app_versions-delete',]);
-        Route::delete('/delete-many', ['as'=>'administrator.app_versions.delete_many','uses'=>'App\Http\Controllers\Admin\AppVersionController@deleteManyByIds','middleware'=>'can:app_versions-delete',]);
-        Route::post('/restore/{id}', ['as' => 'administrator.app_versions.restore','uses' => 'App\Http\Controllers\Admin\AppVersionController@restore','middleware' => 'can:app_versions-edit',]);
-        Route::get('/export', ['as'=>'administrator.app_versions.export','uses'=>'App\Http\Controllers\Admin\AppVersionController@export','middleware'=>'can:app_versions-list',]);
-        Route::get('/audit/{id}', ['as'=>'administrator.app_versions.audit','uses'=>'App\Http\Controllers\Admin\AppVersionController@audit','middleware'=>'can:app_versions-list',]);
-        Route::get('/import', ['as'=>'administrator.app_versions.import','uses'=>'App\Http\Controllers\Admin\AppVersionController@import','middleware'=>'can:app_versions-list',]);
-        Route::get('/{id}', ['as'=>'administrator.app_versions.get','uses'=>'App\Http\Controllers\Admin\AppVersionController@get','middleware'=>'can:app_versions-list',]);
-        Route::put('/', ['as'=>'administrator.app_versions.sort','uses'=>'App\Http\Controllers\Admin\AppVersionController@sort','middleware'=>'can:app_versions-edit',]);
+        Route::get('/', ['as' => 'administrator.app_versions.index', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@index', 'middleware' => 'can:app_versions-list',]);
+        Route::get('/create', ['as' => 'administrator.app_versions.create', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@create', 'middleware' => 'can:app_versions-add',]);
+        Route::post('/store', ['as' => 'administrator.app_versions.store', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@store', 'middleware' => 'can:app_versions-add',]);
+        Route::get('/edit/{id}', ['as' => 'administrator.app_versions.edit', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@edit', 'middleware' => 'can:app_versions-edit',]);
+        Route::put('/update/{id}', ['as' => 'administrator.app_versions.update', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@update', 'middleware' => 'can:app_versions-edit',]);
+        Route::delete('/delete/{id}', ['as' => 'administrator.app_versions.delete', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@delete', 'middleware' => 'can:app_versions-delete',]);
+        Route::delete('/delete-many', ['as' => 'administrator.app_versions.delete_many', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@deleteManyByIds', 'middleware' => 'can:app_versions-delete',]);
+        Route::post('/restore/{id}', ['as' => 'administrator.app_versions.restore', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@restore', 'middleware' => 'can:app_versions-edit',]);
+        Route::get('/export', ['as' => 'administrator.app_versions.export', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@export', 'middleware' => 'can:app_versions-list',]);
+        Route::get('/audit/{id}', ['as' => 'administrator.app_versions.audit', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@audit', 'middleware' => 'can:app_versions-list',]);
+        Route::get('/import', ['as' => 'administrator.app_versions.import', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@import', 'middleware' => 'can:app_versions-list',]);
+        Route::get('/{id}', ['as' => 'administrator.app_versions.get', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@get', 'middleware' => 'can:app_versions-list',]);
+        Route::put('/', ['as' => 'administrator.app_versions.sort', 'uses' => 'App\Http\Controllers\Admin\AppVersionController@sort', 'middleware' => 'can:app_versions-edit',]);
     });
     Route::prefix('user_withdraws')->group(function () {
-        Route::get('/', ['as'=>'administrator.user_withdraws.index','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@index','middleware'=>'can:user_withdraws-list',]);
-        Route::get('/create', ['as'=>'administrator.user_withdraws.create','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@create','middleware'=>'can:user_withdraws-add',]);
-        Route::post('/store', ['as'=>'administrator.user_withdraws.store','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@store','middleware'=>'can:user_withdraws-add',]);
-        Route::get('/edit/{id}', ['as'=>'administrator.user_withdraws.edit','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@edit','middleware'=>'can:user_withdraws-edit',]);
-        Route::put('/update/{id}', ['as'=>'administrator.user_withdraws.update','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@update','middleware'=>'can:user_withdraws-edit',]);
-        Route::delete('/delete/{id}', ['as'=>'administrator.user_withdraws.delete','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@delete','middleware'=>'can:user_withdraws-delete',]);
-        Route::delete('/delete-many', ['as'=>'administrator.user_withdraws.delete_many','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@deleteManyByIds','middleware'=>'can:user_withdraws-delete',]);
-        Route::post('/restore/{id}', ['as' => 'administrator.user_withdraws.restore','uses' => 'App\Http\Controllers\Admin\UserWithdrawController@restore','middleware' => 'can:user_withdraws-edit',]);
-        Route::get('/export', ['as'=>'administrator.user_withdraws.export','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@export','middleware'=>'can:user_withdraws-list',]);
-        Route::get('/audit/{id}', ['as'=>'administrator.user_withdraws.audit','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@audit','middleware'=>'can:user_withdraws-list',]);
-        Route::get('/import', ['as'=>'administrator.user_withdraws.import','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@import','middleware'=>'can:user_withdraws-list',]);
-        Route::get('/{id}', ['as'=>'administrator.user_withdraws.get','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@get','middleware'=>'can:user_withdraws-list',]);
-        Route::put('/', ['as'=>'administrator.user_withdraws.sort','uses'=>'App\Http\Controllers\Admin\UserWithdrawController@sort','middleware'=>'can:user_withdraws-edit',]);
+        Route::get('/', ['as' => 'administrator.user_withdraws.index', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@index', 'middleware' => 'can:user_withdraws-list',]);
+        Route::get('/create', ['as' => 'administrator.user_withdraws.create', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@create', 'middleware' => 'can:user_withdraws-add',]);
+        Route::post('/store', ['as' => 'administrator.user_withdraws.store', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@store', 'middleware' => 'can:user_withdraws-add',]);
+        Route::get('/edit/{id}', ['as' => 'administrator.user_withdraws.edit', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@edit', 'middleware' => 'can:user_withdraws-edit',]);
+        Route::put('/update/{id}', ['as' => 'administrator.user_withdraws.update', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@update', 'middleware' => 'can:user_withdraws-edit',]);
+        Route::delete('/delete/{id}', ['as' => 'administrator.user_withdraws.delete', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@delete', 'middleware' => 'can:user_withdraws-delete',]);
+        Route::delete('/delete-many', ['as' => 'administrator.user_withdraws.delete_many', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@deleteManyByIds', 'middleware' => 'can:user_withdraws-delete',]);
+        Route::post('/restore/{id}', ['as' => 'administrator.user_withdraws.restore', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@restore', 'middleware' => 'can:user_withdraws-edit',]);
+        Route::get('/export', ['as' => 'administrator.user_withdraws.export', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@export', 'middleware' => 'can:user_withdraws-list',]);
+        Route::get('/audit/{id}', ['as' => 'administrator.user_withdraws.audit', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@audit', 'middleware' => 'can:user_withdraws-list',]);
+        Route::get('/import', ['as' => 'administrator.user_withdraws.import', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@import', 'middleware' => 'can:user_withdraws-list',]);
+        Route::get('/{id}', ['as' => 'administrator.user_withdraws.get', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@get', 'middleware' => 'can:user_withdraws-list',]);
+        Route::put('/', ['as' => 'administrator.user_withdraws.sort', 'uses' => 'App\Http\Controllers\Admin\UserWithdrawController@sort', 'middleware' => 'can:user_withdraws-edit',]);
     });
     Route::prefix('websites')->group(function () {
-        Route::get('/', ['as'=>'administrator.websites.index','uses'=>'App\Http\Controllers\Admin\WebsiteController@index','middleware'=>'can:websites-list',]);
-        Route::get('/create', ['as'=>'administrator.websites.create','uses'=>'App\Http\Controllers\Admin\WebsiteController@create','middleware'=>'can:websites-add',]);
-        Route::post('/store', ['as'=>'administrator.websites.store','uses'=>'App\Http\Controllers\Admin\WebsiteController@store','middleware'=>'can:websites-add',]);
-        Route::get('/edit/{id}', ['as'=>'administrator.websites.edit','uses'=>'App\Http\Controllers\Admin\WebsiteController@edit','middleware'=>'can:websites-edit',]);
-        Route::put('/update/{id}', ['as'=>'administrator.websites.update','uses'=>'App\Http\Controllers\Admin\WebsiteController@update','middleware'=>'can:websites-edit',]);
-        Route::delete('/delete/{id}', ['as'=>'administrator.websites.delete','uses'=>'App\Http\Controllers\Admin\WebsiteController@delete','middleware'=>'can:websites-delete',]);
-        Route::delete('/delete-many', ['as'=>'administrator.websites.delete_many','uses'=>'App\Http\Controllers\Admin\WebsiteController@deleteManyByIds','middleware'=>'can:websites-delete',]);
-        Route::post('/restore/{id}', ['as' => 'administrator.websites.restore','uses' => 'App\Http\Controllers\Admin\WebsiteController@restore','middleware' => 'can:websites-edit',]);
-        Route::get('/export', ['as'=>'administrator.websites.export','uses'=>'App\Http\Controllers\Admin\WebsiteController@export','middleware'=>'can:websites-list',]);
-        Route::get('/audit/{id}', ['as'=>'administrator.websites.audit','uses'=>'App\Http\Controllers\Admin\WebsiteController@audit','middleware'=>'can:websites-list',]);
-        Route::get('/import', ['as'=>'administrator.websites.import','uses'=>'App\Http\Controllers\Admin\WebsiteController@import','middleware'=>'can:websites-list',]);
-        Route::get('/{id}', ['as'=>'administrator.websites.get','uses'=>'App\Http\Controllers\Admin\WebsiteController@get','middleware'=>'can:websites-list',]);
-        Route::put('/', ['as'=>'administrator.websites.sort','uses'=>'App\Http\Controllers\Admin\WebsiteController@sort','middleware'=>'can:websites-edit',]);
+        Route::get('/', ['as' => 'administrator.websites.index', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@index', 'middleware' => 'can:websites-list',]);
+        Route::get('/create', ['as' => 'administrator.websites.create', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@create', 'middleware' => 'can:websites-add',]);
+        Route::post('/store', ['as' => 'administrator.websites.store', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@store', 'middleware' => 'can:websites-add',]);
+        Route::get('/edit/{id}', ['as' => 'administrator.websites.edit', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@edit', 'middleware' => 'can:websites-edit',]);
+        Route::put('/update/{id}', ['as' => 'administrator.websites.update', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@update', 'middleware' => 'can:websites-edit',]);
+        Route::delete('/delete/{id}', ['as' => 'administrator.websites.delete', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@delete', 'middleware' => 'can:websites-delete',]);
+        Route::delete('/delete-many', ['as' => 'administrator.websites.delete_many', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@deleteManyByIds', 'middleware' => 'can:websites-delete',]);
+        Route::post('/restore/{id}', ['as' => 'administrator.websites.restore', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@restore', 'middleware' => 'can:websites-edit',]);
+        Route::get('/export', ['as' => 'administrator.websites.export', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@export', 'middleware' => 'can:websites-list',]);
+        Route::get('/audit/{id}', ['as' => 'administrator.websites.audit', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@audit', 'middleware' => 'can:websites-list',]);
+        Route::get('/import', ['as' => 'administrator.websites.import', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@import', 'middleware' => 'can:websites-list',]);
+        Route::get('/{id}', ['as' => 'administrator.websites.get', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@get', 'middleware' => 'can:websites-list',]);
+        Route::put('/', ['as' => 'administrator.websites.sort', 'uses' => 'App\Http\Controllers\Admin\WebsiteController@sort', 'middleware' => 'can:websites-edit',]);
     });
     Route::prefix('reports')->group(function () {
-        Route::get('/', ['as'=>'administrator.reports.index','uses'=>'App\Http\Controllers\Admin\ReportController@index','middleware'=>'can:reports-list',]);
-        Route::get('/create', ['as'=>'administrator.reports.create','uses'=>'App\Http\Controllers\Admin\ReportController@create','middleware'=>'can:reports-add',]);
-        Route::post('/store', ['as'=>'administrator.reports.store','uses'=>'App\Http\Controllers\Admin\ReportController@store','middleware'=>'can:reports-add',]);
-        Route::get('/edit/{id}', ['as'=>'administrator.reports.edit','uses'=>'App\Http\Controllers\Admin\ReportController@edit','middleware'=>'can:reports-edit',]);
-        Route::put('/update/{id}', ['as'=>'administrator.reports.update','uses'=>'App\Http\Controllers\Admin\ReportController@update','middleware'=>'can:reports-edit',]);
-        Route::delete('/delete/{id}', ['as'=>'administrator.reports.delete','uses'=>'App\Http\Controllers\Admin\ReportController@delete','middleware'=>'can:reports-delete',]);
-        Route::delete('/delete-many', ['as'=>'administrator.reports.delete_many','uses'=>'App\Http\Controllers\Admin\ReportController@deleteManyByIds','middleware'=>'can:reports-delete',]);
-        Route::post('/restore/{id}', ['as' => 'administrator.reports.restore','uses' => 'App\Http\Controllers\Admin\ReportController@restore','middleware' => 'can:reports-edit',]);
-        Route::get('/export', ['as'=>'administrator.reports.export','uses'=>'App\Http\Controllers\Admin\ReportController@export','middleware'=>'can:reports-list',]);
-        Route::get('/download-export', ['as'=>'administrator.reports.download_export','uses'=>'App\Http\Controllers\Admin\ReportController@downloadExport','middleware'=>'can:reports-list',]);
-        Route::get('/audit/{id}', ['as'=>'administrator.reports.audit','uses'=>'App\Http\Controllers\Admin\ReportController@audit','middleware'=>'can:reports-list',]);
-        Route::post('/import', ['as'=>'administrator.reports.import','uses'=>'App\Http\Controllers\Admin\ReportController@import','middleware'=>'can:reports-list',]);
-        Route::get('/{id}', ['as'=>'administrator.reports.get','uses'=>'App\Http\Controllers\Admin\ReportController@get','middleware'=>'can:reports-list',]);
-        Route::put('/', ['as'=>'administrator.reports.sort','uses'=>'App\Http\Controllers\Admin\ReportController@sort','middleware'=>'can:reports-edit',]);
+        Route::get('/', ['as' => 'administrator.reports.index', 'uses' => 'App\Http\Controllers\Admin\ReportController@index', 'middleware' => 'can:reports-list',]);
+        Route::get('/create', ['as' => 'administrator.reports.create', 'uses' => 'App\Http\Controllers\Admin\ReportController@create', 'middleware' => 'can:reports-add',]);
+        Route::post('/store', ['as' => 'administrator.reports.store', 'uses' => 'App\Http\Controllers\Admin\ReportController@store', 'middleware' => 'can:reports-add',]);
+        Route::get('/edit/{id}', ['as' => 'administrator.reports.edit', 'uses' => 'App\Http\Controllers\Admin\ReportController@edit', 'middleware' => 'can:reports-edit',]);
+        Route::put('/update/{id}', ['as' => 'administrator.reports.update', 'uses' => 'App\Http\Controllers\Admin\ReportController@update', 'middleware' => 'can:reports-edit',]);
+        Route::delete('/delete/{id}', ['as' => 'administrator.reports.delete', 'uses' => 'App\Http\Controllers\Admin\ReportController@delete', 'middleware' => 'can:reports-delete',]);
+        Route::delete('/delete-many', ['as' => 'administrator.reports.delete_many', 'uses' => 'App\Http\Controllers\Admin\ReportController@deleteManyByIds', 'middleware' => 'can:reports-delete',]);
+        Route::post('/restore/{id}', ['as' => 'administrator.reports.restore', 'uses' => 'App\Http\Controllers\Admin\ReportController@restore', 'middleware' => 'can:reports-edit',]);
+        Route::get('/export', ['as' => 'administrator.reports.export', 'uses' => 'App\Http\Controllers\Admin\ReportController@export', 'middleware' => 'can:reports-list',]);
+        Route::get('/download-export', ['as' => 'administrator.reports.download_export', 'uses' => 'App\Http\Controllers\Admin\ReportController@downloadExport', 'middleware' => 'can:reports-list',]);
+        Route::get('/audit/{id}', ['as' => 'administrator.reports.audit', 'uses' => 'App\Http\Controllers\Admin\ReportController@audit', 'middleware' => 'can:reports-list',]);
+        Route::post('/import', ['as' => 'administrator.reports.import', 'uses' => 'App\Http\Controllers\Admin\ReportController@import', 'middleware' => 'can:reports-list',]);
+        Route::get('/{id}', ['as' => 'administrator.reports.get', 'uses' => 'App\Http\Controllers\Admin\ReportController@get', 'middleware' => 'can:reports-list',]);
+        Route::put('/', ['as' => 'administrator.reports.sort', 'uses' => 'App\Http\Controllers\Admin\ReportController@sort', 'middleware' => 'can:reports-edit',]);
     });/*step_1*/
 });

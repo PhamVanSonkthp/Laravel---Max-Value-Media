@@ -4,12 +4,16 @@ namespace App\Console\Commands;
 
 use App\Models\AdScoreZone;
 use App\Models\BankCashIn;
+use App\Models\Device;
 use App\Models\Formatter;
 use App\Models\Helper;
 use App\Models\National;
 use App\Models\Order;
+use App\Models\Referrer;
 use App\Models\Report;
 use App\Models\ReportByCountry;
+use App\Models\ReportByDevice;
+use App\Models\ReportByReferrer;
 use App\Models\User;
 use App\Models\UserCashIn;
 use App\Models\Website;
@@ -61,10 +65,14 @@ class JobCreateReportAdserver extends Command
         $date = Carbon::today()->subDay()->toDateString();
         $reports = $this->getReport($date);
         $this->getReportByCountry($date, $reports);
+        $this->getReportByDevice($date, $reports);
+        $this->getReportByReferrer($date, $reports);
 
         $date = Carbon::today()->toDateString();
         $reports = $this->getReport($date);
         $this->getReportByCountry($date, $reports);
+        $this->getReportByDevice($date, $reports);
+        $this->getReportByReferrer($date, $reports);
 
     }
 
@@ -125,6 +133,125 @@ class JobCreateReportAdserver extends Command
 
         } else {
             Log::error("JobCreateReport - getReportByCountry: " . $response['data']);
+        }
+    }
+
+    private function getReportByDevice($date, $reports)
+    {
+
+        $params = [
+            'dateBegin' => $date,
+            'dateEnd' => $date,
+            'group' => 'device',
+            'group2' => 'zone',
+            'with_trafq' => 1,
+            'no_limit' => 1
+        ];
+
+        $response = $this->callGetHTTP('stats', $params);
+
+        if ($response['is_success']) {
+            foreach ($response['data'] as $datum) {
+
+                $reportByZoneID = null;
+                foreach ($reports as $report) {
+                    if (optional($report->zoneWebsite)->adserver_id == $datum['iddimension_2']) {
+                        $reportByZoneID = $report;
+                        break;
+                    }
+                }
+
+                if ($reportByZoneID) {
+                    $device = Device::where('adserver_id', $datum['iddimension'])->first();
+
+                    if (empty($device)) {
+                        $device = Device::create([
+                            'name' => $datum['dimension'],
+                            'adserver_id' => $datum['iddimension'],
+                        ]);
+                    }
+
+                    ReportByDevice::updateOrCreate([
+                        'report_id' => $reportByZoneID->id,
+                        'device_id' => $device->id,
+                        'date' => $date,
+                    ], [
+                        'report_id' => $reportByZoneID->id,
+                        'device_id' => $device->id,
+                        'date' => $date,
+                        'requests' => $datum['requests'],
+                        'requests_empty' => $datum['requests_empty'],
+                        'impressions' => $datum['impressions'],
+                        'impressions_unique' => $datum['impressions_unique'],
+                        'trafq' => $datum['trafq'],
+                    ]);
+                }
+
+
+            }
+
+        } else {
+            Log::error("JobCreateReport - getReportByDevice: " . $response['data']);
+        }
+    }
+
+    private function getReportByReferrer($date, $reports)
+    {
+
+        $params = [
+            'dateBegin' => $date,
+            'dateEnd' => $date,
+            'group' => 'referrer',
+            'group2' => 'zone',
+            'with_trafq' => 1,
+            'no_limit' => 1
+        ];
+
+        $response = $this->callGetHTTP('stats', $params);
+
+        if ($response['is_success']) {
+            foreach ($response['data'] as $datum) {
+
+                $reportByZoneID = null;
+                foreach ($reports as $report) {
+                    if (optional($report->zoneWebsite)->adserver_id == $datum['iddimension_2']) {
+                        $reportByZoneID = $report;
+                        break;
+                    }
+                }
+
+                if ($reportByZoneID) {
+                    $referrer = Referrer::where('name', $datum['dimension'])->first();
+
+                    if (empty($referrer)) {
+                        $referrer = Referrer::firstOrCreate([
+                            'name' => empty($datum['dimension']) ? 'Other' : $datum['dimension'],
+                        ],[
+                            'name' => empty($datum['dimension']) ? 'Other' : $datum['dimension'],
+                        ]);
+                    }
+
+                    ReportByReferrer::updateOrCreate([
+                        'report_id' => $reportByZoneID->id,
+                        'referrer_id' => $referrer->id,
+                        'date' => $date,
+                    ], [
+                        'report_id' => $reportByZoneID->id,
+                        'referrer_id' => $referrer->id,
+                        'date' => $date,
+                        'requests' => $datum['requests'],
+                        'requests_empty' => $datum['requests_empty'],
+                        'impressions' => $datum['impressions'],
+                        'impressions_unique' => $datum['impressions_unique'],
+                        'trafq' => $datum['trafq'],
+                    ]);
+                }
+
+
+            }
+
+        } else {
+            Log::error("JobCreateReport - getReportByDevice: " . $response['data']);
         }
     }
 

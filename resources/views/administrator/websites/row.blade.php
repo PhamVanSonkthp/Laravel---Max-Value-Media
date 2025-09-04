@@ -18,7 +18,7 @@
 
     </td>
     <td>
-        <a target="_blank" href="{{ $item->url}}">{{\App\Models\Formatter::maxLengthString($item->url)}}</a>
+        <a target="_blank" href="{{ $item->url}}">{{\App\Models\Formatter::maxLengthString($item->name)}}</a>
     </td>
     <td>
         <div class="text-center">

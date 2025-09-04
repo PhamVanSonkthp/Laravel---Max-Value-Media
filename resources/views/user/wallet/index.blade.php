@@ -20,49 +20,86 @@
 
 @section('css')
     <style>
-        :root{
+        :root {
             --bg: #f9fafb;
             --card: #ffffff;
             --muted: #6b7280;
             --text: #111827;
             --accent: #2563eb;
             --radius: 12px;
-            --shadow: 0 6px 16px rgba(0,0,0,.06);
+            --shadow: 0 6px 16px rgba(0, 0, 0, .06);
         }
 
-        .card{
+        .card {
             overflow: hidden;
             padding: 16px;
             position: relative;
             text-align: center;
         }
 
-        .title{
-            font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;
+        .title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
         }
-        .paypal-logo{
-            width: 70px; margin: 0 auto 14px; display:block;
-        }
-        .balance-box{
-            background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px;
-            padding:12px; margin-bottom:12px;
-        }
-        .balance-label{ font-size:.8rem; color: var(--muted); margin-bottom:4px; }
-        .balance-amount{ font-size:1.2rem; font-weight:700; color:var(--accent); }
 
-        .email-box{ margin-top:10px; }
-        .email-label{ font-size:.8rem; color:var(--muted); margin-bottom:4px; display:block; }
-        .email-value{ font-size:.9rem; font-weight:600; }
+        .paypal-logo {
+            width: 70px;
+            margin: 0 auto 14px;
+            display: block;
+        }
 
-        .btn_edit_method{
-            appearance:none; border:0; cursor:pointer; background: transparent; color: var(--accent);
+        .balance-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .balance-label {
+            font-size: .8rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .balance-amount {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .email-box {
+            margin-top: 10px;
+        }
+
+        .email-label {
+            font-size: .8rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .email-value {
+            font-size: .9rem;
+            font-weight: 600;
+        }
+
+        .btn_edit_method {
+            appearance: none;
+            border: 0;
+            cursor: pointer;
+            background: transparent;
+            color: var(--accent);
             position: absolute;
             top: 12px;
             right: 12px;
             padding: 4px;
         }
-        .btn_edit_method svg{
-            width: 18px; height: 18px;
+
+        .btn_edit_method svg {
+            width: 18px;
+            height: 18px;
             fill: currentColor;
         }
     </style>
@@ -287,112 +324,128 @@
 @endsection
 
 @section('content')
+    <!-- Main Content -->
+    <section class="content" style="margin-top: 140px;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
 
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div id="container_payment_method">
+                                @include('user.wallet.container_paymen_method', ['userPaymentMethod' => $userPaymentMethod])
+                            </div>
 
-    <div class="row">
-        <div class="col-lg-4">
-            <div id="container_payment_method">
-                @include('user.wallet.container_paymen_method', ['userPaymentMethod' => $userPaymentMethod])
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card mb-0 mt-1">
+                                <div class="text-center">
+                                    Total earning
+                                </div>
+                                <div class="text-center">
+                                    <h5>
+                                        ${{\App\Models\Formatter::formatNumber($summary->earning, 2)}}
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="card mb-0 mt-1">
+                                <div class="text-center">
+                                    Total withdrawn
+                                </div>
+                                <div class="text-center">
+                                    <h5>
+                                        ${{\App\Models\Formatter::formatNumber($withdraw, 2)}}
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card mb-0 mt-1">
+                                <div class="text-center">
+                                    Total revenue referral
+                                </div>
+                                <div class="text-center">
+                                    <h5>
+                                        $0
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="card mb-0 mt-1">
+                                <div class="text-center">
+                                    Invalid amount
+                                </div>
+                                <div class="text-center">
+                                    <h5>
+                                        ${{\App\Models\Formatter::formatNumber($summary->invalid, 2)}}
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="table-responsive product-table">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                Reciept
+                                            </th>
+                                            <th>
+                                                Date
+                                            </th>
+                                            <th>
+                                                Method
+                                            </th>
+                                            <th>
+                                                Address
+                                            </th>
+                                            <th>
+                                                Earning
+                                            </th>
+                                            <th>
+                                                Deductions
+                                            </th>
+                                            <th>
+                                                Total
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+                                            <th>
+                                                Estimate Payment Time
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="" id="body_container_item">
+
+                                        @foreach($items as $index => $item)
+                                            @include('user.wallet.row', ['item' => $item, 'index' => $index])
+                                        @endforeach
+
+                                        </tbody>
+
+                                        <tfoot>
+
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <div>
+                                    @include('administrator.components.footer_table')
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
         </div>
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="text-center">
-                    Total earning
-                </div>
-                <div class="text-center">
-                    ${{\App\Models\Formatter::formatNumber($summary->earning, 2)}}
-                </div>
-            </div>
-            <div class="card mt-3">
-                <div class="text-center">
-                    Total withdrawn
-                </div>
-                <div class="text-center">
-                    ${{\App\Models\Formatter::formatNumber($withdraw, 2)}}
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="text-center">
-                    Total revenue referral
-                </div>
-                <div class="text-center">
-                    $0
-                </div>
-            </div>
-            <div class="card mt-3">
-                <div class="text-center">
-                    Invalid amount
-                </div>
-                <div class="text-center">
-                    ${{\App\Models\Formatter::formatNumber($summary->invalid, 2)}}
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div>
-        <div class="card">
-            <div class="card-body">
-
-                <div class="table-responsive product-table">
-                    <table class="table table-hover table-bordered">
-                        <thead>
-                        <tr>
-                            <th>
-
-                            </th>
-                            <th>
-                                Date
-                            </th>
-                            <th>
-                                Method
-                            </th>
-                            <th>
-                                Address
-                            </th>
-                            <th>
-                                Earning
-                            </th>
-                            <th>
-                                Deductions
-                            </th>
-                            <th>
-                                Total
-                            </th>
-                            <th>
-                                Status
-                            </th>
-                            <th>
-                                Estimate Payment Time
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody class="" id="body_container_item">
-
-                        @foreach($items as $index => $item)
-                            @include('user.wallet.row', ['item' => $item, 'index' => $index])
-                        @endforeach
-
-                        </tbody>
-
-                        <tfoot>
-
-                        </tfoot>
-                    </table>
-                </div>
-                <div>
-                    @include('administrator.components.footer_table')
-                </div>
-
-            </div>
-        </div>
-    </div>
-
+    </section>
     <!-- Modal create payment method -->
     <div class="modal fade" id="modal_create_payment_method_modal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -400,7 +453,9 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Choose a payment method
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
                 </div>
                 <div class="modal-body" id="container_modal_create_payment_method_modal">
 
@@ -417,9 +472,7 @@
             callAjax(
                 "GET",
                 "{{route('ajax.user.wallet.modal_create_payment_method')}}",
-                {
-
-                },
+                {},
                 (response) => {
                     $('#container_modal_create_payment_method_modal').html(response.data.html);
                     showModal('modal_create_payment_method_modal');
@@ -434,7 +487,7 @@
         function onSavePaypal() {
             const paypal_email_value = $('#pp-email').val();
 
-            if(!paypal_email_value){
+            if (!paypal_email_value) {
                 showToastError('Email is require');
                 $('#pp-email').focus();
                 return;
@@ -463,17 +516,17 @@
             const crypto_network_value = $('#crypto_network').val();
             const crypto_address_value = $('#crypto_address').val();
 
-            if(!crypto_coin_value){
+            if (!crypto_coin_value) {
                 showToastError('Coin is require');
                 $('#crypto_coin').focus();
                 return;
             }
-            if(!crypto_network_value){
+            if (!crypto_network_value) {
                 showToastError('Network is require');
                 $('#crypto_network').focus();
                 return;
             }
-            if(!crypto_address_value){
+            if (!crypto_address_value) {
                 showToastError('Address is require');
                 $('#crypto_address').focus();
                 return;
@@ -507,27 +560,27 @@
             const wire_transfer_bank_address_value = $('#wire_transfer_bank_address').val();
             const wire_transfer_routing_number_value = $('#wire_transfer_routing_number').val();
 
-            if(!wire_transfer_beneficiary_name_value){
+            if (!wire_transfer_beneficiary_name_value) {
                 showToastError('Beneficiary name is require');
                 $('#wire_transfer_beneficiary_name').focus();
                 return;
             }
-            if(!wire_transfer_account_number_value){
+            if (!wire_transfer_account_number_value) {
                 showToastError('Account number is require');
                 $('#wire_transfer_account_number').focus();
                 return;
             }
-            if(!wire_transfer_bank_name_value){
+            if (!wire_transfer_bank_name_value) {
                 showToastError('Bank_name is require');
                 $('#wire_transfer_bank_name').focus();
                 return;
             }
-            if(!wire_transfer_swift_code_value){
+            if (!wire_transfer_swift_code_value) {
                 showToastError('Swift code is require');
                 $('#wire_transfer_swift_code').focus();
                 return;
             }
-            if(!wire_transfer_bank_address_value){
+            if (!wire_transfer_bank_address_value) {
                 showToastError('Bank address is require');
                 $('#wire_transfer_bank_address').focus();
                 return;
@@ -560,7 +613,7 @@
         function onSavePingPong() {
             const ping_pong_email_value = $('#ping_pong_email').val();
 
-            if(!ping_pong_email_value){
+            if (!ping_pong_email_value) {
                 showToastError('Email is require');
                 $('#ping_pong_email').focus();
                 return;

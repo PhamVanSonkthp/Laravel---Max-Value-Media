@@ -10,7 +10,7 @@
        class="fa-solid fa-check text-success"></i>
 @endif
 
-@if($item->ads_gam_status_websites == 2)
+@if($item->ads_gam_status_websites == 2 && !isset($hiddenGam))
     <div class="text-success">
         Gam
     </div>

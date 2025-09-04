@@ -149,80 +149,130 @@
             display: block !important;
         }
 
+
+        .input-wrapper-search {
+            position: relative;
+            max-width: 250px;
+            width: 100%;
+        }
+
+        .filter-input {
+            border-radius: 50px !important;
+            padding-left: 40px !important;
+            padding-right: 35px !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+            border: 1px solid #ddd;
+            transition: all .2s ease;
+        }
+        .filter-input:focus {
+            border-color: #4b8bff;
+            box-shadow: 0 0 0 .2rem rgba(75,139,255,.2);
+        }
+
+        .filter-icon, .clear-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            cursor: pointer;
+        }
+        .filter-icon { left: 15px; }
+        .clear-icon { right: 12px; display: none; }
     </style>
 @endsection
 
 @section('content')
 
-    <div class="container-fluid list-products">
-        <div class="row">
-            <div class="col-12">
+    <!-- Main Content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
 
-                <div class="card">
+                    <div class="card">
 
-                    <div class="card-header">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                data-bs-target="#modal_craete_website">
-                            Create new website <i class="fa-solid fa-plus"></i>
-                        </button>
+                        <div class="card-body">
+                            <div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <!-- Right: Input -->
+                                            <div class="input-wrapper-search">
+                                                <i class="fa fa-search filter-icon" id="searchIcon"></i>
+                                                <input type="text" id="filterInput" class="form-control filter-input" placeholder="Filter websites...">
+                                                <i style="z-index: 10000;" class="fa fa-times clear-icon" id="clearIcon"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-right">
+                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-toggle="modal"
+                                                    data-target="#modal_create_website"
+                                                    data-bs-target="#modal_create_website">
+                                                Create new <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive bg-white pb-5 p-3">
+                                <div class="accordion-item">
+                                </div>
+                                <div class="accordion-item">
+                                </div>
+                                <table class="table table-hover m-0">
+                                    <thead>
+                                    <tr>
+                                        <th class="border-0 fw-bold text-start">
+                                            <span>Website</span>
+                                        </th>
+                                        <th class="border-0 fw-bold text-center">
+                                            <span>Status</span>
+                                        </th>
+                                        <th class="border-0 fw-bold text-center">
+                                            <span>Ads.txt</span>
+                                        </th>
+                                        <th class="border-0 fw-bold text-center">
+                                            <span>Zone(s)</span>
+                                        </th>
+                                        <th class="border-0 fw-bold text-center">
+                                            <span>Actions</span>
+                                        </th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody class="accordion table-list-website" id="container_row_website">
+                                    @foreach($items as $item)
+                                        @include('user.website.row', ['item' => $item])
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div>
+                                @include('administrator.components.footer_table')
+                            </div>
+
+                        </div>
                     </div>
 
-                    <div class="card-body">
-
-                        <div class="table-responsive bg-white pb-5 p-3">
-                            <div class="accordion-item">
-                            </div>
-                            <div class="accordion-item">
-                            </div>
-                            <table class="table table-hover m-0">
-                                <thead>
-                                <tr>
-                                    <th class="border-0 fw-bold text-start">
-                                        <span>Website</span>
-                                    </th>
-                                    <th class="border-0 fw-bold text-center">
-                                        <span>Status</span>
-                                    </th>
-                                    <th class="border-0 fw-bold text-center">
-                                        <span>Ads.txt</span>
-                                    </th>
-                                    <th class="border-0 fw-bold text-center">
-                                        <span>Zone(s)</span>
-                                    </th>
-                                    <th class="border-0 fw-bold text-center">
-                                        <span>Actions</span>
-                                    </th>
-
-                                </tr>
-                                </thead>
-                                <tbody class="accordion table-list-website" id="container_row_website">
-                                @foreach($items as $item)
-                                    @include('user.website.row', ['item' => $item])
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div>
-                            @include('administrator.components.footer_table')
-                        </div>
-
-                    </div>
                 </div>
 
             </div>
-
         </div>
-    </div>
+    </section>
 
     <!-- Modal -->
-    <div class="modal fade" id="modal_craete_website" tabindex="-1" aria-labelledby="modal_craete_websiteLabel"
+    <div class="modal fade" id="modal_create_website" tabindex="-1" aria-labelledby="modal_create_websiteLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal_craete_websiteLabel">Create new Website</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="modal_create_websiteLabel">Create new Website</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
                 </div>
                 <div class="modal-body">
                     @include('user.website.modal_create')
@@ -238,7 +288,9 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Verify site ownership
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
                 </div>
                 <div class="modal-body" id="container_ad_zone_website_modal">
 
@@ -254,7 +306,9 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Create zone
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
                 </div>
                 <div class="modal-body" id="container_create_zone_website_modal">
 
@@ -266,6 +320,48 @@
 @endsection
 
 @section('js')
+
+    <script>
+        const filterInput = document.getElementById("filterInput");
+        const clearIcon = document.getElementById("clearIcon");
+
+        filterInput.addEventListener("input", function() {
+            clearIcon.style.display = this.value.length > 0 ? "block" : "none";
+            filterList(this.value);
+        });
+
+        clearIcon.addEventListener("click", function() {
+            filterInput.value = "";
+            clearIcon.style.display = "none";
+            filterList("");
+        });
+
+        let typingTimerFilter;
+        const delayTimerFilter = 200;
+
+        function filterList(value) {
+            clearTimeout(typingTimerFilter);
+
+            typingTimerFilter = setTimeout(() => {
+                callAjax(
+                    "GET",
+                    "{{route('ajax.user.website.search')}}",
+                    {
+                        search_query: value,
+                    },
+                    (response) => {
+                        if (response.data.search_query == value || (response.data.search_query == null && value == '')) {
+                            $('#container_row_website').html(response.data.html).fadeIn(500);
+                        }
+                    },
+                    (error) => {
+
+                    }, false, false
+                )
+            }, delayTimerFilter);
+        }
+    </script>
+
     <script>
         function onStoreWebsite() {
             _LoaderOrverlay.show("Creating your website...");
@@ -284,11 +380,13 @@
                         setTimeout(processStoreWebsite(), 5000);
                     } else {
                         if (response.is_success) {
-                            hideModal('modal_craete_website');
+                            hideModal('modal_create_website');
                             _LoaderOrverlay.hide();
                             showToastSuccess('created');
                             addRowAffterStoreWebsite(response.website_id);
                             onShowModalAdCode(response.zone_ids[0]);
+                            $('#require_input_ajax_checking_input').val("").trigger('input');
+                            $("#button_create_website").prop("disabled", true);
                         } else {
                             showToastError('Error');
                         }
@@ -379,7 +477,7 @@
                 (response) => {
                     const row_html = response.data.html;
                     prependWithAnimation("#container_row_website", row_html);
-                    if(is_show_zone) {
+                    if (is_show_zone) {
                         $('#collapse' + website_id).removeClass('collapse').addClass('show');
                     }
                 },
@@ -391,7 +489,7 @@
 
         function onShowModalAdCode(zone_id) {
 
-            if(!zone_id) return;
+            if (!zone_id) return;
 
             _LoaderOrverlay.show();
 

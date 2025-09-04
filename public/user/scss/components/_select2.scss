@@ -1,0 +1,43 @@
+﻿// Select2
+.select2-container {
+	height: 39px;
+    display: block;
+	.select2-choice {
+		height: auto;
+		border: none;
+		background: none;
+        position: absolute;
+		padding: 5px 10px;
+		line-height: 27px;
+		top: 0;
+		left: 0;
+		width: 100%;
+
+		>.select2-chosen {
+			margin: 0;
+		}
+		.select2-arrow {
+			display: none;
+		}
+	}
+    .select2-selection{
+        line-height: 1.5;
+        padding: 0.375rem 0.75rem;
+        height: auto;
+        position: relative;
+    }
+    &.select2-container--default{
+        .select2-selection--single{
+            .select2-selection__arrow{
+                top:6px;
+            }
+        } 
+    } 
+}
+
+.select2-drop-active {
+	border-color: var(--border-color);
+}
+.parsley-required {
+	color: red;
+}

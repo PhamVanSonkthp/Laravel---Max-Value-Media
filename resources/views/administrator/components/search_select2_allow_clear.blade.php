@@ -1,10 +1,13 @@
 @php
     $value = request($name);
+if (!isset($id)){
+    $id = \App\Models\Helper::randomString();
+}
 @endphp
 
 <div class="mt-3">
     <label>{{$label}}</label>
-    <select id="{{isset($id) ? $id : \App\Models\Helper::randomString()}}" name="{{$name}}" class="form-control select2_init_allow_clear">
+    <select id="{{$id}}" name="{{$name}}" class="form-control select2_init_allow_clear">
         <option value="">
             Chọn
         </option>
@@ -17,8 +20,10 @@
 
 <script>
 
-    $('select[name="{{$name}}"]').on('change', function () {
-        addUrlParameter('{{$name}}', this.value)
+    $(document).ready(function() {
+        $('#{{$id}}').on('change', function () {
+            addUrlParameter('{{$name}}', this.value)
+        });
     });
 
 </script>

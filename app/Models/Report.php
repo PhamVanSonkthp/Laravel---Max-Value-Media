@@ -41,6 +41,16 @@ class Report extends Model implements Auditable
         return $this->hasMany(ReportByCountry::class, 'report_id', 'id');
     }
 
+    public function reportByDevices()
+    {
+        return $this->hasMany(ReportByDevice::class, 'report_id', 'id');
+    }
+
+    public function reportByReferrers()
+    {
+        return $this->hasMany(ReportByReferrer::class, 'report_id', 'id');
+    }
+
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
