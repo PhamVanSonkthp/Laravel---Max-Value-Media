@@ -50,6 +50,7 @@ class ReportController extends Controller
         $adServerSumary->selectRaw('SUM(d_request) as d_request');
         $adServerSumary = $adServerSumary->first();
 
+        $sumary->d_request = 0;
         $sumary->d_request += $adServerSumary->d_request;
 
         $items = $this->model->searchByQuery($request, ['report_type_id' => 1], null, null, true);
