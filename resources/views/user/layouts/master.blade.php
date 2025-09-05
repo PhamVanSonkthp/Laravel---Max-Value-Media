@@ -77,6 +77,12 @@
             appearance: menulist !important;
         }
 
+        .navbar-nav .profile img {
+            border: 2px solid #fff;
+            width: 35px;
+            height: 35px;
+        }
+
     </style>
     @yield('css')
 
