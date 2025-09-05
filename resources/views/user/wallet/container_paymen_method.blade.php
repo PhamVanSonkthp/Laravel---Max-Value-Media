@@ -117,7 +117,4 @@
             {{optional($userPaymentMethod->paymentMethod)->description}}
         </small>
     @endif
-
-
-
 </div>

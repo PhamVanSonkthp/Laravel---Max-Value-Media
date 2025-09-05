@@ -1,8 +1,8 @@
 <tr id="row_id_{{$item->id}}">
     <td>
-        <button class="btn btn-outline-primary">
+        <a target="_blank" href="{{route('user.wallet.invoice', ['id' => $item->id])}}" class="btn btn-outline-primary">
             <i class="fa-solid fa-receipt"></i>
-        </button>
+        </a>
     </td>
     <td>
         <div>

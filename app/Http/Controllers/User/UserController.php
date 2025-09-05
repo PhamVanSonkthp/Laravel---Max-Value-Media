@@ -15,10 +15,12 @@ use App\Models\StatusWebsite;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
 use App\Models\Website;
+use App\Models\WithdrawUser;
 use App\Models\ZoneStatus;
 use App\Models\ZoneWebsite;
 use App\Traits\StorageImageTrait;
 use App\Traits\WebsiteTrait;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -385,6 +387,15 @@ class UserController extends Controller
         }
 
         return view('user.wallet.index', compact('items', 'summary', 'withdraw', 'userPaymentMethod'));
+
+    }
+
+    public function invoice(Request $request)
+    {
+
+        $payment = Payment::where(['id' => $request->id, 'user_id' => auth()->id()])->firstOrFail();
+        $pdf = Pdf::loadView('pdf.invoice', ['payment' => $payment]);
+        return $pdf->stream('invoice.pdf');
 
     }
 

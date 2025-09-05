@@ -10,6 +10,7 @@
         "arifhp86/laravel-clear-expired-cache-file": "^1.0",
         "awobaz/compoships": "^2.1",
         "barryvdh/laravel-debugbar": "^3.7",
+        "barryvdh/laravel-dompdf": "^2.2",
         "box/spout": "^3.3",
         "doctrine/dbal": "^3.6",
         "fabpot/goutte": "^4.0",

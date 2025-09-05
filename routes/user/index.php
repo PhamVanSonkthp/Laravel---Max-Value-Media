@@ -23,10 +23,19 @@ Route::group(['middleware' => ['auth','verified']], function () {
         'uses'=>'App\Http\Controllers\User\UserController@website',
     ]);
 
-    Route::get('wallet', [
-        'as'=>'user.wallet',
-        'uses'=>'App\Http\Controllers\User\UserController@wallet',
-    ]);
+    Route::prefix('wallet')->group(function () {
+        Route::get('/', [
+            'as'=>'user.wallet',
+            'uses'=>'App\Http\Controllers\User\UserController@wallet',
+        ]);
+
+        Route::get('invoice', [
+            'as'=>'user.wallet.invoice',
+            'uses'=>'App\Http\Controllers\User\UserController@invoice',
+        ]);
+
+    });
+
 
     Route::prefix('profile')->group(function () {
         Route::get('/', [
