@@ -7,11 +7,12 @@ use App\Models\User;
 use App\Models\Website;
 use App\Traits\WebsiteTrait;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
-Route::middleware(['auth', 'admin'])->get('/admin/user-view/{id}', function ($id) {
+Route::middleware(['auth', 'admin'])->get('/admin/user-view/{id}', function (Request $request, $id) {
 
     session(['impersonate' => auth()->id()]);
     $user = User::findOrFail($id);
@@ -34,9 +35,20 @@ Route::middleware(['auth', 'admin'])->get('/admin/user-view/{id}', function ($id
 
     $siteCharts = [];
 
+
     $from = Carbon::today()->subDays(7);
     $to = Carbon::today();
 
+    if ($request->f == "This Month"){
+        $from = Carbon::today()->startOfMonth();
+        $to = Carbon::today();
+    }else if ($request->f == "Last Month"){
+        $from = Carbon::today()->subMonth()->startOfMonth();
+        $to = Carbon::today()->subMonth()->endOfMonth();
+    }else if ($request->f == "Custom" && $request->c_f && $request->c_t){
+        $from = Carbon::parse($request->c_f);
+        $to = Carbon::parse($request->c_t);
+    }
 
     $sites = Website::where('user_id', auth()->id())->get();
 
@@ -46,7 +58,8 @@ Route::middleware(['auth', 'admin'])->get('/admin/user-view/{id}', function ($id
             'period' => $from->copy()->addDays($i)->format('M-d-Y'),
         ];
 
-        foreach ($sites as $site) {
+        foreach ($sites as $index => $site) {
+            if ($index > 3) break;
             $row[$site->name] = WebsiteTrait::revenue($site->id, $from->copy()->addDays($i)->toDateString(), $from->copy()->addDays($i + 1)->toDateString());
         }
 
@@ -55,7 +68,7 @@ Route::middleware(['auth', 'admin'])->get('/admin/user-view/{id}', function ($id
 
     $performanceSites = Website::where('user_id', auth()->id())->get()->toArray();
 
-    foreach ($performanceSites as &$performanceSite){
+    foreach ($performanceSites as &$performanceSite) {
         $performanceSite['page_view'] = WebsiteTrait::pageView($performanceSite['id'], $from, $to);
         $performanceSite['impressions'] = WebsiteTrait::impressions($performanceSite['id'], $from, $to);
         $performanceSite['revenue'] = WebsiteTrait::revenue($performanceSite['id'], $from, $to);
@@ -66,7 +79,7 @@ Route::middleware(['auth', 'admin'])->get('/admin/user-view/{id}', function ($id
     $trafficByDevices = [];
     $trafficByReferrers = [];
 
-    foreach (Website::where(['user_id' => auth()->id()])->get() as $item){
+    foreach (Website::where(['user_id' => auth()->id()])->get() as $item) {
         foreach (WebsiteTrait::reports($item->id, 2, $from->toDateString(), $to->toDateString()) as $report) {
             $reportByCountries = $report->reportByCountries;
             foreach ($reportByCountries as $reportByCountry) {
@@ -113,15 +126,15 @@ Route::middleware(['auth', 'admin'])->get('/admin/user-view/{id}', function ($id
         return $b['impressions'] <=> $a['impressions'];
     });
 
-    if (count($trafficByContries) > 10){
+    if (count($trafficByContries) > 10) {
         $trafficByContries = array_slice($trafficByContries, 0, 10);
     }
 
-    if (count($trafficByDevices) > 10){
+    if (count($trafficByDevices) > 10) {
         $trafficByDevices = array_slice($trafficByDevices, 0, 10);
     }
 
-    if (count($trafficByReferrers) > 10){
+    if (count($trafficByReferrers) > 10) {
         $trafficByReferrers = array_slice($trafficByReferrers, 0, 10);
     }
 
@@ -140,22 +153,22 @@ Route::middleware(['auth', 'admin'])->get('/admin/user-view/{id}', function ($id
     $jsonDrawMaps = [];
     $jsonColorMaps = [];
 
-    foreach ($trafficByContries as $index => $trafficByContry){
-        $jsonDrawMaps[] = [optional($trafficByContry->national)->name, $index,Formatter::formatNumber($trafficByContry['requests'] / max(1, array_sum(array_column($trafficByContries, "requests"))) * 100, 2) . '%'];
+    foreach ($trafficByContries as $index => $trafficByContry) {
+        $jsonDrawMaps[] = [optional($trafficByContry->national)->name, $index, Formatter::formatNumber($trafficByContry['requests'] / max(1, array_sum(array_column($trafficByContries, "requests"))) * 100, 2) . '%'];
         $jsonColorMaps[] = $colors[$index];
     }
 
     $jsonDrawChartDevices = [];
-    $jsonColorChartDevices = ["#4b8bff", '#6abf4b','#ffb84b','#e68a00','#6b1cdb','#0099cc','#00cc9c','#0033cc','#60acc6','#064155'];
+    $jsonColorChartDevices = ["#4b8bff", '#6abf4b', '#ffb84b', '#e68a00', '#6b1cdb', '#0099cc', '#00cc9c', '#0033cc', '#60acc6', '#064155'];
     $jsonDrawChartDevices[] = ["Device", "Users"];
-    foreach ($trafficByDevices as $trafficByDevice){
+    foreach ($trafficByDevices as $trafficByDevice) {
         $jsonDrawChartDevices[] = [
             optional($trafficByDevice->device)->name,
             $trafficByDevice->requests
         ];
     }
 
-    return view('user.home.index', compact('revenueNow', 'revenueYesterday', 'revenueThisMonth', 'revenueLastMonth','siteCharts','sites','performanceSites','trafficByContries','jsonDrawMaps','jsonColorMaps','trafficByDevices','jsonDrawChartDevices','jsonColorChartDevices','trafficByReferrers'));
+    return view('user.home.index', compact('revenueNow', 'revenueYesterday', 'revenueThisMonth', 'revenueLastMonth', 'siteCharts', 'sites', 'performanceSites', 'trafficByContries', 'jsonDrawMaps', 'jsonColorMaps', 'trafficByDevices', 'jsonDrawChartDevices', 'jsonColorChartDevices', 'trafficByReferrers'));
 
 })->name('admin.userView');
 
