@@ -182,7 +182,12 @@ Route::prefix('ajax/user')->group(function () {
             Route::get('modal_create', function (Request $request) {
 
                 $website = Website::findOrFail($request->website_id);
-                $groupZoneDimensions = GroupZoneDimension::where('id', '!=', 1)->get();
+                $groupZoneDimensions = GroupZoneDimension::where('group_zone_dimensions.id', '!=', 1)
+                    ->select('group_zone_dimensions.*')
+                    ->join('zone_dimensions', 'zone_dimensions.group_zone_dimension_id', '=', 'group_zone_dimensions.id')
+                    ->whereIn('zone_dimensions.id', config('_my_config.allow_user_create_zone_dimension_ids'))
+                    ->groupBy('group_zone_dimensions.id')
+                    ->get();
 
                 $zoneStatuses = Helper::searchAllByQuery(new ZoneStatus(), null);
                 $zoneTypes = [new Balance(1, "Banner")];

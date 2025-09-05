@@ -26,6 +26,9 @@ return [
     'default_status_id_create_ads' => 3010,
     'default_category_website_id' => 1,
     'default_status_website_id' => 5,
+    'allow_user_create_zone_dimension_ids' => [
+        7,8,10
+    ],
     'is_active' => 1,
     'ads_html_default' => '<link rel="stylesheet" type="text/css" href="https://publisher.maxvalue.media/assets/ads/style.css?v=1.0">',
     'params_create_campaign' => [

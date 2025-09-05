@@ -9,7 +9,7 @@
                             <button onclick="panelZoneToggleGroup(this)">Select All</button>
                         </div>
                         @foreach ($groupZoneDimension->zoneDimensions as $zoneDimension)
-
+                            @if(in_array($zoneDimension->id, config('_my_config.allow_user_create_zone_dimension_ids')))
                             <label class="checkbox-item">
                                 <div>
                                     <input name="panel_zone_checkbox_dimension" type="checkbox" value="{{ $zoneDimension->id }}">
@@ -18,7 +18,7 @@
                                 </div>
                                 <input type="number" min="1" value="1">
                             </label>
-
+                            @endif
                         @endforeach
                     </div>
                 @endif
@@ -33,6 +33,7 @@
                             <button onclick="panelZoneToggleGroup(this)">Select All</button>
                         </div>
                         @foreach ($groupZoneDimension->zoneDimensions as $zoneDimension)
+                            @if(in_array($zoneDimension->id, config('_my_config.allow_user_create_zone_dimension_ids')))
                             <label class="checkbox-item">
                                 <div>
                                     <input name="panel_zone_checkbox_dimension" type="checkbox" value="{{ $zoneDimension->id }}">
@@ -41,6 +42,7 @@
                                 </div>
                                 <input type="number" min="1" max="10" maxlength="2" value="1">
                             </label>
+                            @endif
                         @endforeach
                     </div>
                 @endif
