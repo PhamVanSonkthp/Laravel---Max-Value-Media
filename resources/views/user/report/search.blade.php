@@ -91,4 +91,10 @@
         <button class="btn btn-primary btn-block" onclick="onSearch()">Apply Filter</button>
     </div>
 
+    @if(request('website_ids') || request('zone_website_ids'))
+    <div class="form-group col-md-1">
+        <button class="btn btn-secondary btn-block" onclick="onClearFilter()">Clear filter</button>
+    </div>
+    @endif
+
 </div>

@@ -207,5 +207,8 @@
                 }
             ]);
         }
+        function onClearFilter() {
+            window.location.href = "{{route('user.report')}}?from={{\Carbon\Carbon::today()->subWeek()->toDateString()}}&to={{\Carbon\Carbon::today()->toDateString()}}";
+        }
     </script>
 @endsection

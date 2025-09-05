@@ -176,7 +176,7 @@
                                             <tr>
                                                 <td>{{$performanceSite['name']}}</td>
                                                 <td>{{\App\Models\Formatter::formatNumber($performanceSite['page_view'])}}</td>
-                                                <td></td>
+                                                <td>${{\App\Models\Formatter::formatMoney($performanceSite['revenue'] / max(1, $performanceSite['page_view']) * 1000, 2)}}</td>
                                                 <td>{{\App\Models\Formatter::formatNumber($performanceSite['impressions'])}}</td>
                                                 <td>${{\App\Models\Formatter::formatMoney($performanceSite['revenue'], 2)}}</td>
                                             </tr>
@@ -212,6 +212,8 @@
 
             $(".dropdown-item").on("click", function() {
                 let filter = $(this).data("filter");
+
+                if(filter == "{{request('f')}}" || (filter == "Week" && "{{request('f')}}" == "")) return;
 
                 if (filter === "Custom") {
                     $("#customRange").show().focus();
