@@ -14,7 +14,7 @@
                                     <span class="small">{{optional($trafficByContry->national)->name}}</span><span class="text-muted small fw-semibold">{{\App\Models\Formatter::formatNumber($trafficByContry['requests'] / max(1, array_sum(array_column($trafficByContries, "requests"))) * 100, 2)}}%</span>
                                 </div>
                                 <div class="progress" style="height: 5px;">
-                                    <div class="progress-bar" style="width:100%; background: {{$jsonColorMaps[$index]}}"></div>
+                                    <div class="progress-bar" style="width:{{\App\Models\Formatter::formatNumber($trafficByContry['requests'] / max(1, array_sum(array_column($trafficByContries, "requests"))) * 100, 2)}}%; background: {{$jsonColorMaps[$index]}}"></div>
                                 </div>
                             </li>
                         @endforeach

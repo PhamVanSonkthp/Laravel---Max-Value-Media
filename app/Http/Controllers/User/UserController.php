@@ -6,19 +6,23 @@ use App\Exports\ModelExport;
 use App\Http\Controllers\Controller;
 use App\Models\Formatter;
 use App\Models\Helper;
+use App\Models\Image;
 use App\Models\Payment;
 use App\Models\Report;
 use App\Models\ReportByDevice;
+use App\Models\SingleImage;
 use App\Models\StatusWebsite;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
 use App\Models\Website;
 use App\Models\ZoneStatus;
 use App\Models\ZoneWebsite;
+use App\Traits\StorageImageTrait;
 use App\Traits\WebsiteTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use function view;
 
@@ -52,9 +56,20 @@ class UserController extends Controller
 
         $siteCharts = [];
 
+
         $from = Carbon::today()->subDays(7);
         $to = Carbon::today();
 
+        if ($request->f == "This Month"){
+            $from = Carbon::today()->startOfMonth();
+            $to = Carbon::today();
+        }else if ($request->f == "Last Month"){
+            $from = Carbon::today()->subMonth()->startOfMonth();
+            $to = Carbon::today()->subMonth()->endOfMonth();
+        }else if ($request->f == "Custom" && $request->c_f && $request->c_t){
+            $from = Carbon::parse($request->c_f);
+            $to = Carbon::parse($request->c_t);
+        }
 
         $sites = Website::where('user_id', auth()->id())->get();
 
@@ -64,7 +79,8 @@ class UserController extends Controller
                 'period' => $from->copy()->addDays($i)->format('M-d-Y'),
             ];
 
-            foreach ($sites as $site) {
+            foreach ($sites as $index => $site) {
+                if ($index > 3) break;
                 $row[$site->name] = WebsiteTrait::revenue($site->id, $from->copy()->addDays($i)->toDateString(), $from->copy()->addDays($i + 1)->toDateString());
             }
 
@@ -73,7 +89,7 @@ class UserController extends Controller
 
         $performanceSites = Website::where('user_id', auth()->id())->get()->toArray();
 
-        foreach ($performanceSites as &$performanceSite){
+        foreach ($performanceSites as &$performanceSite) {
             $performanceSite['page_view'] = WebsiteTrait::pageView($performanceSite['id'], $from, $to);
             $performanceSite['impressions'] = WebsiteTrait::impressions($performanceSite['id'], $from, $to);
             $performanceSite['revenue'] = WebsiteTrait::revenue($performanceSite['id'], $from, $to);
@@ -84,7 +100,7 @@ class UserController extends Controller
         $trafficByDevices = [];
         $trafficByReferrers = [];
 
-        foreach (Website::where(['user_id' => auth()->id()])->get() as $item){
+        foreach (Website::where(['user_id' => auth()->id()])->get() as $item) {
             foreach (WebsiteTrait::reports($item->id, 2, $from->toDateString(), $to->toDateString()) as $report) {
                 $reportByCountries = $report->reportByCountries;
                 foreach ($reportByCountries as $reportByCountry) {
@@ -131,15 +147,15 @@ class UserController extends Controller
             return $b['impressions'] <=> $a['impressions'];
         });
 
-        if (count($trafficByContries) > 10){
+        if (count($trafficByContries) > 10) {
             $trafficByContries = array_slice($trafficByContries, 0, 10);
         }
 
-        if (count($trafficByDevices) > 10){
+        if (count($trafficByDevices) > 10) {
             $trafficByDevices = array_slice($trafficByDevices, 0, 10);
         }
 
-        if (count($trafficByReferrers) > 10){
+        if (count($trafficByReferrers) > 10) {
             $trafficByReferrers = array_slice($trafficByReferrers, 0, 10);
         }
 
@@ -158,22 +174,22 @@ class UserController extends Controller
         $jsonDrawMaps = [];
         $jsonColorMaps = [];
 
-        foreach ($trafficByContries as $index => $trafficByContry){
-            $jsonDrawMaps[] = [optional($trafficByContry->national)->name, $index,Formatter::formatNumber($trafficByContry['requests'] / max(1, array_sum(array_column($trafficByContries, "requests"))) * 100, 2) . '%'];
+        foreach ($trafficByContries as $index => $trafficByContry) {
+            $jsonDrawMaps[] = [optional($trafficByContry->national)->name, $index, Formatter::formatNumber($trafficByContry['requests'] / max(1, array_sum(array_column($trafficByContries, "requests"))) * 100, 2) . '%'];
             $jsonColorMaps[] = $colors[$index];
         }
 
         $jsonDrawChartDevices = [];
-        $jsonColorChartDevices = ["#4b8bff", '#6abf4b','#ffb84b','#e68a00','#6b1cdb','#0099cc','#00cc9c','#0033cc','#60acc6','#064155'];
+        $jsonColorChartDevices = ["#4b8bff", '#6abf4b', '#ffb84b', '#e68a00', '#6b1cdb', '#0099cc', '#00cc9c', '#0033cc', '#60acc6', '#064155'];
         $jsonDrawChartDevices[] = ["Device", "Users"];
-        foreach ($trafficByDevices as $trafficByDevice){
+        foreach ($trafficByDevices as $trafficByDevice) {
             $jsonDrawChartDevices[] = [
                 optional($trafficByDevice->device)->name,
                 $trafficByDevice->requests
             ];
         }
 
-        return view('user.home.index', compact('revenueNow', 'revenueYesterday', 'revenueThisMonth', 'revenueLastMonth','siteCharts','sites','performanceSites','trafficByContries','jsonDrawMaps','jsonColorMaps','trafficByDevices','jsonDrawChartDevices','jsonColorChartDevices','trafficByReferrers'));
+        return view('user.home.index', compact('revenueNow', 'revenueYesterday', 'revenueThisMonth', 'revenueLastMonth', 'siteCharts', 'sites', 'performanceSites', 'trafficByContries', 'jsonDrawMaps', 'jsonColorMaps', 'trafficByDevices', 'jsonDrawChartDevices', 'jsonColorChartDevices', 'trafficByReferrers'));
     }
 
     public function website(Request $request)
@@ -188,7 +204,14 @@ class UserController extends Controller
     public function report(Request $request)
     {
         $model = new Report();
-        $items = $model->searchByQuery($request, ['report_type_id' => 1, 'user_id' => auth()->id()]);
+        $items = $model->searchByQuery($request, ['report_type_id' => 1, 'user_id' => auth()->id()], null, null, true);
+
+        $searchWebsiteIDs = [];
+        if ($request->website_ids) {
+            $searchWebsiteIDs = explode(",", $request->website_ids);
+            $items = $items->whereIn('website_id', $searchWebsiteIDs);
+        }
+        $items = $items->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
 
         $modelSumary = new Report();
         $summary = $modelSumary->searchByQuery($request, ['report_type_id' => 1, 'user_id' => auth()->id()], null, null, true);
@@ -197,7 +220,58 @@ class UserController extends Controller
         $websites = (new Website())->searchByQuery(null, ['user_id' => auth()->id()]);
         $zoneWebsites = (new ZoneWebsite())->searchByQuery(null, ['user_id' => auth()->id()]);
 
-        return view('user.report.index', compact('items', 'zoneWebsites', 'websites', 'summary'));
+        return view('user.report.index', compact('items', 'zoneWebsites', 'websites', 'summary', 'searchWebsiteIDs'));
+    }
+
+    public function profile(Request $request)
+    {
+        return view('user.profile.index');
+    }
+
+    public function updateProfile(Request $request)
+    {
+
+        if ($request->image) {
+            $item = SingleImage::firstOrCreate([
+                'relate_id' => auth()->id(),
+                'table' => 'users',
+            ], [
+                'relate_id' => auth()->id(),
+                'table' => 'users',
+                'image_path' => 'waiting_update',
+                'image_name' => 'waiting_update',
+                'is_public' => $request->is_public ?? 1,
+            ]);
+
+            $dataUploadFeatureImage = StorageImageTrait::storageTraitUpload($request, 'image', 'single', $item->id);
+
+            $item->update([
+                'image_path' => $dataUploadFeatureImage['file_path'],
+                'image_name' => $dataUploadFeatureImage['file_name'],
+            ]);
+            $item->refresh();
+        }
+
+        if ($request->current_password){
+            if (!$request->new_password){
+                return back()->with('new_password', 'Password can not empty');
+            }
+            if (!$request->new_password_confirm){
+                session()->flash('new_password_confirm', 'Password confirm can not empty');
+            }
+
+            if ($request->new_password != $request->new_password_confirm){
+                session()->flash('new_password_confirm', 'Not match');
+            }
+
+            if (!Hash::check($request->current_password, auth()->user()->password)) {
+                return back()->with('current_password', 'Your current password does not match our records.');
+            }
+
+            auth()->user()->password = Formatter::hash($request->current_password);
+            auth()->user()->save();
+        }
+        return back()->with('success', 'Changed!');
     }
 
     public function wallet(Request $request)

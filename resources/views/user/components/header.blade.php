@@ -5,7 +5,7 @@
             <div class="col-12">
                 <div class="navbar-logo">
                     <a href="javascript:void(0);" class="bars"></a>
-                    <a class="navbar-brand" href="index.html"><img src="{{asset('user/assets/images/logo.svg')}}" width="30"><span class="m-l-10">Maxvalue.media</span></a>
+                    <a class="navbar-brand" href="{{route('user.index')}}"><img src="{{asset('assets/images/YxPIef1UWMmT7hFjDUxN.png')}}" style="width: 157px;margin-left: -20px;"><span class="m-l-10">Maxvalue.media</span></a>
                 </div>
                 <ul class="nav navbar-nav">
 
@@ -37,7 +37,7 @@
 
                     <li class="dropdown profile">
                         <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                            <img class="rounded-circle" src="{{asset('user/assets/images/logo.svg')}}" alt="User">
+                            <img class="rounded-circle" src="{{auth()->user()->avatar()}}" alt="User">
                         </a>
                         <ul class="dropdown-menu">
                             <li>
@@ -47,7 +47,7 @@
                                     <hr>
                                 </div>
                             </li>
-                            <li><a href="profile.html"><i class="icon-user m-r-10"></i> <span>Profile</span></a></li>
+                            <li><a href="{{route('user.profile')}}"><i class="icon-user m-r-10"></i> <span>Profile</span></a></li>
                             <li><a href="{{route('user.logout')}}"><i class="icon-power m-r-10"></i><span>Sign Out</span></a></li>
                         </ul>
                     </li>

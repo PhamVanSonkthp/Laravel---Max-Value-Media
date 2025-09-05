@@ -11,105 +11,97 @@
     <link rel="shortcut icon" href="{{ env('APP_URL') . \App\Models\Helper::logoImagePath() }}">
 
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <!-- End fonts -->
+    <link rel="stylesheet" href="{{asset('user/assets/plugins/bootstrap/css/bootstrap.min.css')}}">
 
-    <!-- core:css -->
-    <link rel="stylesheet" href="{{asset('/assets/administrator/NobleUI/assets/vendors/core/core.css')}}">
-    <!-- endinject -->
+    <!-- Custom Css -->
+    <link rel="stylesheet" href="{{asset('user/assets/light/assets/css/main.css')}}">
+    <link rel="stylesheet" href="{{asset('user/assets/light/assets/css/color_skins.css')}}">
 
-    <!-- Plugin css for this page -->
-    <!-- End plugin css for this page -->
-
-    <!-- inject:css -->
-    <link rel="stylesheet" href="{{asset('/assets/user/fonts/feather-font/css/iconfont.css')}}">
-    <link rel="stylesheet" href="{{asset('/assets/user/vendors/flag-icon-css/css/flag-icon.min.css')}}">
-    <!-- endinject -->
-
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="{{asset('/assets/user/css/demo1/style.css')}}">
-    <!-- End layout styles -->
-
-
-    <script src="{{asset('/assets/administrator/js/jquery-3.5.1.min.js')}}"></script>
-    <script src="{{asset('/assets/administrator/js/jquery.ui.min.js')}}"></script>
-    <script src="{{asset('/assets/administrator/NobleUI/assets/vendors/flatpickr/flatpickr.min.js')}}"></script>
-    <script src="{{asset('/assets/administrator/NobleUI/assets/vendors/apexcharts/apexcharts.min.js')}}"></script>
-
-    @include('administrator.components.helper')
-
+    <style>
+        @media (max-width: 768px){
+            .content-center{
+                padding-top: 0 !important;
+            }
+        }
+    </style>
     @yield('css')
 
 </head>
 
-<body>
+<body class="theme-purple">
 
-<div class="main-wrapper">
-    <div class="page-wrapper full-page">
-        <div class="page-content d-flex align-items-center justify-content-center">
-
-            <div class="row w-100 mx-0 auth-page">
-                <div class="col-md-8 col-xl-6 mx-auto">
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-4 pe-md-0">
-                                <div class="auth-side-wrapper">
-
-                                </div>
-                            </div>
-                            <div class="col-md-8 ps-md-0">
-                                <div class="auth-form-wrapper px-4 py-5">
-                                    <a href="#" class="noble-ui-logo d-block mb-2">Maxvalue.<span>Media</span></a>
-                                    <h5 class="text-muted fw-normal mb-4">Welcome back! Log in to your account.</h5>
-
-                                    <form class="forms-sample" method="POST" action="{{ route('login') }}">
-                                        @csrf
-                                        <div class="mb-3">
-                                            <label for="userEmail" class="form-label @error('email') is-invalid @enderror">Email address</label>
-                                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="userEmail" placeholder="Email"
-                                                   name="email" value="{{ old('email') }}" required autocomplete="email">
-                                            @error('email')
-                                            <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="userPassword" class="form-label">Password</label>
-                                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required autocomplete="current-password">
-                                            @error('password')
-                                            <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-
-                                        <div>
-                                            <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0 text-white">Login</button>
-                                        </div>
-
-                                        <div class="mt-2">
-                                            <a class="btn-link" href="{{ route('password.request') }}">
-                                                Forgot password?
-                                            </a>
-                                        </div>
-
-
-                                        <a href="{{ route('register') }}" class="d-block mt-3 text-muted">Not a user? Sign up</a>
-                                    </form>
-                                </div>
-                            </div>
+<div class="authentication">
+    <div class="container">
+        <div class="col-md-12 content-center" style="padding-top: 70px;">
+            <div class="row clearfix">
+                <div class="col-lg-6 col-md-12">
+                    <div class="company_detail">
+                        <h4 class="logo" style="margin-bottom: 0px; !important;"><img class="mr-1" style="width: 300px !important;;    margin-left: -40px !important;" src="{{ \App\Models\Helper::logoImagePath() }}" alt="Logo"></h4>
+                        <h3>Maxvalue</h3>
+                        <p>Innovative Solutions to Maximize Earnings and Simplify Monetization</p>
+                        <div class="footer">
+                            <ul  class="social_link list-unstyled">
+                                <li><a href="#" title="ThemeMakker"><i class="zmdi zmdi-globe"></i></a></li>
+                                <li><a href="#" title="Themeforest"><i class="zmdi zmdi-shield-check"></i></a></li>
+                                <li><a href="#" title="LinkedIn"><i class="zmdi zmdi-linkedin"></i></a></li>
+                                <li><a href="#" title="Facebook"><i class="zmdi zmdi-facebook"></i></a></li>
+                                <li><a href="#" title="Twitter"><i class="zmdi zmdi-twitter"></i></a></li>
+                                <li><a href="#" title="Google plus"><i class="zmdi zmdi-google-plus"></i></a></li>
+                                <li><a href="#" title="Behance"><i class="zmdi zmdi-behance"></i></a></li>
+                            </ul>
+                            <hr>
+                            <ul class="list-unstyled">
+                                <li><a href="#" target="_blank">Contact Us</a></li>
+                                <li><a href="#" target="_blank">About Us</a></li>
+                                <li><a href="#" target="_blank">Services</a></li>
+                                <li><a href="javascript:void(0);">FAQ</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-lg-5 col-md-12 offset-lg-1">
+                    <div class="card-plain">
+                        <div class="header">
+                            <h5>Log in</h5>
+                        </div>
+                        <form class="form" method="POST" action="{{ route('login') }}">
+                            @csrf
+                            <div class="input-group">
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="userEmail" placeholder="Email"
+                                       name="email" value="{{ old('email') }}" required autocomplete="email">
+                                <span class="input-group-addon"><i class="zmdi zmdi-account-circle"></i></span>
 
+                                @error('email')
+                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                @enderror
+
+                            </div>
+                            <div class="input-group">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required placeholder="Password">
+                                <span class="input-group-addon"><i class="zmdi zmdi-lock"></i></span>
+                                @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                @enderror
+
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-round btn-block">SIGN IN</button>
+                        </form>
+                        <div class="footer">
+
+                            <a href="{{ route('register') }}" class="btn btn-primary btn-simple btn-round btn-block">SIGN UP</a>
+                        </div>
+                        <a href="{{ route('password.request') }}" class="link">Forgot Password?</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <div id="particles-js"></div>
 </div>
 
 </body>

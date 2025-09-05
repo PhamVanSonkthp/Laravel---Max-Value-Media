@@ -89,20 +89,33 @@
                 <div class="col-xl-8 col-lg-12 col-md-12">
                     <div class="card">
                         <div class="header">
-                            <h2><strong>Site</strong> Report</h2>
-                            <ul class="header-dropdown">
-                                <li class="dropdown">
-                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"
-                                       role="button" aria-haspopup="true" aria-expanded="false">
-                                        1 Week
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-right float-right">
-                                        <li><a href="javascript:void(0);">1 Week</a></li>
-                                        <li><a href="javascript:void(0);">This month</a></li>
-                                        <li><a href="javascript:void(0);">Custom</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
+                            <div class="row">
+                                <div class="col-6">
+                                    <h2><strong>Site</strong> Report</h2>
+                                </div>
+                                <div class="col-6">
+                                    <div class="dropdown d-inline-block float-right">
+                                        <button class="btn btn-filter dropdown-toggle" type="button" id="filterMenu" data-toggle="dropdown">
+                                            {{request('f') ?? 'Week'}}
+                                            @if(request('f') == "Custom")
+                                            {{request('c_f')}} → {{request('c_t')}}
+                                            @endif
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="filterMenu">
+                                            <li style="cursor: pointer;" class="dropdown-item" data-filter="Week">Week</li>
+                                            <li style="cursor: pointer;" class="dropdown-item" data-filter="This Month">This Month</li>
+                                            <li style="cursor: pointer;" class="dropdown-item" data-filter="Last Month">Last Month</li>
+                                            <li style="cursor: pointer;" class="dropdown-item" data-filter="Custom">Custom Range</li>
+                                        </ul>
+                                    </div>
+                                    <!-- Custom date input -->
+                                    <div>
+                                        <input type="text" id="customRange" class="form-control mx-auto" style="max-width:300px; display:none;opacity: 0;">
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                         <div class="body">
 
@@ -134,50 +147,6 @@
 
                 </div>
 
-                <div class="col-xl-8 col-lg-12 col-md-12 d-none">
-                    <div class="card">
-                        <div class="header">
-                            <h2><strong>Visitors</strong> Statistics</h2>
-                            <ul class="header-dropdown">
-                                <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle"
-                                                        data-toggle="dropdown" role="button" aria-haspopup="true"
-                                                        aria-expanded="false"> <i class="zmdi zmdi-more"></i> </a>
-                                    <ul class="dropdown-menu dropdown-menu-right">
-                                        <li><a href="javascript:void(0);">Action</a></li>
-                                        <li><a href="javascript:void(0);">Another action</a></li>
-                                        <li><a href="javascript:void(0);">Something else</a></li>
-                                    </ul>
-                                </li>
-                                <li class="remove">
-                                    <a role="button" class="boxs-close"><i class="zmdi zmdi-close"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="body">
-                            <div class="row">
-                                <div class="col-lg-6 col-md-12 visitors-chart">
-                                    <div id="donut_chart" class="donut_chart"></div>
-                                    <span><i class="zmdi zmdi-desktop-mac"></i>Desktops</span>
-                                    <span><i class="zmdi zmdi-tablet-mac"></i>Tablet</span>
-                                    <span><i class="zmdi zmdi-smartphone"></i>Mobile</span>
-                                </div>
-                                <div class="col-lg-6 col-md-12 text-center">
-                                    <div id="world-map-markers" style="height: 260px;"></div>
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <small>Page Views</small>
-                                            <h5 class="m-b-0">32,211,536</h5>
-                                        </div>
-                                        <div class="col-6">
-                                            <small>Site Visitors</small>
-                                            <h5 class="m-b-0">23,516</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="row clearfix">
@@ -234,5 +203,61 @@
     <script
         src="{{asset('user/assets/light/assets/bundles/morrisscripts.bundle.js')}}"></script> <!-- Morris Plugin Js -->
 
+
+    <script>
+        $(document).ready(function() {
+            function updateButton(text) {
+                $("#filterMenu").text(text);
+            }
+
+            $(".dropdown-item").on("click", function() {
+                let filter = $(this).data("filter");
+
+                if (filter === "Custom") {
+                    $("#customRange").show().focus();
+                } else {
+                    updateButton($(this).text());
+                    $("#customRange").hide().val('');
+                    addUrlParameter('f', filter);
+                }
+            });
+
+            // Daterangepicker
+            $('#customRange').daterangepicker({
+                autoUpdateInput: false,
+                maxDate: moment(),
+                locale: { cancelLabel: 'Clear', format: 'YYYY-MM-DD' }
+            });
+
+            $('#customRange').on('apply.daterangepicker', function(ev, picker) {
+                let rangeText = picker.startDate.format('YYYY-MM-DD') + ' → ' + picker.endDate.format('YYYY-MM-DD');
+                $(this).val(rangeText);
+                updateButton("Custom Range (" + rangeText + ")");
+                $(this).data('daterangepicker').hide();
+                $(this).hide();
+                addUrlParameterObjects([
+                    {
+                        name: 'f',
+                        value: "Custom",
+                    },
+                    {
+                        name: 'c_f',
+                        value: picker.startDate.format('YYYY-MM-DD'),
+                    },
+                    {
+                        name: 'c_t',
+                        value: picker.endDate.format('YYYY-MM-DD'),
+                    }
+                ]);
+            });
+
+            $('#customRange').on('cancel.daterangepicker', function() {
+                $(this).val('');
+                updateButton("Filter by Date");
+                $(this).data('daterangepicker').hide();
+                $(this).hide();
+            });
+        });
+    </script>
 
 @endsection

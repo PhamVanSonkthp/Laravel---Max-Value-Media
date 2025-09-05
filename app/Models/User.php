@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Notifications\QueuedVerifyEmail;
 use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 use App\Traits\UserTrait;
+use Awobaz\Compoships\Compoships;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
     use \OwenIt\Auditing\Auditable;
     use UserTrait;
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
-    use \Awobaz\Compoships\Compoships;
+    use Compoships;
     use DeleteModelTrait;
     use StorageImageTrait;
 
@@ -53,6 +55,11 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new QueuedVerifyEmail);
+    }
 
     // begin
 
@@ -339,7 +346,7 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
             return Formatter::getThumbnailImage($image->image_path, $size);
         }
 
-        return \App\Models\Helper::logoImagePath();
+        return Helper::logoImagePath();
     }
 
     public function image()

@@ -19,7 +19,8 @@
 @endsection
 
 @section('css')
-
+    <!-- Daterangepicker CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet" />
 @endsection
 
 @section('content')
@@ -137,4 +138,65 @@
 
 @section('js')
 
+
+
+    <!-- Moment.js -->
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <!-- Daterangepicker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    <script>
+
+        let from_search = "{{request('from')}}";
+        let to_search = "{{request('to')}}";
+
+        $('#select_websites_search').select2({
+            placeholder: 'Select websites',
+            tags: true,
+            tokenSeparators: [',', ';'],
+            width: '100%' // force full width
+        });
+
+        // Date range picker
+        $('#daterange').daterangepicker({
+            opens: 'right',
+            autoUpdateInput: false,
+            maxDate: moment(),
+            locale: {
+                cancelLabel: 'Clear',
+                format: 'YYYY-MM-DD'
+            }
+        });
+
+        $('#daterange').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' → ' + picker.endDate.format('YYYY-MM-DD'));
+
+            from_search = picker.startDate.format('YYYY-MM-DD');
+            to_search   = picker.endDate.format('YYYY-MM-DD');
+
+        });
+
+        $('#daterange').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+
+        $('#daterange').val('{{request('from') . ' → ' . request('to')}}');
+
+        function onSearch() {
+            addUrlParameterObjects([
+                {
+                    name: 'website_ids',
+                    value: $('#select_websites_search').val(),
+                },
+                {
+                    name: 'from',
+                    value: from_search,
+                },
+                {
+                    name: 'to',
+                    value: to_search,
+                }
+            ]);
+        }
+    </script>
 @endsection

@@ -27,7 +27,7 @@
           integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" type="text/css" media="all" href="{{asset('vendor/datetimepicker/daterangepicker.css')}}"/>
-    <link rel="stylesheet" type="text/css" media="all" href="{{asset('vendor/select2/select2.min.css')}}"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
@@ -88,14 +88,14 @@
 
 <body class="theme-purple">
 
-<!-- Page Loader -->
-<div class="page-loader-wrapper">
-    <div class="loader">
-        <div class="m-t-30"><img class="zmdi-hc-spin" src="{{asset('user/assets/images/logo.svg')}}" width="48" height="48" alt="InfiniO"></div>
-    </div>
-</div>
-<!-- Overlay For Sidebars -->
-<div class="overlay"></div>
+{{--<!-- Page Loader -->--}}
+{{--<div class="page-loader-wrapper">--}}
+{{--    <div class="loader">--}}
+{{--        <div class="m-t-30"><img class="zmdi-hc-spin" src="{{ \App\Models\Helper::logoImagePath() }}" width="48" height="48" alt="InfiniO"></div>--}}
+{{--    </div>--}}
+{{--</div>--}}
+{{--<!-- Overlay For Sidebars -->--}}
+{{--<div class="overlay"></div>--}}
 
 @include('user.components.header')
 
@@ -109,11 +109,11 @@
 <script src="{{asset('user/assets/light/assets/bundles/libscripts.bundle.js')}}"></script> <!-- Lib Scripts Plugin Js ( jquery.v3.2.1, Bootstrap4 js) -->
 <script src="{{asset('user/assets/light/assets/bundles/vendorscripts.bundle.js')}}"></script> <!-- slimscroll, waves Scripts Plugin Js -->
 
-<script src="{{asset('user/assets/light/assets/bundles/mainscripts.bundle.js')}}"></script>
+{{--<script src="{{asset('user/assets/light/assets/bundles/mainscripts.bundle.js')}}"></script>--}}
 
 <script src="{{asset('vendor/tinymce/tinymce.min.js') }}"></script>
 <script src="{{asset('vendor/sweet-alert-2/sweetalert2@11.js')}}"></script>
-<script src="{{asset('vendor/select2/select2.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript" src="{{asset('vendor/datetimepicker/moment.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('vendor/datetimepicker/daterangepicker.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/helper/main_helper.js')}}"></script>
@@ -127,6 +127,11 @@
     @include('user.components.freshchat')
 @endauth
 
+<script>
+    $(document).ready(function () {
+        $('.page-loader-wrapper').fadeOut(200);
+    });
+</script>
 </body>
 
 

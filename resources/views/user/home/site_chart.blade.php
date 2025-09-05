@@ -156,12 +156,12 @@
         cb.addEventListener("change", updateSiteChart);
     });
 
-    // Select All Handling
-    document.getElementById("siteChart-selectAll").addEventListener("change", function () {
-        const checkboxes = document.querySelectorAll(".siteChart-siteCheckbox");
-        checkboxes.forEach(cb => cb.checked = this.checked);
-        updateSiteChart();
-    });
+    // // Select All Handling
+    // document.getElementById("siteChart-selectAll").addEventListener("change", function () {
+    //     const checkboxes = document.querySelectorAll(".siteChart-siteCheckbox");
+    //     checkboxes.forEach(cb => cb.checked = this.checked);
+    //     updateSiteChart();
+    // });
 
     // Date Dropdown Handling
     document.querySelectorAll(".siteChart-dateOption").forEach(btn => {

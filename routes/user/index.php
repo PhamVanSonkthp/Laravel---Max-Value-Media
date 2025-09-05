@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth','verified']], function () {
 
     Route::get('/', [
         'as'=>'user.index',
@@ -27,6 +27,18 @@ Route::group(['middleware' => ['auth']], function () {
         'as'=>'user.wallet',
         'uses'=>'App\Http\Controllers\User\UserController@wallet',
     ]);
+
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [
+            'as'=>'user.profile',
+            'uses'=>'App\Http\Controllers\User\UserController@profile',
+        ]);
+        Route::put('update', [
+            'as'=>'user.profile.update',
+            'uses'=>'App\Http\Controllers\User\UserController@updateProfile',
+        ]);
+    });
+
 
     Route::prefix('reports')->group(function () {
         Route::get('/', [
