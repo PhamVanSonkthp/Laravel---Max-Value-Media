@@ -88,74 +88,74 @@ class UserController extends Controller
             $siteCharts[] = $row;
         }
 
-        if (count($siteCharts) > 3){
-            // 1. Calculate total sum for each site
-            $totals = [];
-            foreach ($siteCharts as $row) {
-                foreach ($row as $site => $value) {
-                    if ($site === "period") continue;
-                    $totals[$site] = ($totals[$site] ?? 0) + $value;
-                }
+//        if (count($siteCharts) > 3){
+//            // 1. Calculate total sum for each site
+//            $totals = [];
+//            foreach ($siteCharts as $row) {
+//                foreach ($row as $site => $value) {
+//                    if ($site === "period") continue;
+//                    $totals[$site] = ($totals[$site] ?? 0) + $value;
+//                }
+//            }
+//
+//// 2. Sort totals descending
+//            arsort($totals);
+//
+//// 3. Pick top 3 sites
+//            $topSites = array_slice(array_keys($totals), 0, 3, true);
+//
+//// 4. Rebuild dataset with top 3 + "other"
+//            $result = [];
+//            foreach ($siteCharts as $row) {
+//                $newRow = ["period" => $row["period"]];
+//                $otherTotal = 0;
+//                foreach ($row as $site => $value) {
+//                    if ($site === "period") continue;
+//                    if (in_array($site, $topSites)) {
+//                        $newRow[$site] = $value;
+//                    } else {
+//                        $otherTotal += $value;
+//                    }
+//                }
+//                $newRow["other"] = $otherTotal;
+//                $result[] = $newRow;
+//            }
+//
+//            $siteCharts = $result;
+//        }
+
+
+
+
+        $totals = [];
+        foreach ($siteCharts as $row) {
+            foreach ($row as $k => $v) {
+                if ($k === 'period' || $k === 'total') continue;
+                $totals[$k] = ($totals[$k] ?? 0) + (float)$v;
             }
-
-// 2. Sort totals descending
-            arsort($totals);
-
-// 3. Pick top 3 sites
-            $topSites = array_slice(array_keys($totals), 0, 3, true);
-
-// 4. Rebuild dataset with top 3 + "other"
-            $result = [];
-            foreach ($siteCharts as $row) {
-                $newRow = ["period" => $row["period"]];
-                $otherTotal = 0;
-                foreach ($row as $site => $value) {
-                    if ($site === "period") continue;
-                    if (in_array($site, $topSites)) {
-                        $newRow[$site] = $value;
-                    } else {
-                        $otherTotal += $value;
-                    }
-                }
-                $newRow["other"] = $otherTotal;
-                $result[] = $newRow;
-            }
-
-            $siteCharts = $result;
         }
 
+        arsort($totals);
+        $sitePriority = array_keys($totals);
 
+        $result = [];
+        foreach ($siteCharts as $row) {
+            $newRow = [];
+            foreach ($sitePriority as $site) {
+                // if site exists in original row, include it (otherwise 0)
+                $newRow[$site] = array_key_exists($site, $row) ? $row[$site] : 0;
+            }
+            // keep 'total' if present in original row (optional)
+            if (array_key_exists('total', $row)) {
+                $newRow['total'] = $row['total'];
+            }
+            // finally append period at the end as requested
+            $newRow['period'] = $row['period'];
 
+            $result[] = $newRow;
+        }
 
-//        $totals = [];
-//        foreach ($siteCharts as $row) {
-//            foreach ($row as $k => $v) {
-//                if ($k === 'period' || $k === 'total') continue;
-//                $totals[$k] = ($totals[$k] ?? 0) + (float)$v;
-//            }
-//        }
-//
-//        arsort($totals);
-//        $sitePriority = array_keys($totals);
-//
-//        $result = [];
-//        foreach ($siteCharts as $row) {
-//            $newRow = [];
-//            foreach ($sitePriority as $site) {
-//                // if site exists in original row, include it (otherwise 0)
-//                $newRow[$site] = array_key_exists($site, $row) ? $row[$site] : 0;
-//            }
-//            // keep 'total' if present in original row (optional)
-//            if (array_key_exists('total', $row)) {
-//                $newRow['total'] = $row['total'];
-//            }
-//            // finally append period at the end as requested
-//            $newRow['period'] = $row['period'];
-//
-//            $result[] = $newRow;
-//        }
-//
-//        $siteCharts = $result;
+        $siteCharts = $result;
 
 
         $performanceSites = Website::where('user_id', auth()->id())->get()->toArray();
