@@ -220,6 +220,18 @@ class UserController extends Controller
             return $b['impressions'] <=> $a['impressions'];
         });
 
+        usort($trafficByDevices, function ($a, $b) {
+            return $b['requests'] <=> $a['requests'];
+        });
+
+        usort($trafficByReferrers, function ($a, $b) {
+            return $b['requests'] <=> $a['requests'];
+        });
+
+        usort($trafficByContries, function ($a, $b) {
+            return $b['requests'] <=> $a['requests'];
+        });
+
         if (count($trafficByContries) > 10) {
             $trafficByContries = array_slice($trafficByContries, 0, 10);
         }
