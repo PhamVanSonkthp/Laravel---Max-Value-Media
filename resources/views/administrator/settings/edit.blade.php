@@ -46,6 +46,14 @@
                                     @include('administrator.components.input_text', ['label' => 'Account ID Adscore' , 'name' => 'account_id_adscore'])
                                 </div>
 
+                                <div class="col-6">
+                                    @include('administrator.components.input_text', ['label' => 'Email contact' , 'name' => 'email_contact'])
+                                </div>
+
+                                <div class="col-6">
+                                    @include('administrator.components.input_text', ['label' => 'Phone contact' , 'name' => 'phone_contact'])
+                                </div>
+
                             </div>
 
 
