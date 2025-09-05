@@ -71,7 +71,7 @@ class UserController extends Controller
 
         $managers = $this->managers();
 
-        $items = $items->orderBy('updated_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+        $items = $items->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
 
         $cses = $this->cses();
