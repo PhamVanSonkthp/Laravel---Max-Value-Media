@@ -364,6 +364,9 @@
 
 @section('js')
     <script>
+
+        is_show_modal_view_all_zone = true;
+
         $(function () {
 
             const time_zone_website_modal = document.querySelector('#time_zone_website_modal');
@@ -383,6 +386,7 @@
 
             const modal_create_zone = document.querySelector('#modal_create_zone');
             modal_create_zone.addEventListener('hidden.bs.modal', function () {
+                if (is_show_modal_view_all_zone)
                 showModal('modal_view_all_zone');
             });
 
@@ -465,7 +469,12 @@
         }
 
         function onShowModalCreateZone(website_id = null) {
-            if (!website_id) website_id = $('#modal_view_all_zone_title').attr("data-id");
+            if (!website_id) {
+                is_show_modal_view_all_zone = true;
+                website_id = $('#modal_view_all_zone_title').attr("data-id");
+            }else{
+                is_show_modal_view_all_zone = false;
+            }
 
             callAjax(
                 "GET",

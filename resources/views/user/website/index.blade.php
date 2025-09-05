@@ -340,6 +340,17 @@
         const delayTimerFilter = 200;
 
         function filterList(value) {
+
+            $('#container_row_website').html(`<tr id="row_website_id_6793" onclick=" " class="accordion-header website-reject collapsed" data-toggle="collapse" data-target="#collapse6793" aria-expanded="false" aria-controls="collapse6793" style="cursor: pointer;">
+
+    <td colspan="5">
+       <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+  <div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+    </td>
+</tr>`)
             clearTimeout(typingTimerFilter);
 
             typingTimerFilter = setTimeout(() => {

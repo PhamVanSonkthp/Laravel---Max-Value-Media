@@ -48,6 +48,12 @@
     @include('administrator.components.loading_overlay')
 
     <style>
+
+        body{
+            margin-bottom: 0px;
+            min-height: 69vh;
+        }
+
         .modal-backdrop {
             background: #000 !important;
         }
@@ -81,6 +87,27 @@
             border: 2px solid #fff;
             width: 35px;
             height: 35px;
+        }
+
+        #scroll-container {
+            border: 1px solid #ccc;
+            overflow: hidden; /* Hides the overflowing text */
+            white-space: nowrap; /* Prevents text from wrapping */
+            width: 100%; /* Or a fixed width */
+        }
+
+        #scroll-text {
+            display: inline-block; /* Allows animation on text */
+            animation: scroll-left 15s linear infinite; /* Animation properties */
+        }
+
+        @keyframes scroll-left {
+            from {
+                transform: translateX(100%); /* Start off-screen to the right */
+            }
+            to {
+                transform: translateX(-100%); /* End off-screen to the left */
+            }
         }
 
     </style>

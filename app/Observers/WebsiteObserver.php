@@ -3,9 +3,12 @@
 namespace App\Observers;
 
 use App\Jobs\QueueAdserverUpdateStatusWebsite;
+use App\Mail\ApprovedWebsiteMail;
 use App\Models\Formatter;
+use App\Models\User;
 use App\Models\Website;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use function PHPUnit\Framework\isNull;
 
 class WebsiteObserver
@@ -42,6 +45,14 @@ class WebsiteObserver
             if ($website->status_website_id != 2){
                 $this->turnOfZone($website);
             }
+
+            if ($website->status_website_id == 2){
+                if (env('EMAIL_ENABLE', false)){
+                    $user = $website->user;
+                    if ($user) Mail::to($user->email)->queue(new ApprovedWebsiteMail($user, $website));
+                }
+            }
+
         }
     }
 

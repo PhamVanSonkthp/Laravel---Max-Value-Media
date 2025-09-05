@@ -282,6 +282,11 @@ class UserController extends Controller
             $searchWebsiteIDs = explode(",", $request->website_ids);
             $items = $items->whereIn('website_id', $searchWebsiteIDs);
         }
+        $searchZoneWebsiteIDs = [];
+        if ($request->zone_website_ids) {
+            $searchZoneWebsiteIDs = explode(",", $request->zone_website_ids);
+            $items = $items->whereIn('zone_website_id', $searchZoneWebsiteIDs);
+        }
         $items = $items->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
 
         $modelSumary = new Report();
@@ -289,9 +294,18 @@ class UserController extends Controller
         $summary = $summary->selectRaw('SUM(p_impression) as p_impression, AVG(p_ecpm) as p_ecpm, SUM(p_revenue) as p_revenue')->first();
 
         $websites = (new Website())->searchByQuery(null, ['user_id' => auth()->id()]);
+
+        $zones = [];
+
+        foreach ($websites as $website){
+            foreach ($website->zoneWebsites as $zoneWebsite){
+                $zones[] = $zoneWebsite;
+            }
+        }
+
         $zoneWebsites = (new ZoneWebsite())->searchByQuery(null, ['user_id' => auth()->id()]);
 
-        return view('user.report.index', compact('items', 'zoneWebsites', 'websites', 'summary', 'searchWebsiteIDs'));
+        return view('user.report.index', compact('items', 'zoneWebsites', 'websites', 'summary', 'searchWebsiteIDs','zones','searchZoneWebsiteIDs'));
     }
 
     public function profile(Request $request)

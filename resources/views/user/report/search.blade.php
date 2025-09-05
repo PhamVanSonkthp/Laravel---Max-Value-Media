@@ -73,6 +73,15 @@
     </div>
 
     <div class="form-group col-md-3">
+        <label for="select_zone_websites_search">Zones</label>
+        <select id="select_zone_websites_search" multiple="multiple" style="width:100%;opacity:0;" >
+            @foreach($zones as $zone)
+                <option value="{{$zone->id}}" {{in_array($zone->id,$searchZoneWebsiteIDs) ? 'selected' : ''}}>{{$zone->name}}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="form-group col-md-3">
         <label for="daterange">Date Range</label>
         <input type="text" id="daterange" class="form-control daterange-input" />
 

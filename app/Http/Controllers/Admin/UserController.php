@@ -46,11 +46,8 @@ class UserController extends Controller
 
         $items = $this->model->searchByQuery($request, $queries, null, null, true);
 
-        if ($request->is_verify == 1) {
-            $items = $items->whereNotNull('email_verified_at');
-        } else if ($request->is_verify == 2) {
-            $items = $items->whereNull('email_verified_at');
-        }
+        $items = $items->whereNotNull('email_verified_at');
+
         if ($request->is_balance == 1) {
             $items = $items->where('amount', ">", 0);
         } else if ($request->is_balance == 2) {

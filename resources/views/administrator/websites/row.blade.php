@@ -109,7 +109,7 @@
 
         @can('websites-list-zone')
         <a title="Zones" class="btn btn-outline-success btn-sm"
-           onclick="onViewAllZone('{{$item->id}}')"
+           onclick="onShowModalCreateZone({{$item->id}})"
            data-id="{{$item->id}}">
             <i class="fa-solid fa-cloud"></i>
         </a>

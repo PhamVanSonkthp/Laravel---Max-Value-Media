@@ -138,8 +138,6 @@
 
 @section('js')
 
-
-
     <!-- Moment.js -->
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <!-- Daterangepicker JS -->
@@ -152,6 +150,13 @@
 
         $('#select_websites_search').select2({
             placeholder: 'Select websites',
+            tags: true,
+            tokenSeparators: [',', ';'],
+            width: '100%' // force full width
+        });
+
+        $('#select_zone_websites_search').select2({
+            placeholder: 'Select zones',
             tags: true,
             tokenSeparators: [',', ';'],
             width: '100%' // force full width
@@ -187,6 +192,10 @@
                 {
                     name: 'website_ids',
                     value: $('#select_websites_search').val(),
+                },
+                {
+                    name: 'zone_website_ids',
+                    value: $('#select_zone_websites_search').val(),
                 },
                 {
                     name: 'from',
