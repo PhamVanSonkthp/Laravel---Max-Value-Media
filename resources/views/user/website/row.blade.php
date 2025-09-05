@@ -6,7 +6,7 @@
 
     <td>
         <h6 class="fw-bold"><i class="ri-arrow-down-s-line"></i><i class="ri-arrow-up-s-line"></i>
-            {{$item->name}}</h6>
+            {{\App\Models\Formatter::maxLengthString($item->name , 50)}}</h6>
     </td>
     <td class="text-center">
         @include('administrator.components.label', ['label' => optional($item->statusWebsite)->name, 'style' => 'display: inline-block;margin-top: 6px;padding: 2px 8px;border-radius: 999px;font-size: 11px;font-weight: 600;color: white !important;background: '.optional($item->statusWebsite)->background_color.';'])
