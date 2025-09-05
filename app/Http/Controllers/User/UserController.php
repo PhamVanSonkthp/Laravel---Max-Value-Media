@@ -80,12 +80,18 @@ class UserController extends Controller
             ];
 
             foreach ($sites as $index => $site) {
-//                if ($index > 3) break;
+//                if ($index >= 10) break;
                 $row[$site->name] = WebsiteTrait::revenue($site->id, $from->copy()->addDays($i)->toDateString(), $from->copy()->addDays($i + 1)->toDateString());
             }
 
             $siteCharts[] = $row;
         }
+
+        usort($siteCharts, function($x, $y) {
+            $sumX = array_sum($x); // sum all values of row X
+            $sumY = array_sum($y); // sum all values of row Y
+            return $sumY <=> $sumX; // sort descending
+        });
 
         $performanceSites = Website::where('user_id', auth()->id())->get()->toArray();
 
