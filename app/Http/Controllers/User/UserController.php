@@ -88,42 +88,43 @@ class UserController extends Controller
             $siteCharts[] = $row;
         }
 
-
-        // 1. Calculate total sum for each site
-        $totals = [];
-        foreach ($siteCharts as $row) {
-            foreach ($row as $site => $value) {
-                if ($site === "period") continue;
-                $totals[$site] = ($totals[$site] ?? 0) + $value;
-            }
-        }
-
-// 2. Sort totals descending
-        arsort($totals);
-
-// 3. Pick top 3 sites
-        $topSites = array_slice(array_keys($totals), 0, 3, true);
-
-// 4. Rebuild dataset with top 3 + "other"
-        $result = [];
-        foreach ($siteCharts as $row) {
-            $newRow = ["period" => $row["period"]];
-            $otherTotal = 0;
-            foreach ($row as $site => $value) {
-                if ($site === "period") continue;
-                if (in_array($site, $topSites)) {
-                    $newRow[$site] = $value;
-                } else {
-                    $otherTotal += $value;
+        if (count($siteCharts) > 3){
+            // 1. Calculate total sum for each site
+            $totals = [];
+            foreach ($siteCharts as $row) {
+                foreach ($row as $site => $value) {
+                    if ($site === "period") continue;
+                    $totals[$site] = ($totals[$site] ?? 0) + $value;
                 }
             }
-            $newRow["other"] = $otherTotal;
-            $result[] = $newRow;
+
+// 2. Sort totals descending
+            arsort($totals);
+
+// 3. Pick top 3 sites
+            $topSites = array_slice(array_keys($totals), 0, 3, true);
+
+// 4. Rebuild dataset with top 3 + "other"
+            $result = [];
+            foreach ($siteCharts as $row) {
+                $newRow = ["period" => $row["period"]];
+                $otherTotal = 0;
+                foreach ($row as $site => $value) {
+                    if ($site === "period") continue;
+                    if (in_array($site, $topSites)) {
+                        $newRow[$site] = $value;
+                    } else {
+                        $otherTotal += $value;
+                    }
+                }
+                $newRow["other"] = $otherTotal;
+                $result[] = $newRow;
+            }
+
+            $siteCharts = $result;
         }
 
-        Log::error(json_encode($result));
 
-        $siteCharts = $result;
 
 
 //        $totals = [];
