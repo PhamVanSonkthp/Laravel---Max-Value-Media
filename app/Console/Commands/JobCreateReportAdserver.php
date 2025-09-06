@@ -85,7 +85,8 @@ class JobCreateReportAdserver extends Command
             'group' => 'country',
             'group2' => 'idzone',
             'with_trafq' => 1,
-            'no_limit' => 1
+            'no_limit' => 1,
+            'timezone' => "Asia/Bangkok",
         ];
 
         $response = $this->callGetHTTP('stats', $params);
@@ -145,7 +146,8 @@ class JobCreateReportAdserver extends Command
             'group' => 'device',
             'group2' => 'zone',
             'with_trafq' => 1,
-            'no_limit' => 1
+            'no_limit' => 1,
+            'timezone' => "Asia/Bangkok",
         ];
 
         $response = $this->callGetHTTP('stats', $params);
@@ -204,7 +206,8 @@ class JobCreateReportAdserver extends Command
             'group' => 'referrer',
             'group2' => 'zone',
             'with_trafq' => 1,
-            'no_limit' => 1
+            'no_limit' => 1,
+            'timezone' => "Asia/Bangkok",
         ];
 
         $response = $this->callGetHTTP('stats', $params);
@@ -267,6 +270,7 @@ class JobCreateReportAdserver extends Command
             'group2' => 'zone',
             'with_trafq' => 1,
             'no_limit' => 1,
+            'timezone' => "Asia/Bangkok",
         ];
 
         $response = $this->callGetHTTP('stats', $params);
@@ -305,11 +309,13 @@ class JobCreateReportAdserver extends Command
                     'zone_website_id' => $zoneWebsite->id,
                     'date' => $date,
                     'report_type_id' => 2,
+                    'demand_id' => 0,
                 ],[
                     'website_id' => $website->id,
                     'zone_website_id' => $zoneWebsite->id,
                     'date' => $date,
                     'report_type_id' => 2,
+                    'demand_id' => 0,
                     'd_request' => $datum['requests'],
                     'd_requests_empty' => $datum['requests_empty'],
                     'd_impression' => $datum['impressions'],

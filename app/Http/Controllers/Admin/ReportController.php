@@ -53,7 +53,7 @@ class ReportController extends Controller
         $sumary->d_request = 0;
         $sumary->d_request += $adServerSumary->d_request;
 
-        $items = $this->model->searchByQuery($request, ['report_type_id' => 1], null, null, true);
+        $items = $this->model->searchByQuery($request, [], null, null, true);
 
         $items = $items->orderBy('date', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 

@@ -8,7 +8,7 @@
     }
 @endphp
 
-<div class="form-group mt-3">
+<div class="form-group {{isset($no_margin) ? '' : 'mt-3'}}">
     @if(isset($label))
         <label>{{$label}} @include('administrator.components.lable_require') </label>
     @endif

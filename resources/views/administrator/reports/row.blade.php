@@ -6,7 +6,7 @@
 
     @can('reports-list-demand')
         <td>
-            {{ optional($item->demand)->name}}
+            {{ optional($item->demand)->name ?? 'Adserver'}}
         </td>
     @endcan
 
@@ -31,7 +31,7 @@
 
     @can('reports-list-d_request')
         <td>
-            {{\App\Models\Formatter::formatNumber(optional($item->reportWithAdserver())->d_request)}}
+            {{\App\Models\Formatter::formatNumber($item->d_request)}}
         </td>
     @endcan
 

@@ -21,7 +21,13 @@
 
         <div class="col-md-2">
             <div>
-                @include('administrator.components.search_select2_allow_clear' , ['name' => 'cs_id' , 'label' => 'CS', 'select2Items' => $cses])
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'cs_id' , 'label' => 'CS Manager', 'select2Items' => $cses])
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div>
+                @include('administrator.components.search_select2_allow_clear' , ['name' => 'cs_child_id' , 'label' => 'CS Child', 'select2Items' => $csChildren])
             </div>
         </div>
 
@@ -31,13 +37,13 @@
             </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div>
                 @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'website_id' , 'label' => 'Website', 'url' => route('ajax.administrator.model.search'), 'model' => 'websites'])
             </div>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-1">
             <div>
                 @include('administrator.components.search_select2_allow_clear' , ['name' => 'user_status_id' , 'label' => 'Status', 'select2Items' => $userStatus])
             </div>

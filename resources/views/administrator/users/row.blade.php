@@ -17,6 +17,15 @@
             @include('administrator.components.label', ['label' => optional($item->cs)->name])
         @endif
     </td>
+    <td>
+        @if(\App\Traits\UserTrait::isCSManager(auth()->user()) || \App\Traits\UserTrait::isAdmin(auth()->user()))
+            <a class="text-primary" style="cursor: pointer;" onclick="onShowModalAddCSChild({{$item->id}})">
+                {!! optional(optional($item->userCS)->cs)->name ?? 'Add <i class="fa-solid fa-plus"></i>' !!}
+            </a>
+        @else
+            @include('administrator.components.label', ['label' => optional(optional($item->userCS)->cs)->name])
+        @endif
+    </td>
     <td>{{$item->email}}</td>
     <td>
         <div>
@@ -69,10 +78,10 @@
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
     <td>
         @can('reports-list')
-        <a href="{{route('administrator.reports.index', ['user_id' => $item->id])}}" title="Report"
-           class="btn btn-outline-primary btn-sm">
-            <i class="fa-solid fa-chart-line"></i>
-        </a>
+            <a href="{{route('administrator.reports.index', ['user_id' => $item->id])}}" title="Report"
+               class="btn btn-outline-primary btn-sm">
+                <i class="fa-solid fa-chart-line"></i>
+            </a>
         @endcan
 
         <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#userModal"
@@ -82,10 +91,10 @@
 
 
         @can('websites-list')
-        <a href="{{route('administrator.websites.index', ['user_id' => $item->id])}}" title="Websites"
-           class="btn btn-outline-primary btn-sm">
-            <i class="fa-solid fa-globe"></i>
-        </a>
+            <a href="{{route('administrator.websites.index', ['user_id' => $item->id])}}" title="Websites"
+               class="btn btn-outline-primary btn-sm">
+                <i class="fa-solid fa-globe"></i>
+            </a>
         @endcan
 
         @can('users-edit')
@@ -101,11 +110,11 @@
 
 
         @can('users-delete')
-        <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}" title="Delete"
-           data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
-           class="btn btn-outline-danger btn-sm delete action_delete">
-            <i class="fa-solid fa-x"></i>
-        </a>
+            <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}" title="Delete"
+               data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
+               class="btn btn-outline-danger btn-sm delete action_delete">
+                <i class="fa-solid fa-x"></i>
+            </a>
         @endcan
     </td>
 </tr>

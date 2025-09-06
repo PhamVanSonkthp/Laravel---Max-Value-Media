@@ -97,28 +97,31 @@
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="mt-3">
-                <label>Demands</label>
-                <select name="demand_id" class="form-control select2_init_allow_clear">
-                    <option value="">
-                        Chọn
-                    </option>
-                    @foreach($demands as $demand)
-                        <option value="{{$demand->id}}" {{request('demand_id') == $demand->id ? 'selected' : ''}}>{{$demand->name}}</option>
-                    @endforeach
-                </select>
+        @can('reports-list-demand')
+            <div class="col-md-3">
+                <div class="mt-3">
+                    <label>Demands</label>
+                    <select name="demand_id" class="form-control select2_init_allow_clear">
+                        <option value="">
+                            Chọn
+                        </option>
+                        @foreach($demands as $demand)
+                            <option value="{{$demand->id}}" {{request('demand_id') == $demand->id ? 'selected' : ''}}>{{$demand->name}}</option>
+                        @endforeach
+                    </select>
+
+                </div>
+
+                <script>
+
+                    $('select[name="demand_id"]').on('change', function () {
+                        addUrlParameterObjects([{name: 'demand_id', value: this.value},{name: 'zone_id', value: ""},{name: 'website_id', value: ""}])
+                    });
+                </script>
 
             </div>
+        @endcan
 
-            <script>
-
-                $('select[name="demand_id"]').on('change', function () {
-                    addUrlParameterObjects([{name: 'demand_id', value: this.value},{name: 'zone_id', value: ""},{name: 'website_id', value: ""}])
-                });
-            </script>
-
-        </div>
 
         <div class="col-md-3">
             <div>

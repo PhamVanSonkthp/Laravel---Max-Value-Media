@@ -56,6 +56,10 @@ class WebsiteController extends Controller
             $items = $items->select('websites.*')->join('users', 'users.id', '=', 'websites.user_id')->where('users.manager_id', $request->manager_id);
         }
 
+        if ($request->cs_id) {
+            $items = $items->select('websites.*')->join('user_c_s', 'user_c_s.user_id', '=', 'websites.user_id')->where('user_c_s.cs_id', $request->cs_id);
+        }
+
         $items = $items->with(['zoneWebsites','zoneWebsites.zoneStatus','statusWebsite','user','adsStatusWebsite', 'user.manager','cs']);
         $items = $items->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
@@ -63,7 +67,7 @@ class WebsiteController extends Controller
         $zoneStatuses = ZoneStatus::all();
 
         $managers = $this->managers();
-        $cses = $this->cses();
+        $cses = $this->csChildren();
 
         return view('administrator.' . $this->prefixView . '.index', compact('items', 'statusWebsites', 'zoneStatuses', 'managers','cses'));
     }

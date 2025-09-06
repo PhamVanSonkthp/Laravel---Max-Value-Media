@@ -35,24 +35,31 @@ class UserWithdrawController extends Controller
 
     public function index(Request $request)
     {
-        $items = $this->model->searchByQuery($request, [],null,null,true);
 
         $summary = (new Payment())->searchByQuery($request, [],null,null,true);
+        if ($request->date){
+            $date = Carbon::parse( "20". $request->date . "-01")->toDateString();
+            $summary = $summary->whereDate('from', '<=',$date)->whereDate('to', '>=',$date);
+        }
         $summary = $summary->selectRaw('sum(total) as total, sum(invalid) as invalid, sum(deduction) as deduction')->first();
 
         $summaryUnpaid = (new Payment())->searchByQuery($request, ['payment_status_id'=> 1],null,null,true);
+        if ($request->date){
+            $date = Carbon::parse( "20". $request->date . "-01")->toDateString();
+            $summaryUnpaid = $summaryUnpaid->whereDate('from', '<=',$date)->whereDate('to', '>=',$date);
+        }
         $summaryUnpaid = $summaryUnpaid->selectRaw('sum(total) as total')->first();
 
         $summary->unpaid = $summaryUnpaid->total;
+
+        $items = $this->model->searchByQuery($request, [],null,null,true);
         if ($request->payment_method_id){
             $items = $items->select('payments.*')->join('user_payment_methods', 'user_payment_methods.id', '=', 'payments.user_payment_method_id')
                     ->where('user_payment_methods.payment_method_id', $request->payment_method_id);
         }
         if ($request->date){
             $date = Carbon::parse( "20". $request->date . "-01")->toDateString();
-
             $items = $items->whereDate('from', '<=',$date)->whereDate('to', '>=',$date);
-
         }
         $items = $items->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
 

@@ -360,6 +360,23 @@
         </div>
     </div>
 
+
+    <!-- Modal add cs child -->
+    <div class="modal fade" id="modal_add_cs_child" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_modal_add_cs_child"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_modal_add_cs_child">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('js')
@@ -891,6 +908,44 @@
                 (response) => {
                     hideModal('modal_panel_zone_detail_zone');
                     showToastSuccess("Save!")
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onShowModalAddCSChild(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.websites.modal_add_cs_child')}}",
+                {
+                    id: website_id,
+                    modal_id: 'modal_add_cs_child',
+                },
+                (response) => {
+                    showModal('modal_add_cs_child');
+                    $('#title_modal_add_cs_child').html(response.data.user.email);
+                    $('#container_modal_add_cs_child').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onSaveCSChild(website_id) {
+            callAjax(
+                "PUT",
+                "{{route('ajax.administrator.websites.save_cs_child')}}",
+                {
+                    id: website_id,
+                    cs_id: $('#modal_add_cs_child_select_cs_id').val(),
+                },
+                (response) => {
+                    hideModal('modal_add_cs_child');
+                    onRefreshRow(website_id);
+                    showToastSuccess('Saved!')
                 },
                 (error) => {
 

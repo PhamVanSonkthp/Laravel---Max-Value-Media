@@ -31,5 +31,10 @@ class CreatePaymentStatusSeeder extends Seeder
             "name" => "REJECTED",
             "background_color" => "#ef4444",
         ]);
+
+        PaymentStatus::firstOrCreate([
+            "name" => "PAYING",
+            "background_color" => "#f59e0b",
+        ]);
     }
 }

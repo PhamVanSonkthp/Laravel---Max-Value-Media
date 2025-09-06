@@ -2,8 +2,8 @@
     @include('administrator.components.search')
 
     @can('websites-add')
-        <a onclick="onShowModalCreateWebsite()" class="btn btn-outline-success float-end" title="Tạo"><i
-                class="fa-solid fa-plus"></i></a>
+        <button onclick="onShowModalCreateWebsite()" class="btn btn-success float-end" title="Create">
+            Create website <i class="fa-solid fa-plus"></i></button>
     @endcan
 
 </div>

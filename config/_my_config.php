@@ -73,6 +73,9 @@ return [
     'ads_text_gam' => "google.com, pub-7926125525911862, DIRECT, f08c47fec0942fa0",
     'default_manager_id' => 32,
     'default_cs_id' => 32,
+    'role_can_not_delete_ids' => [
+        2,3,4
+    ],
 
     'timeout_request_api' => 60,
     'cache_time_api' => 500,
@@ -80,7 +83,8 @@ return [
     'default_size_avatar' => "100x100",
     'verify_zone_dimension_id' => 1,
     'role_manager_id' => 2,
-    'role_cs_id' => 3,
+    'role_cs_manager_id' => 3,
+    'role_cs_child_id' => 4,
     'zone_dimension_type_demand_id' => 3,
     'zone_dimension_type_adserver_id' => 2,
     'zone_dimension_type_game_id' => 1,

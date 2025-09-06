@@ -68,6 +68,11 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         return $this->hasOne(User::class, 'id', 'cs_id');
     }
 
+    public function userCS()
+    {
+        return $this->hasOne(UserCS::class, 'user_id', 'id');
+    }
+
     public function csWebsites()
     {
         return $this->hasMany(Website::class, 'cs_id', 'id');
@@ -487,7 +492,6 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
                 'back_id_image_path' => $dataUploadFeatureImage['file_path']
             ]);
         }
-
 
         if (isset($request->portrait_image_path)) {
             $item = Image::create([

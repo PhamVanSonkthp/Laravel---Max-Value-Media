@@ -79,15 +79,13 @@
                                                href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id])}}"
                                                data-id="{{$item->id}}"><i class="fa-solid fa-pen"></i></a>
 
-                                            @if($item->id != 2 && $item->id != 3)
+                                            @if( !in_array($item->id, config('_my_config.role_can_not_delete_ids')))
                                                 <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}" title="Xóa"
                                                    data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
                                                    class="btn btn-outline-danger btn-sm delete action_delete">
                                                     <i class="fa-solid fa-x"></i>
                                                 </a>
                                             @endif
-
-
                                         </td>
                                     </tr>
                                 @endforeach

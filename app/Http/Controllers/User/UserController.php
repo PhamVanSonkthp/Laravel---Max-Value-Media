@@ -378,11 +378,9 @@ class UserController extends Controller
         $model = new Payment();
         $items = $model->searchByQuery($request, ['user_id' => auth()->id()]);
 
-        $summary = Payment::where('user_id', auth()->id())
-            ->selectRaw('SUM(earning) as earning, SUM(deduction) as deduction, SUM(invalid) as invalid')
-            ->first();
-
+        $sumInvalid = Payment::where(['user_id'=> auth()->id(),'payment_status_id' => 3])->sum('total');
         $withdraw = Payment::where(['user_id' => auth()->id(), 'payment_status_id' => 2])->sum('total');
+        $sumEarning = Payment::where(['user_id' => auth()->id()])->sum('earning');
 
         $userPaymentMethod = UserPaymentMethod::where(['user_id' => auth()->id(), 'is_default' => true])->first();
 
@@ -398,7 +396,7 @@ class UserController extends Controller
             ]);
         }
 
-        return view('user.wallet.index', compact('items', 'summary', 'withdraw', 'userPaymentMethod'));
+        return view('user.wallet.index', compact('items', 'withdraw', 'userPaymentMethod','sumInvalid','sumEarning'));
 
     }
 

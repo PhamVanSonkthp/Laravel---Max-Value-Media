@@ -3,19 +3,22 @@
         <input type="checkbox" class="checkbox-delete-item" value="{{$item->id}}">
     </td>
     <td>
-        @if(auth()->user()->is_admin == 2)
+        @if(\App\Traits\UserTrait::isAdmin(auth()->user()))
             @include('administrator.components.modal_change_id', ['label' => optional(optional($item->user)->manager)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $managers, 'field' => 'manager_id', 'item' => $item, 'route' => route('ajax.administrator.websites.manager')])
         @else
             @include('administrator.components.label', ['label' => optional(optional($item->user)->manager)->name])
         @endif
     </td>
     <td>
-        @if(auth()->user()->is_admin == 2)
-            @include('administrator.components.modal_change_id', ['label' => optional($item->cs)->name ?? 'Add <i class="fa-solid fa-plus"></i>','select2Items' => $cses, 'field' => 'cs_id', 'item' => $item,])
-        @else
-            @include('administrator.components.label', ['label' => optional($item->cs)->name])
+        @if($item->user)
+            @if(\App\Traits\UserTrait::isCSManager(auth()->user()) || \App\Traits\UserTrait::isAdmin(auth()->user()))
+                <a class="text-primary" style="cursor: pointer;" onclick="onShowModalAddCSChild({{$item->id}})">
+                    {!! optional(optional(optional($item->user)->userCS)->cs)->name ?? 'Add <i class="fa-solid fa-plus"></i>' !!}
+                </a>
+            @else
+                @include('administrator.components.label', ['label' => optional(optional(optional($item->user)->userCS)->cs)->name])
+            @endif
         @endif
-
     </td>
     <td>
         <a target="_blank" href="{{ $item->url}}">{{\App\Models\Formatter::maxLengthString($item->name)}}</a>
@@ -32,31 +35,31 @@
     </td>
     <td>
         @can('websites-list-zone')
-        <div onclick="onViewAllZone({{$item->id}})" style="cursor: pointer;">
-            @if(count($item->zoneWebsites))
-                <ul>
-                    @foreach($item->zoneWebsites as $index => $zoneWebsites)
-                        @if($index < 3)
-                            <li>
-                                @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($zoneWebsites->name), 'style' => 'color: '.optional($zoneWebsites->zoneStatus)->background_color.';','title' => ''])
+            <div onclick="onViewAllZone({{$item->id}})" style="cursor: pointer;">
+                @if(count($item->zoneWebsites))
+                    <ul>
+                        @foreach($item->zoneWebsites as $index => $zoneWebsites)
+                            @if($index < 3)
+                                <li>
+                                    @include('administrator.components.label', ['label' => \App\Models\Formatter::maxLengthString($zoneWebsites->name), 'style' => 'color: '.optional($zoneWebsites->zoneStatus)->background_color.';','title' => ''])
 
-                                @include('administrator.components.label', ['title' => optional($zoneWebsites->zoneWebsiteOnlineStatus)->name, 'style' => 'display:inline-block;width:8px;height:8px;border-radius:50%;background:'.optional($zoneWebsites->zoneWebsiteOnlineStatus)->background_color.';vertical-align:middle;margin-right:6px;'])
-                            </li>
-                        @else
-                            <li>
-                                +{{count($item->zoneWebsites) - $index}}
-                            </li>
-                            @break
-                        @endif
-                    @endforeach
-                </ul>
-            @else
-                <div class="text-center">
-                    <button class="btn btn-outline-success" title="Add"><i class="fa-solid fa-plus"></i></button>
-                </div>
-            @endif
+                                    @include('administrator.components.label', ['title' => optional($zoneWebsites->zoneWebsiteOnlineStatus)->name, 'style' => 'display:inline-block;width:8px;height:8px;border-radius:50%;background:'.optional($zoneWebsites->zoneWebsiteOnlineStatus)->background_color.';vertical-align:middle;margin-right:6px;'])
+                                </li>
+                            @else
+                                <li>
+                                    +{{count($item->zoneWebsites) - $index}}
+                                </li>
+                                @break
+                            @endif
+                        @endforeach
+                    </ul>
+                @else
+                    <div class="text-center">
+                        <button class="btn btn-outline-success" title="Add"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                @endif
 
-        </div>
+            </div>
         @endcan
     </td>
     <td>
@@ -108,21 +111,21 @@
         @endcan
 
         @can('websites-list-zone')
-        <a title="Zones" class="btn btn-outline-success btn-sm"
-           onclick="onShowModalCreateZone({{$item->id}})"
-           data-id="{{$item->id}}">
-            <i class="fa-solid fa-cloud"></i>
-        </a>
+            <a title="Create zone" class="btn btn-outline-success btn-sm"
+               onclick="onShowModalCreateZone({{$item->id}})"
+               data-id="{{$item->id}}">
+                <i class="fa-solid fa-circle-plus"></i>
+            </a>
         @endcan
 
         @can('websites-delete')
-        <a href="#" title="Delete"
-           data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
-           class="btn btn-outline-danger btn-sm delete action_delete"
-           data-message="Delete {{$item->name}} #{{$item->id}}"
-           data-id="{{$item->id}}">
-            <i class="fa-solid fa-x"></i>
-        </a>
+            <a href="#" title="Delete"
+               data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
+               class="btn btn-outline-danger btn-sm delete action_delete"
+               data-message="Delete {{$item->name}} #{{$item->id}}"
+               data-id="{{$item->id}}">
+                <i class="fa-solid fa-x"></i>
+            </a>
         @endcan
 
     </td>

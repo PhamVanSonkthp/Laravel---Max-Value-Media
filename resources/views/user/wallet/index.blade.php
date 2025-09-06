@@ -344,7 +344,7 @@
                                 </div>
                                 <div class="text-center">
                                     <h5>
-                                        ${{\App\Models\Formatter::formatNumber($summary->earning, 2)}}
+                                        ${{\App\Models\Formatter::formatNumber($sumEarning, 2)}}
                                     </h5>
                                 </div>
                             </div>
@@ -376,7 +376,7 @@
                                 </div>
                                 <div class="text-center">
                                     <h5>
-                                        ${{\App\Models\Formatter::formatNumber($summary->invalid, 2)}}
+                                        ${{\App\Models\Formatter::formatNumber($sumInvalid, 2)}}
                                     </h5>
                                 </div>
                             </div>

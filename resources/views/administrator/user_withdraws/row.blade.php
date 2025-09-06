@@ -17,7 +17,7 @@
         {{ optional(optional($item->user)->manager)->name }}
     </td>
     <td>
-        ${{ \App\Models\Formatter::formatNumber($item->total, 2) }}
+        <strong>${{ \App\Models\Formatter::formatNumber($item->earning, 2) }}</strong>
     </td>
     <td>
         @can('user_withdraws-edit')
@@ -27,15 +27,25 @@
         @endcan
     </td>
     <td>
-        @can('user_withdraws-edit')
-            @include('administrator.components.require_input_text', ['no_margin' => true,'name' => "input_invalid",'id' => "input_invalid_". $item->id, 'value'=> $item->invalid ?? 0])
-        @else
-            @include('administrator.components.label', ['label'=> $item->invalid ?? 0])
-        @endcan
-
+        <strong>${{ \App\Models\Formatter::formatNumber($item->total, 2) }}</strong>
     </td>
     <td>
-        @include('administrator.components.modal_change_id', ['item' => $item, 'field' => 'payment_status_id', 'label' => optional($item->paymentStatus)->name, 'select2Items' => $paymentStatuses])
+        <strong>${{ \App\Models\Formatter::formatNumber($item->paymentPaidParts->sum('amount'), 2) }}</strong>
+        <button class="btn btn-outline-primary" onclick="onShowModalPaidParts({{$item->id}})">
+            <i class="fa-regular fa-eye"></i>
+        </button>
+    </td>
+    <td>
+          <span onclick="onChangeStatusPayment({{$item->id}})" style="display: inline-block;
+              margin-top: 6px;
+              cursor:pointer;
+              padding: 2px 8px;
+              border-radius: 999px;
+              font-size: 11px;
+              font-weight: 600;
+              color: white !important;background: {{optional($item->paymentStatus)->background_color}};">
+            {{optional($item->paymentStatus)->name}}
+        </span>
     </td>
     <td>
         <div>

@@ -28,6 +28,7 @@ use App\Models\OrderProduct;
 use App\Models\ParticipantChat;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use App\Models\PaymentPaidPart;
 use App\Models\PaymentStatus;
 use App\Models\Product;
 use App\Models\Report;
@@ -37,6 +38,7 @@ use App\Models\StatusWebsite;
 use App\Models\StatusWebsiteReason;
 use App\Models\User;
 use App\Models\UserCart;
+use App\Models\UserCS;
 use App\Models\UserPoint;
 use App\Models\UserStatus;
 use App\Models\UserTransaction;
@@ -194,6 +196,41 @@ Route::prefix('ajax/administrator')->group(function () {
                     "html" => View::make('administrator.websites.modal_create_zone_website', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'groupZoneDimensions' => $groupZoneDimensions, 'zoneTypes' => $zoneTypes, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes, 'hideAllPreModal' => $request->is_hide_all_pre_modal])->render()
                 ]));
             })->name('ajax.administrator.zone_websites.modal_create');
+
+
+            Route::get('modal_add_cs_child', function (Request $request) {
+
+                $website = Website::findOrFail($request->id);
+                $user = $website->user;
+                $csChildren = UserTrait::csChildren();
+
+                $htmlRow = View::make('administrator.users.modal_add_cs_child', ['item' => $website,'csChildren' => $csChildren, 'modal_id' => $request->modal_id])->render();
+
+                return response()->json(Helper::successAPI(200, [
+                    'user' => $user,
+                    'website' => $website,
+                    'html' => $htmlRow,
+                ]));
+
+            })->name('ajax.administrator.websites.modal_add_cs_child');
+
+            Route::put('save_cs_child', function (Request $request) {
+
+                $website = Website::findOrFail($request->id);
+                $user = $website->user;
+
+                UserCS::where('user_id', $user->id)->delete();
+                UserCS::create([
+                    'user_id' => $user->id,
+                    'cs_id' => $request->cs_id,
+                ]);
+
+                return response()->json(Helper::successAPI(200, [
+                    'user' => $user,
+                    'website' => $website,
+                ]));
+
+            })->name('ajax.administrator.websites.save_cs_child');
 
             Route::post('store', function (Request $request) {
 
@@ -489,7 +526,7 @@ Route::prefix('ajax/administrator')->group(function () {
                 $website = Website::findOrFail($request->website_id);
                 $statusWebsites = WebsiteTrait::statusWebsites();
                 $managers = UserTrait::managers();
-                $cses = UserTrait::cses();
+                $cses = UserTrait::csManageres();
 
                 $zoneStatuses = ZoneStatus::all();
                 return response()->json(Helper::successAPI(200, [
@@ -584,7 +621,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $statusWebsites = WebsiteTrait::statusWebsites();
                 $managers = UserTrait::managers();
-                $cses = UserTrait::cses();
+                $cses = UserTrait::csManageres();
 
                 $zoneStatuses = ZoneStatus::all();
                 return response()->json(Helper::successAPI(200, [
@@ -802,7 +839,7 @@ Route::prefix('ajax/administrator')->group(function () {
                 $item = User::findOrFail($request->id);
 
                 $managers = UserTrait::managers();
-                $cses = UserTrait::cses();
+                $cses = UserTrait::csManageres();
 
                 $htmlRow = View::make('administrator.users.modal_edit', compact('item', 'managers', 'cses'))->render();
 
@@ -816,7 +853,7 @@ Route::prefix('ajax/administrator')->group(function () {
                 $item = User::findOrFail($request->id);
 
                 $managers = UserTrait::managers();
-                $cses = UserTrait::cses();
+                $cses = UserTrait::csManageres();
 
                 $htmlRow = View::make('administrator.users.row', ['item' => $item, 'prefixView' => 'users', 'managers' => $managers, 'cses' => $cses])->render();
 
@@ -843,10 +880,40 @@ Route::prefix('ajax/administrator')->group(function () {
 
             })->name('ajax.administrator.user.view_all_website');
 
+            Route::get('modal_add_cs_child', function (Request $request) {
+
+                $item = User::findOrFail($request->id);
+                $csChildren = UserTrait::csChildren();
+
+                $htmlRow = View::make('administrator.users.modal_add_cs_child', ['item' => $item,'csChildren' => $csChildren, 'modal_id' => $request->modal_id])->render();
+
+                return response()->json(Helper::successAPI(200, [
+                    'user' => $item,
+                    'html' => $htmlRow,
+                ]));
+
+            })->name('ajax.administrator.user.modal_add_cs_child');
+
+            Route::put('save_cs_child', function (Request $request) {
+
+                $item = User::findOrFail($request->id);
+
+                UserCS::where('user_id', $item->id)->delete();
+                UserCS::create([
+                    'user_id' => $item->id,
+                    'cs_id' => $request->cs_id,
+                ]);
+
+                return response()->json(Helper::successAPI(200, [
+                    'user' => $item,
+                ]));
+
+            })->name('ajax.administrator.user.save_cs_child');
+
             Route::get('create', function (Request $request) {
 
                 $managers = UserTrait::managers();
-                $cses = UserTrait::cses();
+                $cses = UserTrait::csManageres();
 
                 $htmlRow = View::make('administrator.users.modal_create', ['managers' => $managers, 'modal_id' => $request->modal_id, 'cses' => $cses])->render();
 
@@ -862,7 +929,7 @@ Route::prefix('ajax/administrator')->group(function () {
                     'password' => 'required|string',
                 ]);
                 $managers = UserTrait::managers();
-                $cses = UserTrait::cses();
+                $cses = UserTrait::csManageres();
 
                 $data = [
                     'email' => $request->email,
@@ -871,6 +938,7 @@ Route::prefix('ajax/administrator')->group(function () {
                     'skype' => $request->skype,
                     'telegram' => $request->telegram,
                     'whats_app' => $request->whats_app,
+                    'email_verified_at' => now(),
                 ];
 
                 $item = User::create($data);
@@ -883,38 +951,11 @@ Route::prefix('ajax/administrator')->group(function () {
                 ]));
             })->name('ajax.administrator.user.store');
 
-            Route::post('store_website', function (Request $request) {
-
-                $request->validate([
-                    'user_id' => 'required',
-                ]);
-                $managers = UserTrait::managers();
-                $cses = UserTrait::cses();
-
-                $data = [
-                    'email' => $request->email,
-                    'password' => Formatter::hash($request->password),
-                    'manager_id' => $request->manager_id ?? 0,
-                    'skype' => $request->skype,
-                    'telegram' => $request->telegram,
-                    'whats_app' => $request->whats_app,
-                ];
-
-                $item = User::create($data);
-                $item->refresh();
-
-                $htmlRowAdd = View::make('administrator.users.row', ['item' => $item, 'prefixView' => 'users', 'managers' => $managers, 'cses' => $cses])->render();
-
-                return response()->json(Helper::successAPI(200, [
-                    'html' => $htmlRowAdd
-                ]));
-            })->name('ajax.administrator.user.store_website');
-
             Route::put('/', function (Request $request) {
 
                 $item = User::findOrFail($request->id);
                 $managers = UserTrait::managers();
-                $cses = UserTrait::cses();
+                $cses = UserTrait::csManageres();
 
                 $dataUpdate = [];
 
@@ -1004,6 +1045,101 @@ Route::prefix('ajax/administrator')->group(function () {
         });
 
         Route::prefix('payments')->group(function () {
+
+            Route::put('change_status', function (Request $request) {
+
+                $request->validate([
+                    'payment_status_id' => 'required',
+                    'id' => 'required',
+                ]);
+
+
+                $item = Payment::findOrFail($request->id);
+                $paymentStatus = PaymentStatus::findOrFail($request->payment_status_id);
+
+                $item->payment_status_id = $paymentStatus->id;
+                $item->save();
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.user_withdraws.row', ['item' => $item, 'index' => -1, 'prefixView' => 'user_withdraws'])->render()
+                ]));
+            })->name('ajax.administrator.payments.change_status');
+
+            Route::get('modal_change_status', function (Request $request) {
+
+                $item = Payment::findOrFail($request->id);
+                $paymentStatuses = PaymentStatus::all();
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.user_withdraws.modal_change_status', ['item' => $item, 'select2Items' => $paymentStatuses])->render()
+                ]));
+            })->name('ajax.administrator.payments.modal_change_status');
+
+            Route::get('modal_paid_parts', function (Request $request) {
+
+                $item = Payment::findOrFail($request->id);
+
+                return response()->json(Helper::successAPI(200, [
+                    'item' => $item,
+                    'user' => $item->user,
+                    "html" => View::make('administrator.user_withdraws.modal_paid_parts', ['item' => $item])->render()
+                ]));
+            })->name('ajax.administrator.payments.modal_paid_parts');
+
+            Route::get('refresh_row', function (Request $request) {
+
+                $item = Payment::findOrFail($request->id);
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.user_withdraws.row', ['item' => $item, 'prefixView' => 'user_withdraws', 'index' => -1])->render()
+                ]));
+            })->name('ajax.administrator.payments.refresh_row');
+
+            Route::post('store_paid_parts', function (Request $request) {
+
+                $request->validate([
+                    'id' => 'required',
+                    'amount' => 'required|numeric',
+                ]);
+
+                $item = Payment::findOrFail($request->id);
+
+                $amountPaymentPaidPart = $item->paymentPaidParts->sum('amount') + $request->amount;
+                if ($amountPaymentPaidPart > $item->total){
+                    return response()->json(Helper::errorAPI(400, [
+
+                    ],'Amount is not allow gather than total must paid'),400);
+                }
+
+                $paymentPaidPart = PaymentPaidPart::create([
+                    'payment_id' => $item->id,
+                    'amount' => $request->amount,
+                ]);
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.user_withdraws.modal_paid_parts_row', ['item' => $paymentPaidPart])->render()
+                ]));
+            })->name('ajax.administrator.payments.store_paid_parts');
+
+            Route::post('store_paid_all_parts', function (Request $request) {
+
+                $request->validate([
+                    'id' => 'required',
+                ]);
+
+                $item = Payment::findOrFail($request->id);
+
+                $amountPaymentPaidPart = $item->paymentPaidParts->sum('amount') ;
+
+                $paymentPaidPart = PaymentPaidPart::create([
+                    'payment_id' => $item->id,
+                    'amount' => $item->total - $amountPaymentPaidPart,
+                ]);
+
+                return response()->json(Helper::successAPI(200, [
+                    "html" => View::make('administrator.user_withdraws.modal_paid_parts_row', ['item' => $paymentPaidPart])->render()
+                ]));
+            })->name('ajax.administrator.payments.store_paid_all_parts');
 
             Route::put('update_deduction', function (Request $request) {
 

@@ -38,10 +38,10 @@
         <div class="card">
             <div class="card-body">
                 <h3>
-                    ${{\App\Models\Formatter::formatNumber($summary->invalid, 2)}}
+                    ${{\App\Models\Formatter::formatNumber($summary->deduction, 2)}}
                 </h3>
                 <div>
-                    Invalid
+                    Deduction
                 </div>
             </div>
 

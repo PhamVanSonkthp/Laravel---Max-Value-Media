@@ -8,6 +8,7 @@ use App\Models\Image;
 use App\Models\Order;
 use App\Models\ParticipantChat;
 use App\Models\Payment;
+use App\Models\PaymentPaidPart;
 use App\Models\PostComment;
 use App\Models\Report;
 use App\Models\SingleImage;
@@ -20,6 +21,7 @@ use App\Observers\ImageObserver;
 use App\Observers\OrderObserver;
 use App\Observers\ParticipantChatObserver;
 use App\Observers\PaymentObserver;
+use App\Observers\PaymentPaidPartObserver;
 use App\Observers\PostCommentObserver;
 use App\Observers\ReportObserver;
 use App\Observers\SingleImageObserver;
@@ -71,5 +73,6 @@ class AppServiceProvider extends ServiceProvider
         AdScoreZone::observe(AdScoreZoneObserver::class);
         User::observe(UserObserver::class);
         Payment::observe(PaymentObserver::class);
+        PaymentPaidPart::observe(PaymentPaidPartObserver::class);
     }
 }

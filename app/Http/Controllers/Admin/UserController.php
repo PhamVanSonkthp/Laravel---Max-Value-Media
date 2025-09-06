@@ -64,6 +64,16 @@ class UserController extends Controller
             $items = $items->where('websites.status_website_id', $request->status_website_id);
         }
 
+        if ($request->cs_child_id){
+            $items = $items->select('users.*')->join('user_c_s', 'user_c_s.user_id', '=', 'users.id')
+                ->where('user_c_s.cs_id', $request->cs_child_id);
+        }
+
+        if (UserTrait::isChild(auth()->user())){
+            $items = $items->select('users.*')->join('user_c_s', 'user_c_s.user_id', '=', 'users.id')
+                ->where('user_c_s.cs_id', auth()->id());
+        }
+
         $items = $items->with(['manager', 'cs', 'websites', 'websites.statusWebsite', 'status']);
 
         $managers = $this->managers();
@@ -71,13 +81,14 @@ class UserController extends Controller
         $items = $items->orderBy('created_at', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
 
-        $cses = $this->cses();
+        $cses = $this->csManageres();
+        $csChildren = $this->csChildren();
         $userStatus = $this->userStatus();
         $statusWebsite = (new StatusWebsite())->get();
         $isBalances = [new Balance(1, "Yes"), new Balance(2, "No")];
         $isVerifies = [new Balance(1, "Yes"), new Balance(2, "No")];
 
-        return view('administrator.' . $this->prefixView . '.index', compact('items', 'managers', 'userStatus', 'statusWebsite', 'isBalances', 'isVerifies', 'cses'));
+        return view('administrator.' . $this->prefixView . '.index', compact('items', 'managers', 'userStatus', 'statusWebsite', 'isBalances', 'isVerifies', 'cses','csChildren'));
     }
 
     public function get(Request $request, $id)

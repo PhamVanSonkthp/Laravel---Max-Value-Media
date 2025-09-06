@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 
-class Payment extends Model implements Auditable
+class UserCS extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use HasFactory;
@@ -26,54 +26,11 @@ class Payment extends Model implements Auditable
 
     // begin
 
-    public function paymentPaidParts()
+    public function cs()
     {
-        return $this->hasMany(PaymentPaidPart::class, 'payment_id', 'id')->latest();
+        return $this->hasOne(User::class, 'id', 'cs_id');
     }
 
-    public function paymentStatus()
-    {
-        return $this->hasOne(PaymentStatus::class, 'id', 'payment_status_id');
-    }
-
-    public function userPaymentMethod()
-    {
-        if ($this->payment_status_id == 2) {
-            $item = UserPaymentMethod::find($this->user_payment_method_id);
-        } else {
-            $item = UserPaymentMethod::where(['id' => $this->user_payment_method_id, 'is_default' => true])->first();
-        }
-
-
-        if (!$item) {
-            $userPaymentMethod = UserPaymentMethod::where(['user_id' => $this->user_id, 'is_default' => true])->first();
-
-            if ($userPaymentMethod) {
-                $this->user_payment_method_id = $userPaymentMethod->id;
-                $this->save();
-            } else {
-                $userPaymentMethod = UserPaymentMethod::firstOrCreate([
-                    'user_id' => $this->user_id,
-                    'payment_method_id' => 1,
-                ], [
-                    'user_id' => $this->user_id,
-                    'payment_method_id' => 1,
-                    'is_default' => true,
-                ]);
-
-                $this->user_payment_method_id = $userPaymentMethod->id;
-                $this->save();
-
-            }
-        }
-
-        return $this->hasOne(UserPaymentMethod::class, 'id', 'user_payment_method_id');
-    }
-
-    public function user()
-    {
-        return $this->hasOne(User::class, 'id', 'user_id');
-    }
     //
     //    public function multiples(){
     //        return $this->hasMany(Model::class, 'id', 'local_id');

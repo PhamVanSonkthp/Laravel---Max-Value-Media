@@ -55,7 +55,13 @@
 
                                     <th onclick='onSortSearch(`cs_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? "desc" : "") }}`)'>
                                         <div>
-                                            CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            CS Manager {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
+
+                                    <th >
+                                        <div>
+                                            CS Child
                                         </div>
                                     </th>
 
@@ -116,7 +122,13 @@
 
                                     <th onclick='onSortSearch(`cs_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? "desc" : "") }}`)'>
                                         <div>
-                                            CS {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                            CS Manager {!! \App\Models\Helper::getValueInFilterReuquest('cs_id') == "" ? '<i class="fa-solid fa-sort"></i>' : (\App\Models\Helper::getValueInFilterReuquest('cs_id') != "desc" ? '<i class="fa-solid fa-arrow-up-a-z text-success"></i>' : '<i class="fa-solid fa-arrow-down-z-a text-danger"></i>') !!}
+                                        </div>
+                                    </th>
+
+                                    <th >
+                                        <div>
+                                            CS Child
                                         </div>
                                     </th>
 
@@ -292,6 +304,22 @@
                 </div>
                 <div class="modal-body p-0">
                     <iframe id="userIframe" src="" width="100%" style="height: 80vh" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal add cs child -->
+    <div class="modal fade" id="modal_add_cs_child" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_modal_add_cs_child"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="container_modal_add_cs_child">
+
+
                 </div>
             </div>
         </div>
@@ -567,7 +595,7 @@
                     id: id
                 },
                 (response) => {
-                    $('#container_row_' + user_id).after(response.data.html).remove()
+                    $('#container_row_' + id).after(response.data.html).remove()
                 },
                 (error) => {
 
@@ -587,6 +615,44 @@
                     showModal('view_all_website_modal');
                     $('#title_view_all_website_modal').html(response.data.user.email);
                     $('#container_view_all_website_modal').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onShowModalAddCSChild(id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.user.modal_add_cs_child')}}",
+                {
+                    id: id,
+                    modal_id: 'modal_add_cs_child',
+                },
+                (response) => {
+                    showModal('modal_add_cs_child');
+                    $('#title_modal_add_cs_child').html(response.data.user.email);
+                    $('#container_modal_add_cs_child').html(response.data.html);
+                },
+                (error) => {
+
+                }
+            )
+        }
+
+        function onSaveCSChild(id) {
+            callAjax(
+                "PUT",
+                "{{route('ajax.administrator.user.save_cs_child')}}",
+                {
+                    id: id,
+                    cs_id: $('#modal_add_cs_child_select_cs_id').val(),
+                },
+                (response) => {
+                    hideModal('modal_add_cs_child');
+                    refreshRow(id);
+                    showToastSuccess('Saved!')
                 },
                 (error) => {
 
