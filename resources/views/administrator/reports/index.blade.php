@@ -50,14 +50,11 @@
                                             {{\App\Models\Formatter::formatNumber($sumary->d_impression)}}
                                         </th>
                                     @endcan
-
-                                    @can('reports-list-d_impression_us_uk')
-                                        <th>
-                                            <div>
-                                                {{\App\Models\Formatter::formatNumber($sumary->d_impression_us_uk)}}
-                                            </div>
-                                        </th>
-                                    @endcan
+                                    <th>
+                                        <div>
+                                            {{\App\Models\Formatter::formatNumber($sumary->d_impression_us_uk)}}
+                                        </div>
+                                    </th>
                                     @can('reports-list-d_fill_rate')
                                         <th>
                                             <div>
@@ -160,13 +157,12 @@
                                         </th>
                                     @endcan
 
-                                    @can('reports-list-d_impression_us_uk')
-                                        <th>
-                                            <div>
-                                                D.Impression US, UK
-                                            </div>
-                                        </th>
-                                    @endcan
+                                    <th>
+                                        <div>
+                                            D.Impression US, UK
+                                        </div>
+                                    </th>
+
                                     @can('reports-list-d_fill_rate')
                                         <th>
                                             <div>
@@ -314,14 +310,12 @@
                                             </div>
                                         </th>
                                     @endcan
-
-                                    @can('reports-list-d_impression_us_uk')
                                         <th>
                                             <div>
                                                 D.Impression US, UK
                                             </div>
                                         </th>
-                                    @endcan
+
                                     @can('reports-list-d_fill_rate')
                                         <th>
                                             <div>
