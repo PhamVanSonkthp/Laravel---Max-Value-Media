@@ -48,7 +48,7 @@
     @endcan
     @can('reports-list-d_fill_rate')
         <td>
-            {{\App\Models\Formatter::formatNumber(min($item->d_impression / max(1 , $item->d_request * 100 , 100), 2)}}
+            {{\App\Models\Formatter::formatNumber(min($item->d_impression / max(1 , $item->d_request * 100) , 100), 2)}}
             %
         </td>
     @endcan
