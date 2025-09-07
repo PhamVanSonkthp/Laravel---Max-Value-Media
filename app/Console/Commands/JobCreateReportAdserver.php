@@ -62,6 +62,36 @@ class JobCreateReportAdserver extends Command
 
         set_time_limit(1000);
 
+        $date = Carbon::today()->subDays(5)->toDateString();
+        $reports = $this->getReport($date);
+        $this->getReportByCountry($date, $reports);
+        $this->getReportByDevice($date, $reports);
+        $this->getReportByReferrer($date, $reports);
+
+        $date = Carbon::today()->subDays(4)->toDateString();
+        $reports = $this->getReport($date);
+        $this->getReportByCountry($date, $reports);
+        $this->getReportByDevice($date, $reports);
+        $this->getReportByReferrer($date, $reports);
+
+        $date = Carbon::today()->subDays(3)->toDateString();
+        $reports = $this->getReport($date);
+        $this->getReportByCountry($date, $reports);
+        $this->getReportByDevice($date, $reports);
+        $this->getReportByReferrer($date, $reports);
+
+        $date = Carbon::today()->subDays(4)->toDateString();
+        $reports = $this->getReport($date);
+        $this->getReportByCountry($date, $reports);
+        $this->getReportByDevice($date, $reports);
+        $this->getReportByReferrer($date, $reports);
+
+        $date = Carbon::today()->subDays(2)->toDateString();
+        $reports = $this->getReport($date);
+        $this->getReportByCountry($date, $reports);
+        $this->getReportByDevice($date, $reports);
+        $this->getReportByReferrer($date, $reports);
+
         $date = Carbon::today()->subDay()->toDateString();
         $reports = $this->getReport($date);
         $this->getReportByCountry($date, $reports);
@@ -277,7 +307,7 @@ class JobCreateReportAdserver extends Command
 
         if ($response['is_success']) {
             foreach ($response['data'] as $datum) {
-                $zoneWebsite = ZoneWebsite::where('adserver_id', $datum['iddimension_2'])->first();
+                $zoneWebsite = ZoneWebsite::where('adserver_id', $datum['iddimension_2'])->orWhere('name', $datum['dimension'])->first();
                 $website = optional($zoneWebsite)->website;
 
                 if (empty($website)) {
@@ -292,6 +322,11 @@ class JobCreateReportAdserver extends Command
                         'category_website_id' => 1,
                         'status_website_id' => 2,
                     ]);
+                }
+
+                if (empty($website->adserver_id)){
+                    $website->adserver_id = $datum['iddimension_2'];
+                    $website->save();
                 }
 
                 if (empty($zoneWebsite)){
