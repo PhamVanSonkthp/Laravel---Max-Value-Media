@@ -301,7 +301,7 @@ class JobCreateReportAdserver extends Command
                 }
 
                 if (empty($website->adserver_id)){
-                    $website->adserver_id = $datum['iddimension_2'];
+                    $website->adserver_id = $datum['iddimension'];
                     $website->save();
                 }
 
