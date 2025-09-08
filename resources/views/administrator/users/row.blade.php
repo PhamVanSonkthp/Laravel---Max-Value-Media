@@ -85,7 +85,7 @@
         @endcan
 
         <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#userModal"
-                data-userid="{{ $item->id }}" data-username="{{ $item->name }}">
+                data-userid="{{ $item->id }}" data-username="{{ $item->email }}">
             <i class="fa-solid fa-user"></i>
         </button>
 

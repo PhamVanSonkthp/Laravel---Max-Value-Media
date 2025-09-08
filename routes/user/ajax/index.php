@@ -214,6 +214,15 @@ Route::prefix('ajax/user')->group(function () {
 
             })->name('ajax.user.website.search');
 
+            Route::get('ads', function (Request $request) {
+
+                $website = Website::findOrFail($request->website_id);
+
+                return response()->json(Helper::successAPI(200, [
+                    'html' => View::make('user.website.modal_ads_website', ['item' => $website])->render()
+                ]));
+            })->name('ajax.user.website.ads');
+
             Route::post('store', function (Request $request) {
 
                 $request->validate([

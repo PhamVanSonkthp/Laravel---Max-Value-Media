@@ -12,7 +12,20 @@
         @include('administrator.components.label', ['label' => optional($item->statusWebsite)->name, 'style' => 'display: inline-block;margin-top: 6px;padding: 2px 8px;border-radius: 999px;font-size: 11px;font-weight: 600;color: white !important;background: '.optional($item->statusWebsite)->background_color.';'])
     </td>
     <td class="text-center">
-        @include('administrator.websites.ads_status', ['item' => $item, 'hiddenGam' => true])
+
+        <div>
+            @include('administrator.websites.ads_status', ['item' => $item, 'hiddenGam' => true])
+        </div>
+
+        @if($item->ads_status_website_id != 2)
+            <div>
+                <button class="btn btn-warning btn-sm mb-1" onclick="showModalAds(event, '{{$item->id}}')">
+                    Update
+                </button>
+            </div>
+        @endif
+
+
     </td>
     <td class="text-center">
         {{$item->zoneWebsites->count()}} zone(s)

@@ -499,6 +499,7 @@
                 {
                     website_id: website_id,
                     is_hide_all_pre_modal: true,
+                    modal_id: 'modal_create_zone',
                 },
                 (response) => {
                     showModal('modal_create_zone');

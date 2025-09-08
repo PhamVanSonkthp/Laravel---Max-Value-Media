@@ -193,7 +193,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 return response()->json(Helper::successAPI(200, [
                     'website' => $website,
-                    "html" => View::make('administrator.websites.modal_create_zone_website', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'groupZoneDimensions' => $groupZoneDimensions, 'zoneTypes' => $zoneTypes, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes, 'hideAllPreModal' => $request->is_hide_all_pre_modal])->render()
+                    "html" => View::make('administrator.websites.modal_create_zone_website', ['item' => $website, 'prefixView' => 'websites', 'zoneStatuses' => $zoneStatuses, 'groupZoneDimensions' => $groupZoneDimensions, 'zoneTypes' => $zoneTypes, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes, 'hideAllPreModal' => $request->is_hide_all_pre_modal, 'modal_id' => $request->modal_id])->render()
                 ]));
             })->name('ajax.administrator.zone_websites.modal_create');
 

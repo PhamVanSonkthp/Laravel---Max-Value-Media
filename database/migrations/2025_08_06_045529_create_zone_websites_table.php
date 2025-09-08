@@ -21,6 +21,7 @@ class CreateZoneWebsitesTable extends Migration
             $table->bigInteger('zone_dimension_id');
             $table->bigInteger('zone_status_id');
             $table->bigInteger('zone_online_status_id')->default(1);
+            $table->bigInteger('parent_id')->default(0);
             $table->string('gam_id')->index()->nullable();
             $table->text('code_normal')->nullable();
             $table->text('code_iframe')->nullable();

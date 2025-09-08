@@ -41,29 +41,25 @@
         </td>
     @endcan
 
-    <td>
-        {{\App\Models\Formatter::formatNumber($item->d_impression_us_uk)}}
-    </td>
-{{--    @can('reports-list-d_impressions_us_uk')--}}
-{{--        <td>--}}
-{{--            {{\App\Models\Formatter::formatNumber($item->d_impression_us_uk)}}--}}
-{{--        </td>--}}
-{{--    @endcan--}}
+    @can('reports-list-d_impressions_us_uk')
+        <td>
+            {{\App\Models\Formatter::formatNumber($item->d_impression_us_uk)}}
+        </td>
+    @endcan
     @can('reports-list-d_fill_rate')
         <td>
-            {{\App\Models\Formatter::formatNumber(min($item->d_impression / max(1 , $item->d_request) * 100, 100), 2)}}
-            %
+            {{\App\Models\Formatter::formatNumber(min($item->d_impression / max(1 , $item->d_request) * 100, 100), 2)}}<small>%</small>
         </td>
     @endcan
     @can('reports-list-d_ecpm')
         <td>
-            ${{\App\Models\Formatter::formatNumber(round($item->d_ecpm, 2),2)}}
+            <small>$</small>{{\App\Models\Formatter::formatNumber(round($item->d_ecpm, 2),2)}}
         </td>
     @endcan
 
     @can('reports-list-d_revenue')
         <td>
-            ${{\App\Models\Formatter::formatNumber(round($item->d_revenue,2), 2)}}
+            <small>$</small>{{\App\Models\Formatter::formatNumber(round($item->d_revenue,2), 2)}}
         </td>
     @endcan
 
@@ -94,18 +90,18 @@
 
     @can('reports-list-p_ecpm')
         <td>
-            ${{round($item->p_ecpm,2)}}
+            <small>$</small>{{round($item->p_ecpm,2)}}
         </td>
     @endcan
 
     @can('reports-list-p_revenue')
         <td>
-            ${{\App\Models\Formatter::formatNumber(round($item->p_revenue,2),2)}}
+            <small>$</small>{{\App\Models\Formatter::formatNumber(round($item->p_revenue,2),2)}}
         </td>
     @endcan
     @can('reports-list-profit')
         <td>
-            ${{\App\Models\Formatter::formatNumber(round($item->profit,2),2)}}
+            <small>$</small>{{\App\Models\Formatter::formatNumber(round($item->profit,2),2)}}
         </td>
     @endcan
 

@@ -57,7 +57,7 @@
 </div>
 
 <div class="mt-3">
-    @include('administrator.components.require_select2',['label' => 'Status', 'name' => 'zone_status_id', 'select2Items'=> $zoneStatuses, 'id' => 'panel_zone_select_zone_status_id'])
+    @include('administrator.components.require_select2',['label' => 'Status', 'name' => 'zone_status_id', 'select2Items'=> $zoneStatuses, 'id' => 'panel_zone_select_zone_status_id','modal_id' => $modal_id])
 </div>
 
 <div style="position: relative;">

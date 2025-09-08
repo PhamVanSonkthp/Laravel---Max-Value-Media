@@ -300,7 +300,7 @@
         <div class="modal-dialog modal-xl modal-dialog-centered custom-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">User View: <span id="modalUserName"></span></h5>
+                    <h5 class="modal-title"><span id="modalUserName"></span></h5>
                 </div>
                 <div class="modal-body p-0">
                     <iframe id="userIframe" src="" width="100%" style="height: 80vh" frameborder="0"></iframe>

@@ -299,6 +299,24 @@
         </div>
     </div>
 
+    <!-- Modal get ads website -->
+    <div class="modal fade" id="ads_website_modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ads
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="container_ads_website_modal">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal get ad zone website -->
     <div class="modal fade" id="create_zone_website_modal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -501,9 +519,7 @@
         function onShowModalAdCode(zone_id) {
 
             if (!zone_id) return;
-
             _LoaderOrverlay.show();
-
             callAjax(
                 "GET",
                 "{{route('ajax.user.zone_website.ad_code')}}",
@@ -519,7 +535,27 @@
                     _LoaderOrverlay.hide();
                 }, false
             )
+        }
 
+        function showModalAds(e, website_id) {
+            e.stopPropagation();
+
+            _LoaderOrverlay.show();
+            callAjax(
+                "GET",
+                "{{route('ajax.user.website.ads')}}",
+                {
+                    website_id: website_id
+                },
+                (response) => {
+                    _LoaderOrverlay.hide();
+                    $('#container_ads_website_modal').html(response.data.html);
+                    showModal('ads_website_modal');
+                },
+                (error) => {
+                    _LoaderOrverlay.hide();
+                }
+            )
         }
 
         function onVerifyZone(zone_id) {
