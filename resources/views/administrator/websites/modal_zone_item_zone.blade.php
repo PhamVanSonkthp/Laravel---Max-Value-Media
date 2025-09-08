@@ -6,6 +6,29 @@
         @include('administrator.components.label', ['label' => $item->name])
 
         @include('administrator.components.label', ['onclick' => 'onShowModalCheckStatusZoneOnline('.$item->id.')','title' => optional($item->zoneWebsiteOnlineStatus)->name, 'style' => 'display:inline-block;width:8px;height:8px;border-radius:50%;background:'.optional($item->zoneWebsiteOnlineStatus)->background_color.';vertical-align:middle;margin-right:6px;'])
+
+        @if(count($item->children))
+        <ul>
+            @foreach($item->children as $child)
+            <li>
+                {{$child->name}}
+
+                @can('websites-edit-zone')
+                    @if(in_array($child->zone_dimension_id ,config('_my_config.zone_dimension_show_time_ids')))
+                        <!-- Time button -->
+                            <button onclick="onGetTimeZone({{$child->id}})" class="btn btn-time" title="Setup time">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
+                                     viewBox="0 0 24 24" width="20" height="20">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 6v6l4 2"></path>
+                                </svg>
+                            </button>
+                        @endif
+                @endcan
+            </li>
+            @endforeach
+        </ul>
+        @endif
     </td>
     <td>
         <div>

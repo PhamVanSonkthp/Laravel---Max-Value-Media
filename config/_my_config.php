@@ -26,6 +26,7 @@ return [
     'default_status_id_create_ads' => 3010,
     'default_category_website_id' => 1,
     'default_status_website_id' => 5,
+    'default_magic_zone_dimension_id' => 17,
     'allow_user_create_zone_dimension_ids' => [
         7,8,10
     ],

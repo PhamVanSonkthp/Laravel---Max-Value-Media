@@ -12,18 +12,18 @@ use App\Models\ZoneWebsite;
 class ZoneWebsiteObserver
 {
 
-    public function creating(ZoneWebsite $zoneZoneWebsite)
+    public function creating(ZoneWebsite $zoneWebsite)
     {
-        if (empty($zoneZoneWebsite->name)) $zoneZoneWebsite->name = $zoneZoneWebsite->url;
+
     }
 
     /**
      * Handle the ZoneWebsite "created" event.
      *
-     * @param  \App\Models\ZoneWebsite  $zoneZoneWebsite
+     * @param  \App\Models\ZoneWebsite  $zoneWebsite
      * @return void
      */
-    public function created(ZoneWebsite $zoneZoneWebsite)
+    public function created(ZoneWebsite $zoneWebsite)
     {
 
     }
@@ -31,59 +31,63 @@ class ZoneWebsiteObserver
     /**
      * Handle the ZoneWebsite "updated" event.
      *
-     * @param  \App\Models\ZoneWebsite  $zoneZoneWebsite
+     * @param  \App\Models\ZoneWebsite  $zoneWebsite
      * @return void
      */
-    public function updated(ZoneWebsite $zoneZoneWebsite)
+    public function updated(ZoneWebsite $zoneWebsite)
     {
 
-        if ($zoneZoneWebsite->wasChanged('width') || $zoneZoneWebsite->wasChanged('height')  || $zoneZoneWebsite->wasChanged('zone_status_id') ) {
+        if ($zoneWebsite->wasChanged('width') || $zoneWebsite->wasChanged('height')  || $zoneWebsite->wasChanged('zone_status_id') ) {
 
-            if ($zoneZoneWebsite->gam_id){
-                QueueGAMUpdateAdUnit::dispatch($zoneZoneWebsite);
-            }
+            if (count($zoneWebsite->children)){
 
-            if ($zoneZoneWebsite->wasChanged('zone_status_id')){
-                $adScore = $zoneZoneWebsite->adScore;
-                if ($adScore){
-                    $adScore->ad_score_zone_status_id = $zoneZoneWebsite->zone_status_id == 2 ? 1 : 2;
-                    $adScore->save();
+            }else{
+                if ($zoneWebsite->gam_id){
+                    QueueGAMUpdateAdUnit::dispatch($zoneWebsite);
+                }else{
+                    QueueAdserverUpdateZone::dispatch($zoneWebsite);
+                }
+
+                if ($zoneWebsite->wasChanged('zone_status_id')){
+                    $adScore = $zoneWebsite->adScore;
+                    if ($adScore){
+                        $adScore->ad_score_zone_status_id = $zoneWebsite->zone_status_id == 2 ? 1 : 2;
+                        $adScore->save();
+                    }
                 }
             }
-
-            QueueAdserverUpdateZone::dispatch($zoneZoneWebsite);
         }
     }
 
     /**
      * Handle the ZoneWebsite "deleted" event.
      *
-     * @param  \App\Models\ZoneWebsite  $zoneZoneWebsite
+     * @param  \App\Models\ZoneWebsite  $zoneWebsite
      * @return void
      */
-    public function deleted(ZoneWebsite $zoneZoneWebsite)
+    public function deleted(ZoneWebsite $zoneWebsite)
     {
-        $adScore = $zoneZoneWebsite->adScore;
+        $adScore = $zoneWebsite->adScore;
         if ($adScore){
             $adScore->ad_score_zone_status_id = 2;
             $adScore->save();
         }
 
-        if ($zoneZoneWebsite->gam_id){
-            $zoneZoneWebsite->zone_status_id = 3;
-            QueueGAMUpdateAdUnit::dispatch($zoneZoneWebsite);
+        if ($zoneWebsite->gam_id){
+            $zoneWebsite->zone_status_id = 3;
+            QueueGAMUpdateAdUnit::dispatch($zoneWebsite);
+        }else{
+            QueueAdserverDeleteZone::dispatch($zoneWebsite);
         }
-
-        QueueAdserverDeleteZone::dispatch($zoneZoneWebsite);
     }
 
     /**
      * Handle the ZoneWebsite "restored" event.
      *
-     * @param  \App\Models\ZoneWebsite  $zoneZoneWebsite
+     * @param  \App\Models\ZoneWebsite  $zoneWebsite
      * @return void
      */
-    public function restored(ZoneWebsite $zoneZoneWebsite)
+    public function restored(ZoneWebsite $zoneWebsite)
     {
         //
     }
@@ -91,10 +95,10 @@ class ZoneWebsiteObserver
     /**
      * Handle the ZoneWebsite "force deleted" event.
      *
-     * @param  \App\Models\ZoneWebsite  $zoneZoneWebsite
+     * @param  \App\Models\ZoneWebsite  $zoneWebsite
      * @return void
      */
-    public function forceDeleted(ZoneWebsite $zoneZoneWebsite)
+    public function forceDeleted(ZoneWebsite $zoneWebsite)
     {
         //
     }

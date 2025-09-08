@@ -70,6 +70,7 @@ class QueueAdserverCreateZone implements ShouldQueue
             repeat:
 
             $zoneDimension = ZoneDimension::find($dimension_id);
+            $skipCreateZoneAdserver = false;
 
             $nameZone = $this->website->name . " " . (empty($this->name) ? $zoneDimension->name : $this->name);
 
@@ -86,43 +87,53 @@ class QueueAdserverCreateZone implements ShouldQueue
                 'width' => $zoneDimension->width,
             ];
 
+            if ($zoneDimension->zone_dimension_type_id == 1) {
+                $skipCreateZoneAdserver = true;
+                goto skipCreateZoneAdserver;
+            }
+
             $response = $this->callPostHTTP('zone?idsite='. $this->website->adserver_id, $params);
 
             if ($response['is_success']) {
+
+                skipCreateZoneAdserver:
+
                 $paramCreateZoneWebsite = [
                     'website_id' => $this->websiteID,
                     'name' => $nameZone,
                     'zone_dimension_id' => $dimension_id,
                     'zone_status_id' => $this->zoneStatusID,
-                    'adserver_id' => $response['data']['id'],
+                    'adserver_id' => $skipCreateZoneAdserver ? 0 :$response['data']['id'],
                     'height' => $zoneDimension->height,
                     'width' => $zoneDimension->width,
                 ];
 
-                if (count($response['data']['code']) > 0){
-                    $paramCreateZoneWebsite['code_normal'] = $response['data']['code'][0]['code'];
-                }
+                if (!$skipCreateZoneAdserver){
+                    if (count($response['data']['code']) > 0){
+                        $paramCreateZoneWebsite['code_normal'] = $response['data']['code'][0]['code'];
+                    }
 
-                if (count($response['data']['code']) > 1){
-                    $paramCreateZoneWebsite['code_iframe'] = $response['data']['code'][1]['code'];
-                }
+                    if (count($response['data']['code']) > 1){
+                        $paramCreateZoneWebsite['code_iframe'] = $response['data']['code'][1]['code'];
+                    }
 
-                if (count($response['data']['code']) > 2){
-                    $paramCreateZoneWebsite['code_amp'] = $response['data']['code'][2]['code'];
-                }
+                    if (count($response['data']['code']) > 2){
+                        $paramCreateZoneWebsite['code_amp'] = $response['data']['code'][2]['code'];
+                    }
 
-                if (count($response['data']['code']) > 3){
-                    $paramCreateZoneWebsite['code_prebid'] = $response['data']['code'][3]['code'];
-                }
+                    if (count($response['data']['code']) > 3){
+                        $paramCreateZoneWebsite['code_prebid'] = $response['data']['code'][3]['code'];
+                    }
 
-                if (count($response['data']['code']) > 4){
-                    $paramCreateZoneWebsite['code_email'] = $response['data']['code'][4]['code'];
+                    if (count($response['data']['code']) > 4){
+                        $paramCreateZoneWebsite['code_email'] = $response['data']['code'][4]['code'];
+                    }
                 }
 
                 $zoneWebsite = ZoneWebsite::create($paramCreateZoneWebsite);
                 $result['zone_ids'][] = $zoneWebsite->id;
 
-                if ($zoneDimension->zone_dimension_type_id == 1){
+                if ($skipCreateZoneAdserver){
                     QueueGAMCreateAdUnit::dispatch($zoneWebsite, $this->website);
                 }else{
                     QueueAdserverCreateCampaign::dispatch($zoneWebsite, $this->website);

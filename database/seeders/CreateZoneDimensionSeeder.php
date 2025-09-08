@@ -170,6 +170,16 @@ class CreateZoneDimensionSeeder extends Seeder
             "zone_dimension_position_id" => 1,
         ]);
 
+        ZoneDimension::firstOrCreate([
+            "name" => "MAGIC01",
+            "code" => "AD_UNIT_MAGIC",
+            "width" => "100%",
+            "height" => "100%",
+            "group_zone_dimension_id" => 6,
+            "zone_dimension_type_id" => 1,
+            "zone_dimension_position_id" => 1,
+        ]);
+
 
     }
 }

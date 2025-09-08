@@ -131,8 +131,8 @@ Route::prefix('ajax/administrator')->group(function () {
 
             Route::get('refresh_export', function (Request $request) {
 
-                $itemExports = ExportReport::latest()->limit(10)->get();
-                $itemImports = ImportReport::latest()->limit(10)->get();
+                $itemExports = ExportReport::latest()->limit(50)->get();
+                $itemImports = ImportReport::latest()->limit(50)->get();
 
                 foreach ($itemExports as $item) {
                     $textColor = "text-danger";
@@ -254,15 +254,31 @@ Route::prefix('ajax/administrator')->group(function () {
                     foreach ($request->dimension_ids as $indexD => $dimension_id) {
                         if ($dimension_id == config('_my_config.verify_zone_dimension_id')) {
                             if ($website->zoneWebsiteTraffic) {
-                                return response()->json(Helper::errorAPI(200, [
+                                return response()->json(Helper::errorAPI(400, [
 
                                 ], 'Verify Tag only be created once'), 400);
                             }
                             if ($request->numbers[$indexD] > 1) {
-                                return response()->json(Helper::errorAPI(200, [
+                                return response()->json(Helper::errorAPI(400, [
 
                                 ], 'Verify Tag only be created max 1'), 400);
                             }
+                        }
+                        if ($dimension_id == config('_my_config.default_magic_zone_dimension_id')) {
+                            $zoneMagic = ZoneWebsite::where(['website_id' => $website->id, 'zone_dimension_id' => config('_my_config.default_magic_zone_dimension_id')])->first();
+
+                            if ($zoneMagic) {
+                                return response()->json(Helper::errorAPI(400, [
+
+                                ], optional($zoneMagic->zoneDimension)->name . ' only be created once'), 400);
+                            }
+
+                            if ($request->numbers[$indexD] > 1) {
+                                return response()->json(Helper::errorAPI(400, [
+
+                                ], optional($zoneMagic->zoneDimension)->name .' only be created max 1'), 400);
+                            }
+
                         }
                     }
 

@@ -47,7 +47,7 @@ class QueueGAMCreateAdUnit implements ShouldQueue
     {
 
         if (empty($this->website->gam_id)) {
-            $result = $this->createWebsiteOnGame($this->website);
+            $result = $this->createWebsiteOnGAM($this->website);
             if ($result['is_success']) {
                 $this->website->refresh();
             } else {
@@ -64,8 +64,14 @@ class QueueGAMCreateAdUnit implements ShouldQueue
         $response = $this->callPostHTTP('api/adUnit/store', $params);
 
         if ($response['is_success'] && $response['data']['success']) {
+
+            if ($this->zoneWebsite->zoneDimension->id == config('_my_config.default_magic_zone_dimension_id')){
+                $this->saveZoneAndSiteGAM($this->zoneWebsite, $response['data']['data'], $this->website);
+                return;
+            }
+
             if (empty($parentZoneId)) {
-                $this->website->game_parent_zone_id = $response['data']['data']['parentId'];
+                $this->website->gam_parent_zone_id = $response['data']['data']['parentId'];
                 $this->website->save();
 
                 $paramsZone['dimension_code'] = $this->zoneWebsite->zoneDimension->code;
@@ -90,14 +96,44 @@ class QueueGAMCreateAdUnit implements ShouldQueue
 
     function saveZoneAndSiteGAM($zone_website, $response, $website)
     {
-        $zone_website->gam_id = $response['id'];
-        $zone_website->gam_code = $response['tag'];
+        if ($zone_website->zoneDimension->id != config('_my_config.default_magic_zone_dimension_id')){
+            $zone_website->gam_code = $response['tag'];
+            $zone_website->gam_id = $response['id'];
+        }else{
+            $zone_website->gam_code = $response['url_script'];
+            $children = $response['child'];
+            $zone_website->max_gam_id = $response['id'];
+
+            $results = [];
+            foreach ($children as $key => $value) {
+                $results[] = [
+                    'name'       => $key,
+                    'id'         => $value['id'],
+                    'ad_unit_id' => $value['ad_unit_id'],
+                    'active'     => $value['active'],
+                ];
+            }
+            foreach ($results as $result){
+                ZoneWebsite::create([
+                    'name' => $website->name . " ". $result['name'],
+                    'gam_id' => $result['ad_unit_id'],
+                    'website_id' => $zone_website->website_id,
+                    'adserver_id' => 0,
+                    'zone_dimension_id' => optional(ZoneDimension::where('code', $result['name'])->first())->id ?? 0,
+                    'zone_status_id' => $zone_website->zone_status_id,
+                    'parent_id' => $zone_website->id,
+                ]);
+            }
+
+        }
+
+
         $zone_website->save();
 
-        QueueAdserverCreateCampaign::dispatch($zone_website, $website);
+//        QueueAdserverCreateCampaign::dispatch($zone_website, $website);
     }
 
-    function createWebsiteOnGame($website)
+    function createWebsiteOnGAM($website)
     {
         $params = [
             'url' => $website->url,

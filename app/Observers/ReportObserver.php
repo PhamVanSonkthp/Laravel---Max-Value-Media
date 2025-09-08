@@ -111,7 +111,9 @@ class ReportObserver
 
         }
 
-        if ($report->wasChanged('report_status_id') && $report->report_status_id == 2 && $report->p_revenue > 0 && Carbon::yesterday()->toDateString() == $report->date) {
+        if ($report->wasChanged('report_status_id') && $report->report_status_id == 2 && $report->p_revenue > 0
+//            && Carbon::yesterday()->toDateString() == $report->date
+        ) {
             $user = $report->user;
             if ($user) {
                 $user->addAmount($report->p_revenue, "Revenue: ". optional($report->zoneWebsite)->name);

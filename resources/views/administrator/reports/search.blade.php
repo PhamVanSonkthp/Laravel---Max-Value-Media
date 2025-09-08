@@ -43,7 +43,7 @@
             </button>
 
         </a>
-        <div class="p-0 dropdown-menu" aria-labelledby="exportDropdown" id="container_export_dropdown">
+        <div class="p-0 dropdown-menu" aria-labelledby="exportDropdown" id="container_export_dropdown" style="max-height: 50vh;overflow: auto;">
             <a onclick="onCreateReport()" href="javascript:;" class="dropdown-item py-2">
                 <span class="ms-1"> Create new </span></a>
 
@@ -62,15 +62,15 @@
             </button>
 
         </a>
-        <div class="dropdown-menu" aria-labelledby="importDropdown" style="width: 238px;">
+        <div class="dropdown-menu" aria-labelledby="importDropdown" style="width: 346px;">
 
             <form action="{{route('administrator.'.$prefixView.'.import')}}" method="POST" enctype="multipart/form-data"
                   style="display: contents">
                 @csrf
 
                 <div class="wrapper" style="float: right;">
-                    <div class="file-upload me-2">
-                        Tải báo cáo mới (Sẽ tính revenue cho publisher nếu update vào ngày hôm qua, tính theo giờ utc +0)
+                    <div class="file-upload ps-3 pe-3">
+                        Tải báo cáo mới (Sẽ tính revenue cho publisher nếu update)
                         <input id="input_import" type="file" class="@error('input_import') is-invalid @enderror"
                                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                onchange="onImport()"/>
@@ -83,7 +83,7 @@
 
             </form>
 
-            <div class="dropdown-menu show" style="right: 0px;    margin-top: 68px;" id="container_import_dropdown">
+            <div class="dropdown-menu show" style="right: 0px;    margin-top: 45px;" id="container_import_dropdown">
 
             </div>
         </div>
