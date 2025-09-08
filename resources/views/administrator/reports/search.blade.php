@@ -38,11 +38,14 @@
     <div class="float-end">
         <a class="p-0 nav-link dropdown-toggle btn btn-outline-success" href="#" id="exportDropdown" role="button"
            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fa-sharp fa-solid fa-download" style="margin: 10px;color: green;"></i>
+            <button class="btn btn-success">
+                Export <i class="ms-1 fa-sharp fa-solid fa-download"></i>
+            </button>
+
         </a>
         <div class="p-0 dropdown-menu" aria-labelledby="exportDropdown" id="container_export_dropdown">
             <a onclick="onCreateReport()" href="javascript:;" class="dropdown-item py-2">
-                <span class="ms-1"> Tạo báo cáo mới </span></a>
+                <span class="ms-1"> Create new </span></a>
 
         </div>
     </div>
@@ -52,9 +55,12 @@
 
     @can('reports-list_export')
     <div class="float-end me-1">
-        <a class="p-0 nav-link dropdown-toggle btn btn-outline-success" href="#" id="importDropdown" role="button"
+        <a class="p-0 nav-link dropdown-toggle btn btn-outline-primary" href="#" id="importDropdown" role="button"
            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fa-sharp fa-solid fa-upload" style="margin: 10px;color: green;"></i>
+            <button class="btn btn-primary">
+                Import <i class="fa-sharp fa-solid fa-upload"></i>
+            </button>
+
         </a>
         <div class="dropdown-menu" aria-labelledby="importDropdown" style="width: 238px;">
 

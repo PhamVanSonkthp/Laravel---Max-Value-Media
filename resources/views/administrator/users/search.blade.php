@@ -2,8 +2,8 @@
     @include('administrator.components.search')
 
     @can('users-add')
-    <a onclick="onAdd()" class="btn btn-outline-success float-end"><i
-            class="fa-solid fa-plus"></i></a>
+    <a onclick="onAdd()" class="btn btn-success float-end">Create Publisher<i
+            class="ms-1 fa-solid fa-plus"></i></a>
     @endcan
 
 {{--    <a href="{{route('administrator.'.$prefixView.'.export')}}" class="btn btn-outline-primary float-end me-2"--}}

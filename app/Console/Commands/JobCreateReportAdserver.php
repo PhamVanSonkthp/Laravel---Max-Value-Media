@@ -62,36 +62,6 @@ class JobCreateReportAdserver extends Command
 
         set_time_limit(1000);
 
-        $date = Carbon::today()->subDays(5)->toDateString();
-        $reports = $this->getReport($date);
-        $this->getReportByCountry($date, $reports);
-        $this->getReportByDevice($date, $reports);
-        $this->getReportByReferrer($date, $reports);
-
-        $date = Carbon::today()->subDays(4)->toDateString();
-        $reports = $this->getReport($date);
-        $this->getReportByCountry($date, $reports);
-        $this->getReportByDevice($date, $reports);
-        $this->getReportByReferrer($date, $reports);
-
-        $date = Carbon::today()->subDays(3)->toDateString();
-        $reports = $this->getReport($date);
-        $this->getReportByCountry($date, $reports);
-        $this->getReportByDevice($date, $reports);
-        $this->getReportByReferrer($date, $reports);
-
-        $date = Carbon::today()->subDays(4)->toDateString();
-        $reports = $this->getReport($date);
-        $this->getReportByCountry($date, $reports);
-        $this->getReportByDevice($date, $reports);
-        $this->getReportByReferrer($date, $reports);
-
-        $date = Carbon::today()->subDays(2)->toDateString();
-        $reports = $this->getReport($date);
-        $this->getReportByCountry($date, $reports);
-        $this->getReportByDevice($date, $reports);
-        $this->getReportByReferrer($date, $reports);
-
         $date = Carbon::today()->subDay()->toDateString();
         $reports = $this->getReport($date);
         $this->getReportByCountry($date, $reports);
@@ -99,6 +69,12 @@ class JobCreateReportAdserver extends Command
         $this->getReportByReferrer($date, $reports);
 
         $date = Carbon::today()->toDateString();
+        $reports = $this->getReport($date);
+        $this->getReportByCountry($date, $reports);
+        $this->getReportByDevice($date, $reports);
+        $this->getReportByReferrer($date, $reports);
+
+        $date = Carbon::parse("2025-09-01")->toDateString();
         $reports = $this->getReport($date);
         $this->getReportByCountry($date, $reports);
         $this->getReportByDevice($date, $reports);
