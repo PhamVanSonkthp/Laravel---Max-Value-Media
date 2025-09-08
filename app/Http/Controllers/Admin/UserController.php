@@ -69,7 +69,7 @@ class UserController extends Controller
                 ->where('user_c_s.cs_id', $request->cs_child_id);
         }
 
-        if (UserTrait::isChild(auth()->user())){
+        if (UserTrait::isCSChild(auth()->user())){
             $items = $items->select('users.*')->join('user_c_s', 'user_c_s.user_id', '=', 'users.id')
                 ->where('user_c_s.cs_id', auth()->id());
         }

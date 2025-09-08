@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Notifications\Notifications;
 use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
+use App\Traits\UserTrait;
 use Carbon\Carbon;
 use DateTime;
 use Google\Auth\CredentialsLoader;
@@ -301,15 +302,43 @@ class Helper extends Model
         if (optional($user)->is_admin == 1) {
             switch ($table) {
                 case "users":
+                    if (UserTrait::isCSManager($user)) break;
                     $query = $query->where(function ($query) use ($table) {
                         $query->where($table . '.manager_id', auth()->id())
                             ->orWhere($table . '.cs_id', auth()->id());
                     });
+
+                    if (UserTrait::isCSChild($user)){
+                        $query = $query->join('user_c_s', 'users.id', '=', 'user_c_s.user_id')->where('user_c_s.cs_id', $user->id);
+                    }
+
                     break;
-            }
-            switch ($table) {
                 case "websites":
-                    $query = $query->where($table . '.cs_id', auth()->id());
+                    if (UserTrait::isCSManager($user)) break;
+
+                    $query = $query->join('users', 'users.id', '=', 'websites.user_id')
+                        ->where(function ($query) use ($user) {
+                            $query->where('users.manager_id', $user->id)
+                                ->orWhere('users.cs_id', $user->id);
+                        });
+
+                    if (UserTrait::isCSChild($user)){
+                        $query = $query->join('user_c_s', 'websites.user_id', '=', 'user_c_s.user_id')->where('user_c_s.cs_id', $user->id);
+                    }
+                    break;
+                case "zone_websites":
+                    if (UserTrait::isCSManager($user)) break;
+
+                    $query = $query->join('websites', 'websites.id', '=', 'zone_websites.website_id');
+                    $query = $query->join('users', 'users.id', '=', 'websites.user_id')
+                        ->where(function ($query) use ($user) {
+                            $query->where('users.manager_id', $user->id)
+                                ->orWhere('users.cs_id', $user->id);
+                        });
+
+                    if (UserTrait::isCSChild($user)){
+                        $query = $query->join('user_c_s', 'websites.user_id', '=', 'user_c_s.user_id')->where('user_c_s.cs_id', $user->id);
+                    }
                     break;
             }
         }

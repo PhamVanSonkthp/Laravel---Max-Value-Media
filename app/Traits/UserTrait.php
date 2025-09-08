@@ -37,6 +37,8 @@ trait UserTrait
     }
 
     public static function isCSManager($user){
+        if (empty($user)) return false;
+
         if (auth()->user()->is_admin == 2) return false;
 
         $csManageres = self::csManageres();
@@ -48,10 +50,13 @@ trait UserTrait
     }
 
     public static function isAdmin($user){
+        if (empty($user)) return false;
         return $user->is_admin == 2;
     }
 
-    public static function isChild($user){
+    public static function isCSChild($user){
+        if (empty($user)) return false;
+
         if (auth()->user()->is_admin == 2) return false;
 
         $csChildren = self::csChildren();

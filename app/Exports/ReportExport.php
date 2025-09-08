@@ -71,7 +71,7 @@ class ReportExport implements FromQuery, WithMapping, WithHeadings, WithChunkRea
 
     public function query()
     {
-        return Helper::searchByQuery($this->model, $this->request, $this->queries, null, null, true, $this->userQuery)->with(['zoneWebsite', 'website', 'demand'])->limit($this->maxRows);;
+        return Helper::searchByQuery($this->model, $this->request, $this->queries, null, null, true, $this->userQuery)->with(['zoneWebsite', 'website', 'demand'])->limit($this->maxRows);
     }
 
 

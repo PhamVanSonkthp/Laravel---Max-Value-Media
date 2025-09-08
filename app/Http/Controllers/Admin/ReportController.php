@@ -55,7 +55,7 @@ class ReportController extends Controller
 
         $items = $this->model->searchByQuery($request, [], null, null, true);
 
-        $items = $items->orderBy('date', 'DESC')->orderBy('id', 'DESC')->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+        $items = $items->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
         $demands = (new Demand())->get();
 
