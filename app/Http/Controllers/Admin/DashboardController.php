@@ -23,27 +23,6 @@ class DashboardController extends Controller
     {
         if (auth()->check()) {
 
-
-            $duplicates = Website::select('id','name', DB::raw('COUNT(*) as total'))
-                ->groupBy('name')
-                ->having('total', '>', 1)
-                ->get();
-
-            foreach ($duplicates as $duplicate){
-
-                $websiteRemoves = Website::where('id','!=' ,$duplicate->id)->where('name', $duplicate->name)->get();
-                foreach ($websiteRemoves as $websiteRemove){
-                    Report::where('website_id', $websiteRemove->id)->update([
-                        'website_id' => $duplicate->id
-                    ]);
-
-                    ZoneWebsite::where('website_id', $websiteRemove->id)->update([
-                        'website_id' => $duplicate->id
-                    ]);
-                    $websiteRemove->forceDelete();
-                }
-            }
-
             $totalUser = User::where('is_admin', 0)->count();
             $totalWebsite = Website::count();
             $totalZone = ZoneWebsite::count();
