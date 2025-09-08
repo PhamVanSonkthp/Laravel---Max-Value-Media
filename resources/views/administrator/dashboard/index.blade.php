@@ -83,7 +83,7 @@
                         <div class="card-body">
                             <div class="card-container">
                                 <div>
-                                    <label class="card-title fs-sm fw-medium mb-1">Requests</label>
+                                    <label class="card-title fs-sm fw-medium mb-1">D.Requests</label>
                                     <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber($sumary->d_request)}}</h3>
                                 </div>
 
@@ -97,7 +97,7 @@
                         <div class="card-body">
                             <div class="card-container">
                                 <div>
-                                    <label class="card-title fs-sm fw-medium mb-1">Impressions</label>
+                                    <label class="card-title fs-sm fw-medium mb-1">D.Impressions</label>
                                     <h3 class="card-value mb-1">{{\App\Models\Formatter::formatNumber($sumary->d_impression)}}</h3>
                                 </div>
                                 <div class="card-content">
@@ -112,7 +112,7 @@
                         <div class="card-body">
                             <div class="card-container">
                                 <div>
-                                    <label class="card-title fs-sm fw-medium mb-1">CPM</label>
+                                    <label class="card-title fs-sm fw-medium mb-1">D.CPM</label>
                                     <h3 class="card-value mb-1"><i class="ri-numbers-line"></i>
                                         ${{\App\Models\Formatter::formatNumber($sumary->d_ecpm, 2)}}</h3>
                                 </div>
@@ -128,7 +128,7 @@
                         <div class="card-body">
                             <div class="card-container">
                                 <div>
-                                    <label class="card-title fs-sm fw-medium mb-1">Revenue</label>
+                                    <label class="card-title fs-sm fw-medium mb-1">D.Revenue</label>
                                     <h3 class="card-value mb-1"><i class="ri-money-dollar-box-line"></i>
                                         ${{\App\Models\Formatter::formatNumber($sumary->d_revenue, 2)}}</h3>
                                 </div>
