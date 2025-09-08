@@ -170,9 +170,9 @@ class ReportController extends Controller
             'path' => '/app/' . $filePath,
         ]);
 
-        $request->merge([
-            'report_type_id' => 1
-        ]);;
+//        $request->merge([
+//            'report_type_id' => 1
+//        ]);
 
         QueueCreateReport::dispatch($filePath, $request->all(), $exportReport, auth()->user());
 
