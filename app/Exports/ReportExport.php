@@ -33,12 +33,14 @@ class ReportExport implements FromQuery, WithMapping, WithHeadings, WithChunkRea
     private $currentRow = 1;
     private $perChunk = 100;
     private $maxRows;
+    private $userQuery;
 
-    public function __construct($request, $queries = [], $heading = null, $approvedColums = null)
+    public function __construct($request, $queries = [], $heading = null, $approvedColums = null, $user_query = null)
     {
         $this->request = $request;
         $this->model = new Report();
         $this->queries = $queries;
+        $this->userQuery = $user_query;
         $this->maxRows = config('_my_config.max_row_export');
 
         $heading = [
@@ -69,7 +71,7 @@ class ReportExport implements FromQuery, WithMapping, WithHeadings, WithChunkRea
 
     public function query()
     {
-        return Helper::searchByQuery($this->model, $this->request, $this->queries, null, null, true)->with(['zoneWebsite', 'website', 'demand'])->limit($this->maxRows);;
+        return Helper::searchByQuery($this->model, $this->request, $this->queries, null, null, true, $this->userQuery)->with(['zoneWebsite', 'website', 'demand'])->limit($this->maxRows);;
     }
 
 

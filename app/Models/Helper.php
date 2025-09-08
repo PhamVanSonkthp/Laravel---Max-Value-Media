@@ -99,7 +99,7 @@ class Helper extends Model
         return Schema::getColumnListing($object->getTableName());
     }
 
-    public static function searchByQuery($object, $request, $queries = [], $random_record = null, $make_hiddens = null, $is_custom = false)
+    public static function searchByQuery($object, $request, $queries = [], $random_record = null, $make_hiddens = null, $is_custom = false, $user_query = null)
     {
         $columns = Schema::getColumnListing($object->getTableName());
         $query = $object->query();
@@ -272,7 +272,7 @@ class Helper extends Model
             }
         }
 
-        $query = self::permission($object->getTableName(), $query);
+        $query = self::permission($object->getTableName(), $query, $user_query);
 
         if ($is_custom) {
             return $query;
@@ -293,10 +293,12 @@ class Helper extends Model
         return $items;
     }
 
-    static function permission($table, $query)
+    static function permission($table, $query, $user = null)
     {
-
-        if (auth()->user()->is_admin == 1) {
+        if (empty($user)){
+            $user = auth()->user();
+        }
+        if (optional($user)->is_admin == 1) {
             switch ($table) {
                 case "users":
                     $query = $query->where(function ($query) use ($table) {

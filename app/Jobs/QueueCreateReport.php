@@ -19,18 +19,20 @@ class QueueCreateReport implements ShouldQueue
     private $filePath;
     private $request;
     private $exportReport;
+    private $userQuery;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($file_path, $request, $export_report)
+    public function __construct($file_path, $request, $export_report, $user_query)
     {
         //
         $this->filePath = $file_path;
         $this->request = $request;
         $this->exportReport = $export_report;
+        $this->userQuery = $user_query;
     }
 
     /**
@@ -41,10 +43,11 @@ class QueueCreateReport implements ShouldQueue
     public function handle()
     {
         try {
-            Excel::store(new ReportExport(null,$this->request), $this->filePath, 'local');
+            Excel::store(new ReportExport(null,$this->request, null, null, $this->userQuery), $this->filePath, 'local');
             $this->exportReport->export_report_status_id = 2;
             $this->exportReport->save();
         }catch (\Exception $exception){
+            Log::error("QueueCreateReport: ".$exception->getMessage());
             $this->exportReport->export_report_status_id = 3;
             $this->exportReport->save();
         }

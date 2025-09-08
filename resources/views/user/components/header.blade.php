@@ -37,7 +37,7 @@
 
                     <li class="dropdown profile">
                         <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                            <img class="rounded-circle" src="{{auth()->user()->avatar()}}" alt="User">
+                            <img class="rounded-circle" src="{{optional(auth()->user())->avatar()}}" alt="User">
                         </a>
                         <ul class="dropdown-menu">
                             <li>

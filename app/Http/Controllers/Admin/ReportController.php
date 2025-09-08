@@ -174,7 +174,7 @@ class ReportController extends Controller
             'report_type_id' => 1
         ]);;
 
-        QueueCreateReport::dispatch($filePath, $request->all(), $exportReport);
+        QueueCreateReport::dispatch($filePath, $request->all(), $exportReport, auth()->user());
 
         return response()->json([
             'message' => 'Export started! You will find the file at: storage/app/' . $filePath
