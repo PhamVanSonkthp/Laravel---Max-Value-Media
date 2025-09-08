@@ -74,12 +74,6 @@ class JobCreateReportAdserver extends Command
         $this->getReportByDevice($date, $reports);
         $this->getReportByReferrer($date, $reports);
 
-        $date = Carbon::parse("2025-09-01")->toDateString();
-        $reports = $this->getReport($date);
-        $this->getReportByCountry($date, $reports);
-        $this->getReportByDevice($date, $reports);
-        $this->getReportByReferrer($date, $reports);
-
     }
 
     private function getReportByCountry($date, $reports)
