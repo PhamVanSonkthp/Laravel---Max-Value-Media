@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>Admin {{env('APP_NAME')}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Admin Infinity Ltd" name="description">
+    <meta content="Admin {{env('APP_NAME')}}" name="description">
     <meta content="Pham Son" name="author">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
