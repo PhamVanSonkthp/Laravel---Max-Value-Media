@@ -280,6 +280,10 @@ class JobCreateReportAdserver extends Command
                 $zoneWebsite = ZoneWebsite::where('adserver_id', $datum['iddimension_2'])->orWhere('name', $datum['dimension'])->first();
                 $website = optional($zoneWebsite)->website;
 
+                if (config('_my_config.report_with_user')){
+                    if (empty($zoneWebsite) || empty($website)) continue;
+                }
+
                 if (empty($website)) {
 
                     $website = Website::firstOrCreate([

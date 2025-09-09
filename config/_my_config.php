@@ -78,6 +78,7 @@ return [
         2,3,4
     ],
 
+    'report_with_user' => true,
     'timeout_request_api' => 60,
     'cache_time_api' => 500,
     'default_avatar' => null,

@@ -171,7 +171,7 @@ class CreateZoneDimensionSeeder extends Seeder
         ]);
 
         ZoneDimension::firstOrCreate([
-            "name" => "MAGIC01",
+            "name" => "MaxOne",
             "code" => "AD_UNIT_MAGIC",
             "width" => "100%",
             "height" => "100%",

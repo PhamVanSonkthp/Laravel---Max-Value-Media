@@ -67,30 +67,41 @@ class JobCreateReportDemands extends Command
 
         if ($response['is_success']){
             foreach ($response['data']['data'] as $datum){
-                //
+                if (config('_my_config.report_with_user')){
+                    $zoneWebsite = ZoneWebsite::where([
+                        'gam_id' => $datum['zone_id'],
+                    ])->first();
 
-                $website = Website::firstOrCreate([
-                    'name' => $datum['site']
-                ],[
-                    'name' => $datum['site'],
-                    'user_id' => 0,
-                    'category_website_id' => 1,
-                    'status_website_id' => 1,
-                    'adserver_id' => 0,
-                ]);
+                    $website = optional($zoneWebsite)->website;
 
-                $zoneWebsite = ZoneWebsite::firstOrCreate([
-                    'website_id' => $website->id,
-                    'gam_id' => $datum['zone_id'],
-                ],[
-                    'name' => $website->name ." " . $datum['zone_name'],
-                    'website_id' => $website->id,
-                    'adserver_id' => 0,
-                    'zone_dimension_id' => 1,
-                    'zone_status_id' => 1,
-                    'gam_id' => $datum['zone_id'],
-                ]);
+                    if (empty($zoneWebsite) || empty($website) ) continue;
+                }
 
+                if (empty($website)){
+                    $website = Website::firstOrCreate([
+                        'name' => $datum['site']
+                    ],[
+                        'name' => $datum['site'],
+                        'user_id' => 0,
+                        'category_website_id' => 1,
+                        'status_website_id' => 1,
+                        'adserver_id' => 0,
+                    ]);
+                }
+
+                if (empty($zoneWebsite)){
+                    $zoneWebsite = ZoneWebsite::firstOrCreate([
+                        'website_id' => $website->id,
+                        'gam_id' => $datum['zone_id'],
+                    ],[
+                        'name' => $website->name ." " . $datum['zone_name'],
+                        'website_id' => $website->id,
+                        'adserver_id' => 0,
+                        'zone_dimension_id' => 1,
+                        'zone_status_id' => 1,
+                        'gam_id' => $datum['zone_id'],
+                    ]);
+                }
 
                 $report = Report::updateOrCreate(                [
                     'website_id' => $website->id,

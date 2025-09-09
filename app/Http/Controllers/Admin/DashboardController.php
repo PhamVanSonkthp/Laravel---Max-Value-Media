@@ -23,7 +23,7 @@ class DashboardController extends Controller
     {
         if (auth()->check()) {
 
-            $totalUser = User::where('is_admin', 0)->count();
+            $totalUser = User::where('is_admin', 0)->whereNotNull('email_verified_at')->count();
             $totalWebsite = Website::count();
             $totalZone = ZoneWebsite::count();
             $totalZonePending = ZoneWebsite::where('zone_status_id', 1)->count();
