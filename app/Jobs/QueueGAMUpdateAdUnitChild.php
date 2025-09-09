@@ -19,11 +19,12 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class QueueGAMUpdateAdUnitParent implements ShouldQueue
+class QueueGAMUpdateAdUnitChild implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GAMTrait;
 
     private $zoneWebsite;
+    private $zoneWebsiteParent;
 
     /**
      * Create a new job instance.
@@ -34,6 +35,7 @@ class QueueGAMUpdateAdUnitParent implements ShouldQueue
     {
         //
         $this->zoneWebsite = $zone_website;
+        $this->zoneWebsiteParent = optional($zone_website)->parent;
     }
 
     /**
@@ -43,11 +45,12 @@ class QueueGAMUpdateAdUnitParent implements ShouldQueue
      */
     public function handle()
     {
-        $response = $this->callPutHTTP("api/v2/adUnit/update?id=".($this->zoneWebsite->max_gam_id)."&type=AD_MAGIC&active=".($this->zoneWebsite->zone_status_id == 2 ? 1 : 0));
+        if ($this->zoneWebsiteParent && $this->zoneWebsite){
+            $response = $this->callPutHTTP("api/v2/adUnit/update?id=".$this->zoneWebsiteParent->max_gam_id."&type=AD_MAGIC&active=".($this->zoneWebsite->zone_status_id == 2)."&child[".$this->zoneWebsite->max_gam_id."][timeDelay]=".$this->zoneWebsite->time_delay."&child[".$this->zoneWebsite->max_gam_id."][active]=". ($this->zoneWebsite->zone_status_id == 2 ? 1 : 0));
 
-        if (!$response['is_success'] || !$response['data']['success']) {
-            throw new \Exception('Queue QueueGAMUpdateAdUnitParent error: ' . json_encode($response));
+            if (!$response['is_success'] || !$response['data']['success']) {
+                throw new \Exception('Queue QueueGAMUpdateAdUnitParent error: ' . json_encode($response));
+            }
         }
-
     }
 }

@@ -6,6 +6,7 @@ use App\Jobs\QueueAdserverDeleteZone;
 use App\Jobs\QueueAdserverUpdateStatusZone;
 use App\Jobs\QueueAdserverUpdateZone;
 use App\Jobs\QueueGAMUpdateAdUnit;
+use App\Jobs\QueueGAMUpdateAdUnitChild;
 use App\Jobs\QueueGAMUpdateAdUnitParent;
 use App\Models\Helper;
 use App\Models\ZoneWebsite;
@@ -38,12 +39,12 @@ class ZoneWebsiteObserver
     public function updated(ZoneWebsite $zoneWebsite)
     {
 
-        if ($zoneWebsite->wasChanged('width') || $zoneWebsite->wasChanged('height')  || $zoneWebsite->wasChanged('zone_status_id') ) {
+        if ($zoneWebsite->wasChanged('width') || $zoneWebsite->wasChanged('height') || $zoneWebsite->wasChanged('zone_status_id')  || $zoneWebsite->wasChanged('time_delay') ) {
 
             if (count($zoneWebsite->children)){
-//                QueueGAMUpdateAdUnitParent::dispatch($zoneWebsite);
+                QueueGAMUpdateAdUnitParent::dispatch($zoneWebsite);
             }else if ($zoneWebsite->parent_id != 0){
-
+                QueueGAMUpdateAdUnitChild::dispatch($zoneWebsite);
             }else{
                 if ($zoneWebsite->gam_id){
                     QueueGAMUpdateAdUnit::dispatch($zoneWebsite);

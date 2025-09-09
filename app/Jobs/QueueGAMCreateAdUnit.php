@@ -18,6 +18,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use function Brick\Math\_of;
 
 class QueueGAMCreateAdUnit implements ShouldQueue
 {
@@ -60,15 +61,19 @@ class QueueGAMCreateAdUnit implements ShouldQueue
             'name' => $this->zoneWebsite->name,
             'dimension_code' => $this->zoneWebsite->zoneDimension->code,
         ];
+
+        if ($this->zoneWebsite->zoneDimension->id == config('_my_config.default_magic_zone_dimension_id')){
+            if (empty($parentZoneId)){
+                $params['dimension_code'] = "AD_UNIT_REWARDED";
+            }else{
+                $params['parentId'] = $parentZoneId;
+            }
+        }
+
         $params = $this->prepareZoneParams($this->zoneWebsite, $params, $parentZoneId);
         $response = $this->callPostHTTP('api/adUnit/store', $params);
 
         if ($response['is_success'] && $response['data']['success']) {
-
-            if ($this->zoneWebsite->zoneDimension->id == config('_my_config.default_magic_zone_dimension_id')){
-                $this->saveZoneAndSiteGAM($this->zoneWebsite, $response['data']['data'], $this->website);
-                return;
-            }
 
             if (empty($parentZoneId)) {
                 $this->website->gam_parent_zone_id = $response['data']['data']['parentId'];
@@ -81,6 +86,12 @@ class QueueGAMCreateAdUnit implements ShouldQueue
                 $response = $this->callPostHTTP('api/adUnit/store', $paramsZone);
 
                 if ($response['is_success'] && $response['data']['success']) {
+
+                    if ($this->zoneWebsite->zoneDimension->id == config('_my_config.default_magic_zone_dimension_id')){
+                        $this->saveZoneAndSiteGAM($this->zoneWebsite, $response['data']['data'], $this->website);
+                        return;
+                    }
+
                     $this->saveZoneAndSiteGAM($this->zoneWebsite, $response['data']['data'], $this->website);
                 } else {
                     throw new \Exception('Queue QueueGAMCreateAdUnit error: ' . json_encode($response));
@@ -122,6 +133,7 @@ class QueueGAMCreateAdUnit implements ShouldQueue
                     'zone_dimension_id' => optional(ZoneDimension::where('code', $result['name'])->first())->id ?? 0,
                     'zone_status_id' => $zone_website->zone_status_id,
                     'parent_id' => $zone_website->id,
+                    'max_gam_id' => $result['id'],
                 ]);
             }
 

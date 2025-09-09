@@ -61,10 +61,13 @@ class ZoneWebsite extends Model implements Auditable
         return $this->hasOne(Website::class, 'id', 'website_id');
     }
 
-
     public function children()
     {
         return $this->hasMany(ZoneWebsite::class, 'parent_id', 'id');
+    }
+    public function parent()
+    {
+        return $this->hasOne(ZoneWebsite::class, 'id', 'parent_id');
     }
 
     // end
