@@ -8,38 +8,39 @@
         @include('administrator.components.label', ['onclick' => 'onShowModalCheckStatusZoneOnline('.$item->id.')','title' => optional($item->zoneWebsiteOnlineStatus)->name, 'style' => 'display:inline-block;width:8px;height:8px;border-radius:50%;background:'.optional($item->zoneWebsiteOnlineStatus)->background_color.';vertical-align:middle;margin-right:6px;'])
 
         @if(count($item->children))
-        <ul>
-            @foreach($item->children as $child)
-            <li>
-                {{$child->name}}
-
-                @can('websites-edit-zone')
-                    @if(in_array($child->zone_dimension_id ,config('_my_config.zone_dimension_show_time_ids')))
-                        <!-- Time button -->
-                            <button onclick="onGetTimeZone({{$child->id}})" class="btn btn-time" title="Setup time">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
-                                     viewBox="0 0 24 24" width="20" height="20">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <path d="M12 6v6l4 2"></path>
-                                </svg>
-                            </button>
-                        @endif
-                @endcan
-            </li>
-            @endforeach
-        </ul>
+            <ul class="mt-3">
+                @foreach($item->children as $child)
+                    <li style="height: 30px;">
+                        {{$child->name}}
+                    </li>
+                @endforeach
+            </ul>
         @endif
     </td>
     <td>
         <div>
-            @include('administrator.websites.panel_zone_item_zone_modal_change_status_id', ['label' => optional($item->zoneStatus)->name, 'select2Items' => $zoneStatuses, 'field' => 'zone_status_id', 'item' => $item,'style' => 'display: inline-block;margin-top: 6px;padding: 2px 8px;border-radius: 999px;font-size: 11px;font-weight: 600;color: white !important;background: '.optional($item->zoneStatus)->background_color.';'])
+            @can('websites-edit-zone')
+                @include('administrator.websites.panel_zone_item_zone_modal_change_status_id', ['label' => optional($item->zoneStatus)->name, 'select2Items' => $zoneStatuses, 'field' => 'zone_status_id', 'item' => $item,'style' => 'display: inline-block;margin-top: 6px;padding: 2px 8px;border-radius: 999px;font-size: 11px;font-weight: 600;color: white !important;background: '.optional($item->zoneStatus)->background_color.';'])
+            @else
+                @include('administrator.components.label', ['label' => optional($item->zoneStatus)->name, 'style' => 'display: inline-block;margin-top: 6px;padding: 2px 8px;border-radius: 999px;font-size: 11px;font-weight: 600;color: white !important;background: '.optional($item->zoneStatus)->background_color.';' ])
+            @endcan
         </div>
+
+        @if(count($item->children))
+            @foreach($item->children as $child)
+                <div>
+                    @can('websites-edit-zone')
+                        @include('administrator.websites.panel_zone_item_zone_modal_change_status_id', ['label' => optional($child->zoneStatus)->name, 'select2Items' => $zoneStatuses, 'field' => 'zone_status_id', 'item' => $child,'style' => 'margin-bottom: 4px;display: inline-block;margin-top: 6px;padding: 2px 8px;border-radius: 999px;font-size: 11px;font-weight: 600;color: white !important;background: '.optional($child->zoneStatus)->background_color.';'])
+                    @else
+                        @include('administrator.components.label', ['label' => optional($child->zoneStatus)->name, 'style' => 'display: inline-block;margin-top: 6px;padding: 2px 8px;border-radius: 999px;font-size: 11px;font-weight: 600;color: white !important;background: '.optional($child->zoneStatus)->background_color.';' ])
+                    @endcan
+                </div>
+            @endforeach
+        @endif
     </td>
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
     <td>
         <div class="text-end">
-
-
         @can('websites-edit-zone')
             @if(in_array($item->zone_dimension_id ,config('_my_config.zone_dimension_show_time_ids')))
                 <!-- Time button -->
@@ -63,14 +64,14 @@
 
         @can('websites-edit-zone')
             <!-- Config button -->
-            <button onclick="onDetailZone({{$item->id}})" class="btn btn-config" title="Config">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
-                     viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path
-                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 .6 1.65 1.65 0 0 0-.33 1.82 2 2 0 1 1-2.83-2.83 1.65 1.65 0 0 0-1-.6 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-.6-1 1.65 1.65 0 0 0-1.82-.33 2 2 0 1 1 2.83-2.83 1.65 1.65 0 0 0 1-.6 1.65 1.65 0 0 0 .33-1.82A2 2 0 1 1 9.17 4.6a1.65 1.65 0 0 0 1 .6 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 .6 1 1.65 1.65 0 0 0 1.82.33 2 2 0 1 1 2.83 2.83 1.65 1.65 0 0 0-.6 1z"/>
-                </svg>
-            </button>
+                <button onclick="onDetailZone({{$item->id}})" class="btn btn-config" title="Config">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
+                         viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 .6 1.65 1.65 0 0 0-.33 1.82 2 2 0 1 1-2.83-2.83 1.65 1.65 0 0 0-1-.6 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-.6-1 1.65 1.65 0 0 0-1.82-.33 2 2 0 1 1 2.83-2.83 1.65 1.65 0 0 0 1-.6 1.65 1.65 0 0 0 .33-1.82A2 2 0 1 1 9.17 4.6a1.65 1.65 0 0 0 1 .6 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 .6 1 1.65 1.65 0 0 0 1.82.33 2 2 0 1 1 2.83 2.83 1.65 1.65 0 0 0-.6 1z"/>
+                    </svg>
+                </button>
         @endcan
         @can('websites-delete-zone')
             <!-- Delete button -->
@@ -90,5 +91,27 @@
             @endcan
         </div>
 
+        @can('websites-edit-zone')
+        @if(count($item->children))
+            @foreach($item->children as $child)
+                    <div class="text-end">
+                    @if(in_array($child->zone_dimension_id ,config('_my_config.zone_dimension_show_time_ids')))
+                        <!-- Time button -->
+                            <button onclick="onGetTimeZone({{$child->id}})" class="btn btn-time mb-1" title="Setup time">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
+                                     viewBox="0 0 24 24" width="20" height="20">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 6v6l4 2"></path>
+                                </svg>
+                            </button>
+                        @else
+                            <div style="height: 30px;">
+
+                            </div>
+                        @endif
+                </div>
+            @endforeach
+        @endif
+        @endcan
     </td>
 </tr>

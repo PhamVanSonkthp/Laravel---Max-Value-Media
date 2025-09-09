@@ -20,27 +20,23 @@ class CreateGroupZoneDimensionSeeder extends Seeder
         ]);
 
         GroupZoneDimension::firstOrCreate([
-            "name" => "Best Performance",
+            "name" => "Adx Banner",
         ]);
 
         GroupZoneDimension::firstOrCreate([
-            "name" => "GAM 360",
+            "name" => "Video",
         ]);
 
         GroupZoneDimension::firstOrCreate([
-            "name" => "Banner format",
+            "name" => "Native",
         ]);
 
         GroupZoneDimension::firstOrCreate([
-            "name" => "Video format",
+            "name" => "Direct Campaign",
         ]);
 
         GroupZoneDimension::firstOrCreate([
-            "name" => "Native format",
-        ]);
-
-        GroupZoneDimension::firstOrCreate([
-            "name" => "Mobile format",
+            "name" => "MAGIC",
         ]);
     }
 }

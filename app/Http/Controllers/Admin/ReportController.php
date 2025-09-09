@@ -55,6 +55,10 @@ class ReportController extends Controller
 
         $items = $this->model->searchByQuery($request, [], null, null, true);
 
+        $items = $items->select('reports.*')
+            ->join('zone_websites', 'zone_websites.id', '=', 'reports.zone_website_id')
+            ->where('zone_websites.parent_id', 0);
+
         $items = $items->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
         $demands = (new Demand())->get();

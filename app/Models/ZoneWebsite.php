@@ -26,6 +26,11 @@ class ZoneWebsite extends Model implements Auditable
 
     // begin
 
+    public function report($date)
+    {
+        return Report::where(['zone_website_id' => $this->id, 'date' => $date])->first();
+    }
+
     public function zoneWebsiteOnlineStatus()
     {
         return $this->hasOne(ZoneWebsiteOnlineStatus::class, 'id', 'zone_online_status_id');

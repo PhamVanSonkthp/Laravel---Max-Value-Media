@@ -6,6 +6,7 @@ use App\Jobs\QueueAdserverDeleteZone;
 use App\Jobs\QueueAdserverUpdateStatusZone;
 use App\Jobs\QueueAdserverUpdateZone;
 use App\Jobs\QueueGAMUpdateAdUnit;
+use App\Jobs\QueueGAMUpdateAdUnitParent;
 use App\Models\Helper;
 use App\Models\ZoneWebsite;
 
@@ -40,6 +41,8 @@ class ZoneWebsiteObserver
         if ($zoneWebsite->wasChanged('width') || $zoneWebsite->wasChanged('height')  || $zoneWebsite->wasChanged('zone_status_id') ) {
 
             if (count($zoneWebsite->children)){
+//                QueueGAMUpdateAdUnitParent::dispatch($zoneWebsite);
+            }else if ($zoneWebsite->parent_id != 0){
 
             }else{
                 if ($zoneWebsite->gam_id){
