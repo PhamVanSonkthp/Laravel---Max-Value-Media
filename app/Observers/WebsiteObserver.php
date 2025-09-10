@@ -79,7 +79,9 @@ class WebsiteObserver
      */
     public function deleted(Website $website)
     {
-        $this->turnOfZone($website);
+        foreach ($website->zoneWebsites as $website){
+            $website->delete();
+        }
     }
 
     /**

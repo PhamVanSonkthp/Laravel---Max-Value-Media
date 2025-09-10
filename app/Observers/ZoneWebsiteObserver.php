@@ -77,11 +77,19 @@ class ZoneWebsiteObserver
             $adScore->save();
         }
 
-        if ($zoneWebsite->gam_id){
-            $zoneWebsite->zone_status_id = 3;
-            QueueGAMUpdateAdUnit::dispatch($zoneWebsite);
+        $zoneWebsite->zone_status_id = 3;
+        if (count($zoneWebsite->children)){
+            QueueGAMUpdateAdUnitParent::dispatch($zoneWebsite);
+
+            foreach ($zoneWebsite->children as $child){
+                $child->delete();
+            }
         }else{
-            QueueAdserverDeleteZone::dispatch($zoneWebsite);
+            if ($zoneWebsite->gam_id){
+                QueueGAMUpdateAdUnit::dispatch($zoneWebsite);
+            }else{
+                QueueAdserverDeleteZone::dispatch($zoneWebsite);
+            }
         }
     }
 
