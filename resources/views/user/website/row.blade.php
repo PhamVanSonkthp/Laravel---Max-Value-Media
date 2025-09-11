@@ -32,10 +32,10 @@
     </td>
     @if($item->status_website_id == 2)
         <td class="text-center">
-            <button class="btn btn-primary btn-sm mb-1"
-                    onclick="showModalAddZone(event, '{{$item->id}}')">
-                <i class="ri-add-circle-fill"></i> Add zone
-            </button>
+{{--            <button class="btn btn-primary btn-sm mb-1"--}}
+{{--                    onclick="showModalAddZone(event, '{{$item->id}}')">--}}
+{{--                <i class="ri-add-circle-fill"></i> Add zone--}}
+{{--            </button>--}}
         </td>
     @else
         <td class="text-center w-10">
