@@ -45,7 +45,13 @@ class QueueGAMUpdateAdUnit implements ShouldQueue
     {
         $params = [
             'id' => $this->zoneWebsite->gam_id,
-            'active' => $this->zoneWebsite->zone_status_id == 2,
+            'active' => $this->zoneWebsite->zone_status_id == 2 ? 1 : 0,
+            'timeDelay' => $this->zoneWebsite->time_delay,
+            'frequencyCap'=> [
+                'impression'=> $this->zoneWebsite->time_delay,
+                'numberTime'=> $this->zoneWebsite->numberTime,
+                'timeAdUnit'=> $this->zoneWebsite->zone_time_type_id,
+            ]
         ];
 
         $response = $this->callPutHTTP('api/adUnit/update', $params);

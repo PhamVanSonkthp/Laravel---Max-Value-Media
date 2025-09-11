@@ -33,7 +33,8 @@ class CreateZoneWebsitesTable extends Migration
             $table->string('width')->nullable();
             $table->string('height')->nullable();
             $table->integer('time_delay')->default(0);
-            $table->integer('time_refresh')->default(0);
+            $table->integer('frequency_cap_impression')->default(0);
+            $table->integer('frequency_cap_number_time')->default(0);
             $table->integer('zone_time_type_id')->default(1);
 
             $table->bigInteger('priority')->default(0)->index();

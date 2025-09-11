@@ -634,7 +634,11 @@
                             hideModal('modal_create_zone');
                             showToastSuccess('Created Zone');
                             onRefreshRow(website_id);
-                            prependWithAnimation('#modal_view_all_zones_body_container_item', response.data.html, 'pop', false, 1500)
+                            prependWithAnimation('#modal_view_all_zones_body_container_item', response.data.html, 'pop', false, 1500);
+                            for(let i = 0; i < response.data.zone_ids.length ; i++){
+                                processTakeCode(response.data.zone_ids[i]);
+                            }
+
                         } else {
                             showToastError('Có lỗi khởi tạo');
                         }
@@ -660,6 +664,31 @@
                 (error) => {
 
                 }
+            )
+
+        }
+
+        function processTakeCode(zone_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.administrator.zone_websites.refresh_take_code')}}",
+                {
+                    id: zone_id,
+                },
+                (response) => {
+                    if (response.code == 219) {
+                        setTimeout(processTakeCode(zone_id), 2000);
+                    } else {
+                        if (response.is_success || response.code == 200) {
+                            $('#modal_view_all_zones_tr_row_' + zone_id).after(response.data.html).remove();
+                        } else {
+                            showToastError('Có lỗi khởi tạo');
+                        }
+                    }
+                },
+                (error) => {
+
+                },false
             )
 
         }
@@ -882,7 +911,8 @@
                 {
                     id: zone_id,
                     time_delay: $('#panel_zone_item_zone_input_time_delay').val(),
-                    time_refresh: $('#panel_zone_item_zone_input_time_refresh').val(),
+                    frequency_cap_impression: $('#panel_zone_item_zone_input_frequency_cap_impression').val(),
+                    frequency_cap_number_time: $('#panel_zone_item_zone_input_frequency_cap_number_time').val(),
                     zone_time_type_id: $('#panel_zone_item_zone_select_time_type_id').val(),
                 },
                 (response) => {

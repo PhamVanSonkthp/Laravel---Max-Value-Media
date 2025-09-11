@@ -65,9 +65,15 @@ class ZoneWebsite extends Model implements Auditable
     {
         return $this->hasMany(ZoneWebsite::class, 'parent_id', 'id');
     }
+
     public function parent()
     {
         return $this->hasOne(ZoneWebsite::class, 'id', 'parent_id');
+    }
+
+    public function zoneWebsiteTimeType()
+    {
+        return $this->hasOne(ZoneWebsiteTimeType::class, 'id', 'zone_time_type_id');
     }
 
     // end

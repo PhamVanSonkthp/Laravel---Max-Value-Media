@@ -41,30 +41,44 @@
     <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
     <td>
         <div class="text-end">
-        @can('websites-edit-zone')
-            @if(in_array($item->zone_dimension_id ,config('_my_config.zone_dimension_show_time_ids')))
-                <!-- Time button -->
-                    <button onclick="onGetTimeZone({{$item->id}})" class="btn btn-time" title="Setup time">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
-                             viewBox="0 0 24 24" width="20" height="20">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 6v6l4 2"></path>
-                        </svg>
-                    </button>
+
+
+            @if(!empty($item->code_normal) || !empty($item->gam_code))
+
+                @can('websites-edit-zone')
+                    @if(in_array($item->zone_dimension_id ,config('_my_config.zone_dimension_show_time_ids')))
+                        <!-- Time button -->
+                            <button onclick="onGetTimeZone({{$item->id}})" class="btn btn-time" title="Setup time">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
+                                     viewBox="0 0 24 24" width="20" height="20">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 6v6l4 2"></path>
+                                </svg>
+                            </button>
+                        @endif
+                    @endcan
+
+                <button onclick="onGetAdCodeZone({{$item->id}})" class="btn btn-code" title="Get Code">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
+                         viewBox="0 0 24 24">
+                        <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
+                    </svg>
+                </button>
+
+            @else
+                <button class="btn btn-code" title="Get Code" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
+                         viewBox="0 0 24 24">
+                        <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
+                    </svg>
+                    Taking code...
+                </button>
             @endif
-        @endcan
 
-        <!-- Code button -->
-            <button onclick="onGetAdCodeZone({{$item->id}})" class="btn btn-code" title="Get Code">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
-                     viewBox="0 0 24 24">
-                    <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
-                </svg>
-            </button>
 
-        @can('websites-edit-zone')
+            @can('websites-edit-zone')
 
-            @if($item->zoneDimension->zone_dimension_type_id != 1)
+                @if($item->zoneDimension->zone_dimension_type_id != 1)
                 <!-- Config button -->
                     <button onclick="onDetailZone({{$item->id}})" class="btn btn-config" title="Config">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
@@ -74,10 +88,10 @@
                                 d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 .6 1.65 1.65 0 0 0-.33 1.82 2 2 0 1 1-2.83-2.83 1.65 1.65 0 0 0-1-.6 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-.6-1 1.65 1.65 0 0 0-1.82-.33 2 2 0 1 1 2.83-2.83 1.65 1.65 0 0 0 1-.6 1.65 1.65 0 0 0 .33-1.82A2 2 0 1 1 9.17 4.6a1.65 1.65 0 0 0 1 .6 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 .6 1 1.65 1.65 0 0 0 1.82.33 2 2 0 1 1 2.83 2.83 1.65 1.65 0 0 0-.6 1z"/>
                         </svg>
                     </button>
-            @endif
+                @endif
 
-        @endcan
-        @can('websites-delete-zone')
+            @endcan
+            @can('websites-delete-zone')
             <!-- Delete button -->
                 <button
                     onclick="onDeleteZone('{{$item->website->id}}', '{{$item->id}}', 'Delete {{$item->name}} #{{$item->id}}')"
@@ -96,13 +110,15 @@
         </div>
 
         @can('websites-edit-zone')
-        @if(count($item->children))
-            @foreach($item->children as $child)
+            @if(count($item->children))
+                @foreach($item->children as $child)
                     <div class="text-end">
                     @if(in_array($child->zone_dimension_id ,config('_my_config.zone_dimension_show_time_ids')))
                         <!-- Time button -->
-                            <button onclick="onGetTimeZone({{$child->id}})" class="btn btn-time mb-1" title="Setup time">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
+                            <button onclick="onGetTimeZone({{$child->id}})" class="btn btn-time mb-1"
+                                    title="Setup time">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                                     stroke-width="2"
                                      viewBox="0 0 24 24" width="20" height="20">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <path d="M12 6v6l4 2"></path>
@@ -113,9 +129,9 @@
 
                             </div>
                         @endif
-                </div>
-            @endforeach
-        @endif
+                    </div>
+                @endforeach
+            @endif
         @endcan
     </td>
 </tr>

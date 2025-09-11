@@ -18,28 +18,8 @@ class CreateZoneWebsiteTimeTypeSeeder extends Seeder
     public function run()
     {
         ZoneWebsiteTimeType::firstOrCreate([
-            "name" => "Minute",
-            "code" => "Minute",
-        ]);
-
-        ZoneWebsiteTimeType::firstOrCreate([
-            "name" => "Hour",
-            "code" => "Hour",
-        ]);
-
-        ZoneWebsiteTimeType::firstOrCreate([
-            "name" => "Day",
-            "code" => "Day",
-        ]);
-
-        ZoneWebsiteTimeType::firstOrCreate([
-            "name" => "Week",
-            "code" => "Week",
-        ]);
-
-        ZoneWebsiteTimeType::firstOrCreate([
-            "name" => "Month",
-            "code" => "Month",
+            "name" => "Second",
+            "code" => "Second",
         ]);
 
 

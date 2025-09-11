@@ -49,6 +49,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
@@ -218,8 +219,23 @@ Route::prefix('ajax/user')->group(function () {
 
                 $website = Website::findOrFail($request->website_id);
 
+                $adsDB = explode("\n", File::get(storage_path('ads.txt')));
+                $adsDB = array_map('trim', $adsDB);
+                $adsDB = array_filter($adsDB);
+                $adsDB = array_filter($adsDB, function ($line) {
+                    return stripos($line, '#maxvalue.media') === false;
+                });
+                $adsWeb = explode("\n", "");
+                $adsWeb = array_map('trim', $adsWeb);
+                $adsWeb = array_filter($adsWeb);
+                $adsWeb = array_filter($adsWeb, function ($line) {
+                    return stripos($line, '#maxvalue.media') === false;
+                });
+
+                $missingLines = array_udiff($adsDB, $adsWeb, 'strcasecmp');
+
                 return response()->json(Helper::successAPI(200, [
-                    'html' => View::make('user.website.modal_ads_website', ['item' => $website])->render()
+                    'html' => View::make('user.website.modal_ads_website', ['item' => $website,'ads' => $missingLines])->render()
                 ]));
             })->name('ajax.user.website.ads');
 

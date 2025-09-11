@@ -28,8 +28,15 @@
                 <div class="bd-clipboard">
                 </div>
                 <div class="col-12 highlight">
-                    <textarea id="textarea_code" class="form-control p-3" rows="8" placeholder="Code ..."
-                              readonly>{!! $item->ads_compared !!}</textarea>
+                    @if($item->ads_status_website_id == 1)
+                        <textarea id="textarea_code" class="form-control p-3" rows="8" placeholder="Code ..."
+                                  readonly>@foreach($ads as $ad){{$ad."\r"}}@endforeach
+                        </textarea>
+                    @else
+                        <textarea id="textarea_code" class="form-control p-3" rows="8" placeholder="Code ..."
+                                  readonly>{!! $item->ads_compared !!}</textarea>
+                    @endif
+
                     <div class="text-center mt-3">
                         <button class="btn btn-outline-primary" onclick="copyCode('textarea_code')">
                             Click here to copy <i class="fa-solid fa-copy"></i>

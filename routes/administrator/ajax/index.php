@@ -300,7 +300,8 @@ Route::prefix('ajax/administrator')->group(function () {
                     Cache::forget($keyCache);
 
                     return response()->json(Helper::successAPI(200, [
-                        'html' => $responseHTML
+                        'html' => $responseHTML,
+                        'zone_ids' => $cacheValue['zone_ids']
                     ]));
                 }
 
@@ -311,6 +312,25 @@ Route::prefix('ajax/administrator')->group(function () {
                 return response()->json(Helper::successAPI(219, [], 'Processing'));
 
             })->name('ajax.administrator.zone_websites.store');
+
+            Route::get('refresh_take_code', function (Request $request) {
+
+                $request->validate([
+                    'id' => 'required',
+                ]);
+
+                $item = ZoneWebsite::findOrFail($request->id);
+
+                if(empty($item->code_normal) && empty($item->gam_code)) return response()->json(Helper::successAPI(219, [], 'Processing'));
+
+                $zoneStatuses = ZoneStatus::all();
+                $zoneWebsiteTimeTypes = ZoneWebsiteTimeType::all();
+
+                return response()->json(Helper::successAPI(200, [
+                    'html' => View::make('administrator.websites.modal_zone_item_zone', ['item' => $item, 'zoneStatuses' => $zoneStatuses, 'zoneWebsiteTimeTypes' => $zoneWebsiteTimeTypes])->render()
+                ]));
+
+            })->name('ajax.administrator.zone_websites.refresh_take_code');
 
             Route::post('check_status_zone_online', function (Request $request) {
 
@@ -370,14 +390,16 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 $request->validate([
                     'time_delay' => 'required',
-                    'time_refresh' => 'required',
+                    'frequency_cap_impression' => 'required',
+                    'frequency_cap_number_time' => 'required',
                     'zone_time_type_id' => 'required',
                 ]);
 
                 $zoneWebsite = ZoneWebsite::findOrFail($request->id);
 
                 $zoneWebsite->time_delay = $request->time_delay;
-                $zoneWebsite->time_refresh = $request->time_refresh;
+                $zoneWebsite->frequency_cap_impression = $request->frequency_cap_impression;
+                $zoneWebsite->frequency_cap_number_time = $request->frequency_cap_number_time;
                 $zoneWebsite->zone_time_type_id = $request->zone_time_type_id;
                 $zoneWebsite->save();
 
