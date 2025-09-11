@@ -91,6 +91,29 @@ class AdminController extends Controller
         return back();
     }
 
+    public function profile()
+    {
+        $title = "Profile";
+        $timezones = \DateTimeZone::listIdentifiers();
+
+        $item = auth()->user();
+
+        return view('administrator.profile.index', compact('title','timezones','item'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'timezone' => 'required',
+        ]);
+
+        auth()->user()->update([
+            'timezone' => $request->timezone
+        ]);
+
+        return back();
+    }
+
     public function impersonate(Request $request)
     {
         session(['impersonate' => auth()->id()]);

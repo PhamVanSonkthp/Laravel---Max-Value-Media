@@ -49,7 +49,7 @@ class JobCheckStatusZoneOnline extends Command
      */
     public function handle()
     {
-        $zones = ZoneWebsite::latest('id')->where('updated_at' , '<', Carbon::now()->subHours(3)->toDateTimeString())->limit(50)->get();
+        $zones = ZoneWebsite::latest('id')->where('updated_at' , '<', Carbon::now()->subMinutes(1)->toDateTimeString())->limit(50)->get();
 
         foreach ($zones as $zone) {
 

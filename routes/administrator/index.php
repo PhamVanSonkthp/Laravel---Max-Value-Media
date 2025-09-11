@@ -59,6 +59,17 @@ Route::group(['prefix' => 'administrator', 'middleware' => ['admin']], function 
         ]);
     });
 
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [
+            'as' => 'administrator.profile.index',
+            'uses' => 'App\Http\Controllers\Admin\AdminController@profile',
+        ]);
+        Route::put('/', [
+            'as' => 'administrator.profile.update',
+            'uses' => 'App\Http\Controllers\Admin\AdminController@updateProfile',
+        ]);
+    });
+
     Route::prefix('health')->group(function () {
         Route::get('/', HealthCheckResultsController::class)->name('administrator.dashboard.health');
     });
