@@ -770,7 +770,7 @@
                 "{{route('ajax.administrator.'.$prefixView.'.modal_change_status')}}",
                 {
                     id: website_id,
-                    modal_id: 'view_all_website_modal',
+                    modal_id: 'modal_change_status',
                 },
                 (response) => {
                     showModal('modal_change_status');

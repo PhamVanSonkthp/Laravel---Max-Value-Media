@@ -580,7 +580,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 return response()->json(Helper::successAPI(200, [
                     "website" => $item,
-                    "html" => View::make('administrator.websites.modal_change_status', ['item' => $item, 'select2Items' => $statusWebsites, 'statusWebsiteReasonPendings' => $statusWebsiteReasonPendings, 'statusWebsiteReasonRejects' => $statusWebsiteReasonRejects])->render()
+                    "html" => View::make('administrator.websites.modal_change_status', ['modal_id'=> $request->modal_id,'item' => $item, 'select2Items' => $statusWebsites, 'statusWebsiteReasonPendings' => $statusWebsiteReasonPendings, 'statusWebsiteReasonRejects' => $statusWebsiteReasonRejects])->render()
                 ]));
             })->name('ajax.administrator.websites.modal_change_status');
 
