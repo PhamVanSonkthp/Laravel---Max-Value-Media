@@ -209,7 +209,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
 
                 <div class="modal-header">
@@ -236,7 +236,7 @@
 
     <!-- Modal create user -->
     <div class="modal fade" id="modal_create_user" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
 
                 <div class="modal-header">
@@ -281,7 +281,7 @@
 
     <!-- Modal view all website -->
     <div class="modal fade" id="view_all_website_modal" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="title_view_all_website_modal">Websites</h5>
@@ -311,7 +311,7 @@
 
     <!-- Modal add cs child -->
     <div class="modal fade" id="modal_add_cs_child" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="title_modal_add_cs_child"></h5>
