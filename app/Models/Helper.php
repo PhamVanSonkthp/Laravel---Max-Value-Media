@@ -303,42 +303,53 @@ class Helper extends Model
             switch ($table) {
                 case "users":
                     if (UserTrait::isCSManager($user)) break;
-                    $query = $query->where(function ($query) use ($table) {
-                        $query->where($table . '.manager_id', auth()->id())
-                            ->orWhere($table . '.cs_id', auth()->id());
-                    });
 
-                    if (UserTrait::isCSChild($user)){
+                    if (UserTrait::isManager($user)){
+                        $query = $query->where($table . '.manager_id', $user->id);
+                    }else if (UserTrait::isCSChild($user)){
+                        $query = $query->select("users.*");
                         $query = $query->join('user_c_s', 'users.id', '=', 'user_c_s.user_id')->where('user_c_s.cs_id', $user->id);
+                    }else{
+                        $query = $query->where(function ($query) use ($table, $user) {
+                            $query->where($table . '.manager_id', $user->id)
+                                ->orWhere($table . '.cs_id', $user->id);
+                        });
                     }
 
                     break;
                 case "websites":
                     if (UserTrait::isCSManager($user)) break;
 
-                    $query = $query->join('users', 'users.id', '=', 'websites.user_id')
-                        ->where(function ($query) use ($user) {
-                            $query->where('users.manager_id', $user->id)
-                                ->orWhere('users.cs_id', $user->id);
-                        });
+                    $query = $query->select("websites.*");
 
-                    if (UserTrait::isCSChild($user)){
+                    if (UserTrait::isManager($user)){
+                        $query = $query->join('users', 'users.id', '=', 'websites.user_id')->where('users.manager_id', $user->id);
+                    }else if (UserTrait::isCSChild($user)){
                         $query = $query->join('user_c_s', 'websites.user_id', '=', 'user_c_s.user_id')->where('user_c_s.cs_id', $user->id);
+                    }else{
+                        $query = $query->join('users', 'users.id', '=', 'websites.user_id')->where(function ($query) use ($table, $user) {
+                            $query->where($table . '.manager_id', $user->id)
+                                ->orWhere($table . '.cs_id', $user->id);
+                        });
                     }
                     break;
                 case "zone_websites":
                     if (UserTrait::isCSManager($user)) break;
+                    $query = $query->select("zone_websites.*");
 
                     $query = $query->join('websites', 'websites.id', '=', 'zone_websites.website_id');
-                    $query = $query->join('users', 'users.id', '=', 'websites.user_id')
-                        ->where(function ($query) use ($user) {
-                            $query->where('users.manager_id', $user->id)
-                                ->orWhere('users.cs_id', $user->id);
-                        });
 
-                    if (UserTrait::isCSChild($user)){
+                    if (UserTrait::isManager($user)){
+                        $query = $query->join('users', 'users.id', '=', 'websites.user_id')->where('users.manager_id', $user->id);
+                    }else if (UserTrait::isCSChild($user)){
                         $query = $query->join('user_c_s', 'websites.user_id', '=', 'user_c_s.user_id')->where('user_c_s.cs_id', $user->id);
+                    }else{
+                        $query = $query->join('users', 'users.id', '=', 'websites.user_id')->where(function ($query) use ($table, $user) {
+                            $query->where($table . '.manager_id', $user->id)
+                                ->orWhere($table . '.cs_id', $user->id);
+                        });
                     }
+
                     break;
             }
         }

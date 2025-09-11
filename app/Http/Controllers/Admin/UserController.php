@@ -64,15 +64,15 @@ class UserController extends Controller
             $items = $items->where('websites.status_website_id', $request->status_website_id);
         }
 
-        if ($request->cs_child_id){
+        if ($request->cs_child_id && !UserTrait::isCSChild(auth()->user())){
             $items = $items->select('users.*')->join('user_c_s', 'user_c_s.user_id', '=', 'users.id')
                 ->where('user_c_s.cs_id', $request->cs_child_id);
         }
 
-        if (UserTrait::isCSChild(auth()->user())){
-            $items = $items->select('users.*')->join('user_c_s', 'user_c_s.user_id', '=', 'users.id')
-                ->where('user_c_s.cs_id', auth()->id());
-        }
+//        if (UserTrait::isCSChild(auth()->user())){
+//            $items = $items->select('users.*')->join('user_c_s', 'user_c_s.user_id', '=', 'users.id')
+//                ->where('user_c_s.cs_id', auth()->id());
+//        }
 
         $items = $items->with(['manager', 'cs', 'websites', 'websites.statusWebsite', 'status']);
 

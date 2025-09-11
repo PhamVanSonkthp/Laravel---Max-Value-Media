@@ -36,6 +36,19 @@ trait UserTrait
         return $users;
     }
 
+    public static function isManager($user){
+        if (empty($user)) return false;
+
+        if (auth()->user()->is_admin == 2) return false;
+
+        $csManageres = self::managers();
+        foreach ($csManageres as $csManager){
+            if ($user->id == $csManager->id) return true;
+        }
+
+        return false;
+    }
+
     public static function isCSManager($user){
         if (empty($user)) return false;
 
