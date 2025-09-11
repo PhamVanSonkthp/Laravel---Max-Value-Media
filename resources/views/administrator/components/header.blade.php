@@ -29,7 +29,7 @@
                 <span class="ms-1 me-1 d-none d-md-inline-block">
                     <i class="fa-regular fa-clock"></i>
                     <span class="ms-1">
-                        UTC <span id="header_clock">{{\Carbon\Carbon::now()->toDateTimeString()}}</span>
+                        {{optional(auth()->user())->timezone}} <span id="header_clock">{{\App\Models\Formatter::getDateTime(\Carbon\Carbon::now()->toDateTimeString())}}</span>
                     </span>
                 </span>
             </li>
@@ -126,5 +126,5 @@
     }
 
     // Example: Start from 2025-01-01 12:00:00
-    startClock("header_clock", "{{\Carbon\Carbon::now()->toDateTimeString()}}", "Y-m-d H:i:s");
+    startClock("header_clock", "{{\App\Models\Formatter::getDateTime(\Carbon\Carbon::now()->toDateTimeString())}}", "Y-m-d H:i:s");
 </script>

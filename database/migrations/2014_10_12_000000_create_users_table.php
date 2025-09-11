@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->dateTime('date_of_birth')->nullable();
             $table->string('password');
             $table->string('firebase_uid')->nullable();
+            $table->string('timezone')->default('UTC');
             $table->bigInteger('user_status_id')->default(1);
             $table->bigInteger('role_id');
             $table->tinyInteger('is_admin')->default(0);

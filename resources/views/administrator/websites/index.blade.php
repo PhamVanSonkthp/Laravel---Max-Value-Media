@@ -284,8 +284,8 @@
                         <h5 class="modal-title" id="modal_view_all_zone_title"></h5>
 
                         @can('websites-add-zone')
-                        <button onclick="onShowModalCreateZone()" class="btn btn-outline-success float-end"
-                                title="Create zone"><i class="fa-solid fa-plus"></i></button>
+                        <button onclick="onShowModalCreateZone()" class="btn btn-success float-end"
+                                title="Create zone">Create zone <i class="fa-solid fa-plus ms-1"></i></button>
                         @endcan
                     </div>
 

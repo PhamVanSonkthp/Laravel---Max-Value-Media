@@ -96,6 +96,7 @@ return [
     'items_show_in_table' => [
         50, 100, 500, 1000
     ],
+    'timezone' => 'UTC',
     'type_date' => 'Y-m-d',
     'type_time' => 'H:i:s',
     'type_time_no_second' => 'H:i',

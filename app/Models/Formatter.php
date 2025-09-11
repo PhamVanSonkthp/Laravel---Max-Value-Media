@@ -51,32 +51,20 @@ class Formatter extends Model
 
     public static function getOnlyDate($input, $format = null)
     {
-        try {
-            if (!empty($format)) {
-                return date($format, strtotime($input));
-            } else {
-                return date(config('_my_config.type_date'), strtotime($input));
-            }
-        } catch (\Exception $exception) {
-            return null;
-        }
+        $user = auth()->user();
+        return Carbon::parse($input)->timezone(optional($user)->timezone ?? config('_my_config.timezone'))->format($format ?? config('_my_config.type_date'));
     }
 
     public static function getDateTime($input, $format = null)
     {
-        if (empty($input)) {
-            return '';
-        }
-        if (!empty($format)) {
-            return date($format, strtotime($input));
-        } else {
-            return date(config('_my_config.type_date_time'), strtotime($input));
-        }
+        $user = auth()->user();
+        return Carbon::parse($input)->timezone(optional($user)->timezone ?? config('_my_config.timezone'))->format($format ?? config('_my_config.type_date_time'));
     }
 
     public static function getOnlyTime($input)
     {
-        return date(config('_my_config.type_time_no_second'), strtotime($input));
+        $user = auth()->user();
+        return Carbon::parse($input)->timezone(optional($user)->timezone ?? config('_my_config.timezone'))->format($format ?? config('_my_config.type_time_no_second'));
     }
 
     public static function paginator(Request $request, $data)

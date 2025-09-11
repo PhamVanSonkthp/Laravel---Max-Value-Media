@@ -125,16 +125,22 @@ class QueueGAMCreateAdUnit implements ShouldQueue
                 ];
             }
             foreach ($results as $result){
-                ZoneWebsite::create([
-                    'name' => $website->name . " ". $result['name'],
-                    'gam_id' => $result['ad_unit_id'],
-                    'website_id' => $zone_website->website_id,
-                    'adserver_id' => 0,
-                    'zone_dimension_id' => optional(ZoneDimension::where('code', $result['name'])->first())->id ?? 0,
-                    'zone_status_id' => $zone_website->zone_status_id,
-                    'parent_id' => $zone_website->id,
-                    'max_gam_id' => $result['id'],
-                ]);
+
+                $zoneDimension = ZoneDimension::where('code', $result['name'])->first();
+                if (!empty($zoneDimension)){
+                    ZoneWebsite::create([
+                        'name' => $website->name . " ". $zoneDimension->name,
+                        'gam_id' => $result['ad_unit_id'],
+                        'website_id' => $zone_website->website_id,
+                        'adserver_id' => 0,
+                        'zone_dimension_id' => $zoneDimension->id,
+                        'zone_status_id' => $zone_website->zone_status_id,
+                        'parent_id' => $zone_website->id,
+                        'max_gam_id' => $result['id'],
+                    ]);
+                }
+
+
             }
 
         }
