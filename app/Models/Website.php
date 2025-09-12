@@ -79,7 +79,15 @@ class Website extends Model implements Auditable
 
     public function getMaxRequestOneDay()
     {
-        return Report::where('website_id', $this->id)->max('d_request');
+        $maxDay = DB::table('reports')
+            ->select('date', DB::raw('SUM(d_request) as sum_d_request'))
+            ->where('website_id', $this->id)
+            ->where('report_type_id', 2)
+            ->groupBy('date')
+            ->orderByDesc('sum_d_request')
+            ->first();
+
+        return optional($maxDay)->sum_d_request ?? 0;
     }
 
     public function reports()
