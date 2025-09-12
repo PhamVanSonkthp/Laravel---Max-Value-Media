@@ -482,7 +482,7 @@ Route::prefix('ajax/administrator')->group(function () {
 
                 if (count($adScoreZones)) {
                     $firstAdScoreZones = $adScoreZones[0];
-                    $timeBeginCheckTraffic = $firstAdScoreZones->created_at;
+                    $timeBeginCheckTraffic = $firstAdScoreZones->date_create_new_section ?? $firstAdScoreZones->created_at;
                     $timeEndCheckTraffic = $firstAdScoreZones->updated_at;
 
                     $adScoreZoneHistories = $firstAdScoreZones->adScoreZoneHistories;
