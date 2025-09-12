@@ -66,14 +66,14 @@ class Website extends Model implements Auditable
     public function getMaxDImpressionOneDay()
     {
 
-        $maxImpressionDay = DB::table('reports')
-            ->select('date', DB::raw('SUM(d_impression) as total_impression'))
-            ->groupBy('date')
+        $maxImpression = DB::table('reports')
+            ->select('website_id', 'date', DB::raw('SUM(d_impression) as total_impression'))
+            ->groupBy('website_id', 'date')
             ->orderByDesc('total_impression')
             ->first();
 
 
-        return optional($maxImpressionDay)->total_impression ?? 0;
+        return optional($maxImpression)->total_impression ?? 0;
     }
 
     public function getMaxRequestOneDay()
