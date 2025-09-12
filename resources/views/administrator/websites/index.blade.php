@@ -64,7 +64,7 @@
                                     </th>
                                     <th>
                                         <div>
-                                            Req
+                                            <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Max D.Impression One Day / Max D.Request One Day">Req <i class="fa-regular fa-circle-question"></i></span>
                                         </div>
                                     </th>
                                     <th onclick='onSortSearch(`status_website_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('status_website_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('status_website_id') != "desc" ? "desc" : "") }}`)'>
@@ -125,7 +125,7 @@
                                     </th>
                                     <th>
                                         <div>
-                                            Req
+                                            <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Max D.Impression One Day / Max D.Request One Day">Req <i class="fa-regular fa-circle-question"></i></span>
                                         </div>
                                     </th>
                                     <th onclick='onSortSearch(`status_website_id`, `{{ \App\Models\Helper::getValueInFilterReuquest('status_website_id') == "" ? "asc" : (\App\Models\Helper::getValueInFilterReuquest('status_website_id') != "desc" ? "desc" : "") }}`)'>
