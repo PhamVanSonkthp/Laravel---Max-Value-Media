@@ -55,7 +55,7 @@
                     </ul>
                 @else
                     <div class="text-center">
-                        <button class="btn btn-outline-success" title="Add"><i class="fa-solid fa-plus"></i></button>
+                        <button class="btn btn-outline-success" title="View and create"><i class="fa-solid fa-plus"></i></button>
                     </div>
                 @endif
 
