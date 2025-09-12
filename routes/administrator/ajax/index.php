@@ -527,6 +527,7 @@ Route::prefix('ajax/administrator')->group(function () {
                 });
 
                 return response()->json(Helper::successAPI(200, [
+                    "item"=> $item,
                     "html" => View::make('administrator.websites.modal_view_and_edit_website',
                         compact('item', 'modalID', 'validHit', 'totalHit', 'validPertotalHit', 'proxyHit'
                             , 'proxyPertotalHit', 'junkHit', 'junkHitPertotalHit', 'botHit', 'botHitPertotalHit'

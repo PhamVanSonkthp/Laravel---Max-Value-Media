@@ -1,14 +1,5 @@
 <div>
     <div>
-        <strong>
-            Url
-        </strong>
-    </div>
-    <div>
-        <a target="_blank" href="{{$item->url}}">{{$item->url}}</a>
-    </div>
-
-    <div class="mt-3">
         <div>
             <strong>
                 Publisher

@@ -235,7 +235,11 @@
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Infor</h5>
+                    <h5 class="modal-title">
+                        <a href="#" id="title_view_and_edit_website_modal">
+
+                        </a>
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="container_view_and_edit_website_modal">
@@ -591,6 +595,8 @@
                 },
                 (response) => {
                     showModal('view_and_edit_website_modal')
+                    $('#title_view_and_edit_website_modal').attr("href", response.data.item.url);
+                    $('#title_view_and_edit_website_modal').html(response.data.item.name).fadeIn(1000);
                     $('#container_view_and_edit_website_modal').html(response.data.html).fadeIn(1000);
                 },
                 (error) => {
