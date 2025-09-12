@@ -73,7 +73,11 @@ class WebsiteController extends Controller
         $zoneStatuses = ZoneStatus::all();
 
         $managers = $this->managers();
-        $cses = $this->csChildren();
+
+        $cses = [];
+        if ($this->isCSManager(auth()->user()) || $this->isAdmin(auth()->user())){
+            $cses = $this->csChildren();
+        }
 
         return view('administrator.' . $this->prefixView . '.index', compact('items', 'statusWebsites', 'zoneStatuses', 'managers','cses'));
     }

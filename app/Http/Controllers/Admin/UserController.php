@@ -69,11 +69,6 @@ class UserController extends Controller
                 ->where('user_c_s.cs_id', $request->cs_child_id);
         }
 
-//        if (UserTrait::isCSChild(auth()->user())){
-//            $items = $items->select('users.*')->join('user_c_s', 'user_c_s.user_id', '=', 'users.id')
-//                ->where('user_c_s.cs_id', auth()->id());
-//        }
-
         $items = $items->with(['manager', 'cs', 'websites', 'websites.statusWebsite', 'status']);
 
         $managers = $this->managers();
@@ -82,7 +77,11 @@ class UserController extends Controller
 
 
         $cses = $this->csManageres();
-        $csChildren = $this->csChildren();
+        $csChildren = [];
+        if ($this->isCSManager(auth()->user()) || $this->isAdmin(auth()->user())){
+            $csChildren = $this->csChildren();
+        }
+
         $userStatus = $this->userStatus();
         $statusWebsite = (new StatusWebsite())->get();
         $isBalances = [new Balance(1, "Yes"), new Balance(2, "No")];
