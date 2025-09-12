@@ -49,7 +49,7 @@ class JobCheckAdsWebsite extends Command
      */
     public function handle()
     {
-        $websites = Website::where('updated_at' , '<', Carbon::now()->subMinutes(1)->toDateTimeString())->orderBy('updated_at', 'ASC')->limit(50)->get();
+        $websites = Website::orderBy('updated_at', 'ASC')->limit(50)->get();
 
         foreach ($websites as $website) {
             if (!$website->ads) {

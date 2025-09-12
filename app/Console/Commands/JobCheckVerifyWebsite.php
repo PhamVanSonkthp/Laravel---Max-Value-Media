@@ -49,7 +49,7 @@ class JobCheckVerifyWebsite extends Command
      */
     public function handle()
     {
-        $websites = Website::where('updated_at' , '<', Carbon::now()->subMinutes(1)->toDateTimeString())->whereIn('status_website_id', [5,2])->orderBy('updated_at', 'ASC')->limit(50)->get();
+        $websites = Website::whereIn('status_website_id', [5,2])->orderBy('updated_at', 'ASC')->limit(50)->get();
 
         foreach ($websites as $website) {
 
