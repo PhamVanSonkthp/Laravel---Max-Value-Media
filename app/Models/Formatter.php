@@ -23,29 +23,32 @@ class Formatter extends Model
         return config('_my_config.items_show_in_table')[0];
     }
 
-    public static function formatTimeToNow($input)
+    public static function formatTimeToNow($input, $now = null, $not_ago = true)
     {
         $date = new DateTime($input);
         $date = $date->getTimestamp();
 
-        $now = new DateTime();
+        if (empty($now)){
+            $now = new DateTime();
+        }
+
         $now = $now->getTimestamp();
 
         $a = $now - $date;
         $a *= 1000;
 
         if ($a < 60000) {
-            return floor($a / 1000) . ' giây trước';
+            return floor($a / 1000) . ' giây'. ($not_ago ? ' trước' : '');
         } else if ($a < 3600000) {
-            return floor($a / 60000) . ' phút trước';
+            return floor($a / 60000) . ' phút'. ($not_ago ? ' trước' : '');
         } else if ($a >= 3600000 && $a < 86400000) {
-            return floor($a / 3600000) . ' giờ trước';
+            return floor($a / 3600000) . ' giờ'. ($not_ago ? ' trước' : '');
         } else if ($a >= 86400000 && $a < 2592000000) {
-            return floor($a / 86400000) . ' ngày trước';
+            return floor($a / 86400000) . ' ngày'. ($not_ago ? ' trước' : '');
         } else if ($a >= 2592000000 && $a < 31104000000) {
-            return floor($a / 2592000000) . ' tháng trước';
+            return floor($a / 2592000000) . ' tháng'. ($not_ago ? ' trước' : '');
         } else {
-            return floor($a / 31104000000) . ' năm trước';
+            return floor($a / 31104000000) . ' năm'. ($not_ago ? ' trước' : '');
         }
     }
 

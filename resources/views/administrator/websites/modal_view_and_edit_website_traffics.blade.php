@@ -15,7 +15,7 @@
 <div class="card">
     <div class="card-header">
         <div>
-            From: <strong>{{\App\Models\Formatter::getDateTime($timeBeginCheckTraffic)}}</strong> To <strong id="modal_view_and_edit_website_traffics_time_end_adscore">{{\App\Models\Formatter::getDateTime($timeEndCheckTraffic)}}</strong>
+            From: <strong>{{\App\Models\Formatter::getDateTime($timeBeginCheckTraffic)}}</strong> To <strong id="modal_view_and_edit_website_traffics_time_end_adscore">{{\App\Models\Formatter::getDateTime($timeEndCheckTraffic)}}</strong> ({{\App\Models\Formatter::formatTimeToNow($timeBeginCheckTraffic, $timeEndCheckTraffic, null, false)}})
         </div>
 
     </div>
