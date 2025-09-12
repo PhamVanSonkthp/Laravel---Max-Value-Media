@@ -45,20 +45,13 @@ class ReportController extends Controller
         $sumary->selectRaw('SUM(d_request) as d_request, SUM(d_impression) as d_impression, SUM(d_impression_us_uk) as d_impression_us_uk, AVG(d_ecpm) as d_ecpm, SUM(d_revenue) as d_revenue, AVG(count) as count, AVG(share) as share, SUM(p_impression) as p_impression, AVG(p_ecpm) as p_ecpm, SUM(p_revenue) as p_revenue, SUM(profit) as profit, SUM(sale_percent) as sale_percent, SUM(system_percent) as system_percent, SUM(salary) as salary, SUM(deduction) as deduction, SUM(net_profit) as net_profit');
         $sumary = $sumary->first();
 
-//        $modelAdserverSummary = new Report();
-//        $adServerSumary = $modelAdserverSummary->searchByQuery($request, [], null, null, true);
-//        $adServerSumary->selectRaw('SUM(d_request) as d_request');
-//        $adServerSumary = $adServerSumary->first();
-
-//        $sumary->d_request = 0;
-//        $sumary->d_request += $adServerSumary->d_request;
-
         $items = $this->model->searchByQuery($request, [], null, null, true);
 
         $items = $items->select('reports.*')
             ->join('zone_websites', 'zone_websites.id', '=', 'reports.zone_website_id')
             ->where('zone_websites.parent_id', 0);
 
+        $items = $items->with(['children','website','zoneWebsite','zoneWebsite.children']);
         $items = $items->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
         $demands = (new Demand())->get();
