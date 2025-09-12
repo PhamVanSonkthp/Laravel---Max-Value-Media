@@ -49,7 +49,7 @@ class JobCheckAdsWebsite extends Command
      */
     public function handle()
     {
-        $websites = Website::latest('id')->where('updated_at' , '<', Carbon::now()->subMinutes(1)->toDateTimeString())->limit(50)->get();
+        $websites = Website::where('updated_at' , '<', Carbon::now()->subMinutes(1)->toDateTimeString())->orderBy('updated_at', 'ASC')->limit(50)->get();
 
         foreach ($websites as $website) {
             if (!$website->ads) {
@@ -74,26 +74,24 @@ class JobCheckAdsWebsite extends Command
                     return stripos($line, '#maxvalue.media') === false;
                 });
 
-                if (!empty($adsWeb) && in_array(config('_my_config.ads_text_gam'), $adsWeb)) {
-                    $website->ads_gam_status_websites = 2;
-                } else {
-                    $website->ads_gam_status_websites = 1;
-                }
-
                 $missingLines = array_udiff($adsDB, $adsWeb, 'strcasecmp');
 
                 if (count($missingLines) >= count($adsDB)) {
                     $website->ads_compared = implode("\n", $missingLines);
                     $website->ads_status_website_id = 1;
+                    $website->ads_gam_status_websites = 1;
                 } else if (count($missingLines) > 0) {
                     $website->ads_compared = implode("\n", $missingLines);
                     $website->ads_status_website_id = 3;
+                    $website->ads_gam_status_websites = 3;
                 } else {
                     $website->ads_compared = '';
                     $website->ads_status_website_id = 2;
+                    $website->ads_gam_status_websites = 2;
                 }
             } else {
                 $website->ads_status_website_id = 1;
+                $website->ads_gam_status_websites = 1;
             }
             $website->save();
         }

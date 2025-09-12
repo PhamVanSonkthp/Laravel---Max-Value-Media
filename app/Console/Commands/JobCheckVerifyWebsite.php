@@ -49,7 +49,7 @@ class JobCheckVerifyWebsite extends Command
      */
     public function handle()
     {
-        $websites = Website::latest('id')->where('updated_at' , '<', Carbon::now()->subMinutes(1)->toDateTimeString())->limit(50)->get();
+        $websites = Website::where('updated_at' , '<', Carbon::now()->subMinutes(1)->toDateTimeString())->whereIn('status_website_id', [5,2])->orderBy('updated_at', 'ASC')->limit(50)->get();
 
         foreach ($websites as $website) {
 
@@ -64,13 +64,15 @@ class JobCheckVerifyWebsite extends Command
                     $isVerified = in_array($zoneVerify->adserver_id, $results);
                     if (!$isVerified){
                         goto notVerify;
+                    }else{
+                        $website->status_website_id = 2;
                     }
                 }else{
                     notVerify:
                     $website->status_website_id = 5;
-                    $website->saveQuietly();
                 }
             }
+            $website->saveQuietly();
         }
     }
 
