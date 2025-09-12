@@ -69,10 +69,11 @@ class Website extends Model implements Auditable
         $maxDay = DB::table('reports')
             ->select('date', DB::raw('SUM(d_impression) as sum_d_impression'))
             ->where('website_id', $this->id)
+            ->where('report_type_id', 2)
             ->groupBy('date')
             ->orderByDesc('sum_d_impression')
             ->first();
-        
+
         return optional($maxDay)->sum_d_impression ?? 0;
     }
 
