@@ -30,6 +30,8 @@ class Formatter extends Model
 
         if (empty($now)){
             $now = new DateTime();
+        }else{
+            $now = Carbon::parse($now);
         }
 
         $now = $now->getTimestamp();
