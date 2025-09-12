@@ -875,7 +875,6 @@ class Helper extends Model
 
             return $response->getBody()->getContents();
         } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
             return null;
         }
     }
@@ -1062,7 +1061,7 @@ class Helper extends Model
     public static function isHasTagFromURL($url, $tag)
     {
         try {
-            $response = Http::get($url);
+            $response = Http::timeout(10)->get($url);
             if ($response->ok()) {
                 $html = $response->body();
 
