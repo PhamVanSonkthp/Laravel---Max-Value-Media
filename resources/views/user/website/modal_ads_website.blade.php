@@ -29,20 +29,34 @@
                 </div>
                 <div class="col-12 highlight">
                     @if($item->ads_status_website_id == 1)
-                        <textarea id="textarea_code" class="form-control p-3" rows="8" placeholder="Code ..."
+                        <textarea id="textarea_code_ads" class="form-control p-3" rows="8" placeholder="Code ..."
                                   readonly>@foreach($ads as $ad){{$ad."\r"}}@endforeach
                         </textarea>
                     @else
-                        <textarea id="textarea_code" class="form-control p-3" rows="8" placeholder="Code ..."
+                        <textarea id="textarea_code_ads" class="form-control p-3" rows="8" placeholder="Code ..."
                                   readonly>{!! $item->ads_compared !!}</textarea>
                     @endif
 
                     <div class="text-center mt-3">
-                        <button class="btn btn-outline-primary" onclick="copyCode('textarea_code')">
+
+                        <button class="btn btn-outline-primary" onclick="copyCode('textarea_code_ads')">
                             Click here to copy <i class="fa-solid fa-copy"></i>
                         </button>
+
+                        <button class="btn btn-outline-primary" onclick="downloadAds('textarea_code_ads')">
+                            Download Ads.txt <i class="fa-solid fa-download"></i>
+                        </button>
+
+                        @if($item->ads_status_website_id != 2)
+                        <button class="btn btn-primary" onclick="onCheckAds({{$item->id}})">
+                            Check Ads
+                        </button>
+                        @endif
                     </div>
 
+                        <div id="modal_ads_website_alert_accept" style="display:none;" class="alert alert-success mt-3" role="alert">ACCEPT</div>
+                        <div id="modal_ads_website_alert_empty" style="display:none;" class="alert alert-danger mt-3" role="alert">EMPTY</div>
+                        <div id="modal_ads_website_alert_not_update" style="display:none;" class="alert alert-warning mt-3" role="alert">NOT_UPDATE</div>
 
                 </div>
 
@@ -53,6 +67,7 @@
 </div>
 
 <script>
+
     function copyCode(textAreaId) {
         var copyText = document.getElementById(textAreaId);
         // Select the text field

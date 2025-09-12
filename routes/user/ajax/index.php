@@ -9,6 +9,7 @@ use App\Jobs\QueueAdScroreCheckTrafficZone;
 use App\Jobs\QueueAdserverCreateWebsite;
 use App\Jobs\QueueAdserverCreateZone;
 use App\Jobs\QueueAdserverUpdateStatusZone;
+use App\Jobs\QueueCheckWebsiteAds;
 use App\Jobs\QueueCheckZoneVerified;
 use App\Models\CategoryWebsite;
 use App\Models\Chat;
@@ -44,6 +45,7 @@ use App\Models\ZoneWebsite;
 use App\Traits\AdScoreTrait;
 use App\Traits\AdserverTrait;
 use App\Traits\StorageImageTrait;
+use App\Traits\WebsiteTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
@@ -151,6 +153,31 @@ Route::prefix('ajax/user')->group(function () {
 
             })->name('ajax.user.website.checking_url_valid');
 
+            Route::get('check_ads', function (Request $request) {
+
+                $item = Website::findOrFail($request->id);
+
+                $keyCache = WebsiteTrait::$KEY_CACHE_CHECK_ADS
+                    . $item->id;
+                $cacheValue = Cache::get($keyCache);
+
+                if (!empty($cacheValue)) {
+                    if ($cacheValue == Common::$CACHE_QUEUE_PROCESSING) {
+                        goto skip;
+                    }
+
+                    Cache::forget($keyCache);
+                    return response()->json($cacheValue);
+                }
+
+                QueueCheckWebsiteAds::dispatch($keyCache, $item);
+
+                Cache::put($keyCache, Common::$CACHE_QUEUE_PROCESSING, config('_my_config.cache_time_api'));
+
+                skip:
+                return response()->json(Helper::successAPI(219, [], 'Processing'));
+            })->name('ajax.user.website.check_ads');
+
             Route::get('{id}', function (Request $request, $id) {
 
                 $model = Helper::convertVariableToModelName(Helper::prefixToClassName($request->model), ['App', 'Models']);
@@ -161,7 +188,7 @@ Route::prefix('ajax/user')->group(function () {
                 ]));
             })->name('ajax.user.model.get');
 
-            Route::put('/update_field', function (Request $request) {
+            Route::put('update_field', function (Request $request) {
 
                 $model = Helper::convertVariableToModelName(Helper::prefixToClassName($request->model), ['App', 'Models']);
                 $item = $model->findOrFail($request->id);

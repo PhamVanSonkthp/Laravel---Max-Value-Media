@@ -10,6 +10,7 @@ use App\Models\Website;
 trait WebsiteTrait
 {
     public static $KEY_CACHE_CHECK_STATUS_ZONE_ONLINE = "KEY_CACHE_CHECK_STATUS_ZONE_ONLINE";
+    public static $KEY_CACHE_CHECK_ADS = "KEY_CACHE_CHECK_ADS";
 
     public static function statusWebsites()
     {

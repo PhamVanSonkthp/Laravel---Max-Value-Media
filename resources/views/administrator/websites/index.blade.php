@@ -347,7 +347,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="userModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="userModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered custom-modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -996,10 +996,6 @@
                 document.getElementById('modalUserName').innerText = userName;
                 iframe.src = "/admin/user-view/" + userId;
             });
-
-            iframe.onload = function() {
-
-            };
         });
 
         window.addEventListener("message", function(event) {

@@ -580,23 +580,7 @@
                                 $('#modal_ad_zone_website_label_verified').show();
                                 $('#modal_ad_zone_website_label_not_verified').hide();
 
-                                const website_id = response.website_id;
-                                callAjax(
-                                    "GET",
-                                    "{{route('ajax.user.website.row')}}",
-                                    {
-                                        'website_id': website_id
-                                    },
-                                    (response) => {
-                                        console.log(response);
-
-                                        $('#row_zone_website_id_' + website_id).remove();
-                                        $('#row_website_id_' + website_id).after(response.data.html).remove();
-                                    },
-                                    (error) => {
-
-                                    }, false
-                                )
+                                onRefreshRow(response.website_id);
 
                             } else {
                                 $('#modal_ad_zone_website_label_not_verified').show();
@@ -613,6 +597,22 @@
             )
         }
 
+        function onRefreshRow(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.user.website.row')}}",
+                {
+                    'website_id': website_id
+                },
+                (response) => {
+                    $('#row_zone_website_id_' + website_id).remove();
+                    $('#row_website_id_' + website_id).after(response.data.html).remove();
+                },
+                (error) => {
+
+                }, false
+            )
+        }
 
         function panelZoneToggleGroup(btn) {
             const group = btn.closest('.group');
@@ -631,5 +631,60 @@
             const checkboxesChecked = document.querySelectorAll('input[name="panel_zone_checkbox_dimension"]:checked');
             $('#modal_create_zone_btn_create').prop('disabled', checkboxesChecked.length == 0);
         }
+
+        function downloadAds(textarea_code_ads) {
+            const content = $('#' + textarea_code_ads).val();
+
+            // Tạo file dạng text
+            const blob = new Blob([content], { type: "text/plain" });
+
+            // Tạo link download ảo
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "ads.txt"; // tên file tải về
+            link.click();
+
+            // Giải phóng bộ nhớ
+            URL.revokeObjectURL(link.href);
+        }
+
+        function onCheckAds(website_id) {
+            _LoaderOrverlay.show();
+            processCheckAds(website_id);
+        }
+
+        function processCheckAds(website_id) {
+            callAjax(
+                "GET",
+                "{{route('ajax.user.website.check_ads')}}",
+                {
+                    id: website_id
+                },
+                (response) => {
+                    if (response.code == 219) {
+                        setTimeout(processCheckAds(website_id), 5000);
+                    } else {
+                        if (response.is_success) {
+                            _LoaderOrverlay.hide();
+                            onRefreshRow(response.website_id);
+
+                            if (response.website.ads_status_website_id == 1) {
+                                $('#modal_ads_website_alert_empty').show();
+                            }else if (response.website.ads_status_website_id == 2) {
+                                $('#modal_ads_website_alert_accept').show();
+                            } else {
+                                $('#modal_ads_website_alert_not_update').show();
+                            }
+                        } else {
+                            showToastError('Error');
+                        }
+                    }
+                },
+                (error) => {
+                    _LoaderOrverlay.hide();
+                }, false
+            )
+        }
+
     </script>
 @endsection

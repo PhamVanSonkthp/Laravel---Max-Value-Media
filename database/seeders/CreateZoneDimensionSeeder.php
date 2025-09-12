@@ -54,9 +54,9 @@ class CreateZoneDimensionSeeder extends Seeder
 
         ZoneDimension::firstOrCreate([
             "name" => "Flexible",
-            "code" => "Flexible",
-            "width" => "auto",
-            "height" => "auto",
+            "code" => "AD_UNIT_BANNER_SMART",
+            "width" => "100%",
+            "height" => "100%",
             "group_zone_dimension_id" => 2,
             "zone_dimension_type_id" => 1,
         ]);

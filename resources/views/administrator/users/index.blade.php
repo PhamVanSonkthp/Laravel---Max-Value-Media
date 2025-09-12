@@ -672,10 +672,6 @@
                 document.getElementById('modalUserName').innerText = userName;
                 iframe.src = "/admin/user-view/" + userId;
             });
-
-            iframe.onload = function() {
-
-            };
         });
 
         window.addEventListener("message", function(event) {
