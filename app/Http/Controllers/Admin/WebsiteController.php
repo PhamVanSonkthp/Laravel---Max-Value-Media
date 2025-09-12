@@ -53,11 +53,17 @@ class WebsiteController extends Controller
         }
 
         if ($request->manager_id) {
-            $items = $items->select('websites.*')->join('users', 'users.id', '=', 'websites.user_id')->where('users.manager_id', $request->manager_id);
+            $items = $items->select('websites.*')
+                ->join('users', 'users.id', '=', 'websites.user_id')
+                ->where('users.manager_id', $request->manager_id)
+                ->groupBy('websites.id');
         }
 
         if ($request->cs_id) {
-            $items = $items->select('websites.*')->join('user_c_s', 'user_c_s.user_id', '=', 'websites.user_id')->where('user_c_s.cs_id', $request->cs_id);
+            $items = $items->select('websites.*')
+                ->join('user_c_s', 'user_c_s.user_id', '=', 'websites.user_id')
+                ->where('user_c_s.cs_id', $request->cs_id)
+                ->groupBy('websites.id');
         }
 
         $items = $items->with(['zoneWebsites','zoneWebsites.zoneStatus','statusWebsite','user','adsStatusWebsite', 'user.manager','cs']);

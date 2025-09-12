@@ -302,6 +302,8 @@ class Helper extends Model
         if (optional($user)->is_admin == 1) {
             switch ($table) {
                 case "users":
+                    $query = $query->whereNotNull($table . '.email_verified_at');
+
                     if (UserTrait::isCSManager($user)) break;
 
                     if (UserTrait::isManager($user)){
