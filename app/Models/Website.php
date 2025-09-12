@@ -6,6 +6,7 @@ use App\Traits\WebsiteTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Traits\DeleteModelTrait;
@@ -64,7 +65,17 @@ class Website extends Model implements Auditable
 
     public function getMaxDImpressionOneDay()
     {
-        return Report::where('website_id', $this->id)->max('d_impression');
+        $query = DB::table('reports')
+            ->select('website_id', DB::raw('MAX(d_impression) as max_d_impression'))
+            ->groupBy('website_id');
+
+        $sub = $query;
+
+        $total = DB::table(DB::raw("({$sub->toSql()}) as daily_max"))
+            ->mergeBindings($sub) // quan trọng để gộp bindings
+            ->sum('max_d_impression');
+
+        return $total;
     }
 
     public function getMaxRequestOneDay()
