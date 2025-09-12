@@ -72,8 +72,8 @@ return [
     ],
 
     'ads_text_gam' => "google.com, pub-7926125525911862, DIRECT, f08c47fec0942fa0",
-    'default_manager_id' => 32,
-    'default_cs_id' => 32,
+    'default_manager_id' => 0,
+    'default_cs_id' => 6,
     'role_can_not_delete_ids' => [
         2,3,4
     ],
