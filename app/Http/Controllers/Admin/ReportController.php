@@ -46,7 +46,7 @@ class ReportController extends Controller
         $sumary = $sumary->first();
 
         $modelAdserverSummary = new Report();
-        $adServerSumary = $modelAdserverSummary->searchByQuery($request, ['report_type_id' => 2], null, null, true);
+        $adServerSumary = $modelAdserverSummary->searchByQuery($request, [], null, null, true);
         $adServerSumary->selectRaw('SUM(d_request) as d_request');
         $adServerSumary = $adServerSumary->first();
 
