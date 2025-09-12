@@ -137,7 +137,7 @@
 
         <div class="col-md-3">
             <div>
-                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'zone_website_id' , 'label' => 'Zone', 'url' => route('ajax.administrator.model.search'), 'model' => 'zone_websites'])
+                @include('administrator.components.search_select2_ajax_allow_clear' , ['name' => 'zone_website_id' , 'label' => 'Zone', 'url' => route('ajax.administrator.model.search', ['parent_id', 0]), 'model' => 'zone_websites'])
             </div>
         </div>
 
