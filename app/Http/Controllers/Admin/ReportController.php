@@ -51,7 +51,7 @@ class ReportController extends Controller
             ->join('zone_websites', 'zone_websites.id', '=', 'reports.zone_website_id')
             ->where('zone_websites.parent_id', 0);
 
-        $items = $items->with(['children','website','zoneWebsites','zoneWebsites.children']);
+        $items = $items->with(['children','website','zoneWebsite','zoneWebsite.children']);
         $items = $items->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
         $demands = (new Demand())->get();
