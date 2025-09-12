@@ -69,7 +69,7 @@ class Website extends Model implements Auditable
         $results = DB::table('reports')
             ->select(
                 DB::raw('DATE(date) as day'),
-                'user_id',
+                'website_id',
                 DB::raw('MAX(d_impression) as max_d_impression')
             )
             ->groupBy('day', 'website_id');
