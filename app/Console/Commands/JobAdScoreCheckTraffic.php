@@ -72,7 +72,7 @@ class JobAdScoreCheckTraffic extends Command
                     "cost"
                 ],
                 "time" => [
-                    "start" => $adScoreZone->created_at,
+                    "start" => $adScoreZone->date_create_new_section ?? $adScoreZone->created_at,
                     "end" => Carbon::now()->toDateTimeString(),
                 ],
                 "sub_id" => [],
