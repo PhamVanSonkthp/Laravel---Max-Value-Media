@@ -180,6 +180,16 @@ class CreateZoneDimensionSeeder extends Seeder
             "zone_dimension_position_id" => 1,
         ]);
 
+        ZoneDimension::firstOrCreate([
+            "name" => "300x600",
+            "code" => "Half-page",
+            "width" => "300",
+            "height" => "600",
+            "group_zone_dimension_id" => 2,
+            "zone_dimension_type_id" => 1,
+            "zone_dimension_position_id" => 1,
+        ]);
+
 
     }
 }

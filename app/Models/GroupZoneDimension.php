@@ -33,7 +33,7 @@ class GroupZoneDimension extends Model implements Auditable
 
     public function zoneDimensions()
     {
-        return $this->hasMany(ZoneDimension::class, 'group_zone_dimension_id', 'id');
+        return $this->hasMany(ZoneDimension::class, 'group_zone_dimension_id', 'id')->orderBy('name');
     }
 
     // end
